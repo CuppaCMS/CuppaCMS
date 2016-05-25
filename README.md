@@ -19,7 +19,7 @@ It is all, with 2 steps you can create the administration of all content in your
 
 Download
 ========
-http://int-server-tree.com/cloudbit/cuppa/files/cuppa_cms.zip
+http://cuppacms.com/files/cuppa_cms.zip
 
 Demo online.
 ========================
