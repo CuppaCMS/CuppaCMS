@@ -1,0 +1,3 @@
+1. copy to tiny_mce\plugins\
+2. add 'richeditor' to your config.plugins
+2. add 'richeditor' to your config.theme_advanced_buttons

@@ -1,0 +1,5 @@
+# Deny the excecution of files with this extensions, recommended put this file in the upload folder
+<FilesMatch "\.(?:inc|php|php5|php4|php3|php2|phtml|py|rb|pl|jsp|asp|htm|shtml|html|exe)$">
+	Order allow,deny
+	Deny from all
+</FilesMatch>

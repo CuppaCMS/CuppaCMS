@@ -1,0 +1,524 @@
+<?php
+	class Utils{
+	    private static $instance;
+		public function Utils(){ }
+        public static function getInstance() {
+			if (self::$instance == NULL) { self::$instance = new Utils(); } 
+			return self::$instance;
+		}
+        /* send and load with CULR
+                $data = object
+        */
+            public function sendAndLoad($url, $data = NULL, $method = "POST"){
+                $data = (array) $data;
+                $data = @http_build_query(@$data);
+                $curl = curl_init();
+                if($method == "GET") $url.="?".$data;
+                curl_setopt ($curl, CURLOPT_URL, $url);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);  
+                curl_setopt($curl, CURLOPT_POST, 1);
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                curl_setopt($curl, CURLOPT_COOKIESESSION, $data);
+                
+                $strCookie = 'PHPSESSID=' . $_COOKIE['PHPSESSID'] . '; path=/';
+                @session_write_close();
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); 
+                curl_setopt( $curl, CURLOPT_COOKIE, $strCookie ); 
+                
+                $result = curl_exec($curl);
+                curl_close($curl);
+                return $result;
+            }
+        // Get inputs with the Request vars
+    		public function getInputsWithRequestVars($type = ""){
+                $inputs = "";
+                $data = $_REQUEST;
+                if($type == "post") $data = $_POST;  
+                else if($type == "get") $data = $_GET;
+                foreach ( $data as $key => $value ){
+                    $inputs .= '<input type="hidden" name="'.$key.'" id="'.$key.'" value="'.$data[$key].'" />';
+                }
+                return $inputs;
+    		}
+        // Search in Array
+            function searchInArray($array, $key, $value){
+                if(is_object($array)) $array = (array) $array;
+                $results = array();
+                if (is_array($array)) {
+                    if (isset($array[$key]) && $array[$key] == $value)
+                        $results[] = $array;
+                    foreach ($array as $subarray) $results = array_merge($results, $this->searchInArray($subarray, $key, $value));
+                }
+                return $results;
+            }
+        // Cut string text
+            function cutText($delimiter = " ", $text = "", $lenght = 200, $string_to_end = "", $delimiter_forced = false, $remove_tags = false){
+                if($remove_tags) $text = strip_tags($text);
+                if($delimiter_forced){
+                    $text = substr($text, 0, $lenght);
+                    if(strrpos($text, $delimiter) !== false) $text = trim(substr($text,0, strrpos($text, $delimiter)));
+                    $text .= $string_to_end;
+                }else if(strlen($text) > $lenght ){
+                    $text = substr($text, 0, $lenght);
+                    if(strrpos($text, $delimiter) !== false) $text = trim(substr($text,0, strrpos($text, $delimiter)));
+                    $text .= $string_to_end;                    
+                }
+                return $text;
+            }
+        // ip
+            public function ip(){
+                $ip = "";
+                if (!empty($_SERVER['HTTP_CLIENT_IP'])){ $ip = $_SERVER['HTTP_CLIENT_IP']; }
+                else if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])){ $ip = $_SERVER['HTTP_X_FORWARDED_FOR']; }
+                else { $ip = $_SERVER['REMOTE_ADDR']; }
+                if($ip == "::1") $ip = "";
+                return $ip;
+            }
+        // Create Tree
+            private $tmp_info;
+            function createTree($info, $column_real, $column_to_validate, $column_road_path = "alias", $on_fail_return_info = true, $init_id_reference = 0, $include_init_reference = false, $character_depth = "|&mdash;&nbsp;&nbsp;"){
+                if(!$info) return null;
+                $this->tmp_info = array();
+                if(!$init_id_reference){
+                    for($i = 0; $i < count($info); $i++){
+                        $info[$i] = (array) $info[$i];
+                        if(!$info[$i][$column_to_validate]){
+                            $row = (array) $info[$i];
+                            $validation = count($this->searchInArray($this->tmp_info, $column_real, $row[$column_real]));
+                            if(!$validation){
+                                $row["level_tree"] = 0;
+                                $row["road_path"] = @$row[$column_road_path];
+                                array_push($this->tmp_info, $row);
+                                $this->getSubTree($row, $column_real, $column_to_validate, $info, 1, $character_depth, $column_road_path, $row["road_path"]);
+                            }
+                        }
+                    }
+                }else{
+                    for($i = 0; $i < count($info); $i++){
+                        $info[$i] = (array) $info[$i];
+                        if($info[$i]["id"] == $init_id_reference){
+                            $row = (array) $info[$i];
+                            $validation = count($this->searchInArray($this->tmp_info, $column_real, $row[$column_real]));
+                            if(!$validation){
+                                $backPath = $this->getBackPath($info, $column_real, $column_to_validate, $column_road_path = "alias", $init_id_reference);
+                                $row["level_tree"] = 0;
+                                $row["road_path"] = $backPath;
+                                if($include_init_reference){
+                                    $level_tree = 1;
+                                    array_push($this->tmp_info, $row);
+                                }else{
+                                    $level_tree = 0;
+                                }
+                                $this->getSubTree($row, $column_real, $column_to_validate, $info, $level_tree, $character_depth, $column_road_path, $row["road_path"]);
+                            }
+                        }
+                    }
+                }
+                if(!count($this->tmp_info)){
+                    if($on_fail_return_info) return $info;
+                    else return null; 
+                }
+                return $this->tmp_info;
+            }
+                private function getSubTree($row, $column_real, $column_to_validate, $info, $level_tree = 1, $character_depth = "|&mdash;&nbsp;&nbsp;", $column_road_path = "alias", $road_path = ""){
+                    for($j = 0; $j < count($info); $j++){
+                        $info[$j] = (array) $info[$j];
+                        if($info[$j][$column_to_validate] == $row[$column_real]){
+                            $row2 = (array) $info[$j];
+                            $validation = count($this->searchInArray($this->tmp_info, $column_real, $row2[$column_real]));
+                            if(!$validation){
+                                $deep_string = "";
+                                for($k = 0; $k < $level_tree; $k++){$deep_string .= $character_depth; }
+                                $row2["level_tree"] = $level_tree;
+                                $row2["deep_string"] = $deep_string;
+                                $row2["road_path"] = $road_path."/".@$row2[$column_road_path];
+                                array_push($this->tmp_info, $row2);
+                                $this->getSubTree($row2, $column_real, $column_to_validate, $info, $level_tree + 1, $character_depth, $column_road_path, $row2["road_path"]);
+                            }
+                        }
+                    }
+                }
+                public function getBackPath($info, $column_real, $column_to_validate, $column_road_path = "alias", $init_id_reference = 0, $path = "", $include_current_value = true){
+                    for($m = 0; $m < count($info); $m++){
+                        $info[$m] = (array) $info[$m];
+                        if($info[$m][$column_real] == $init_id_reference){
+                            if($include_current_value) $path = ($path) ? $info[$m][$column_road_path] ."/". $path : $info[$m][$column_road_path];
+                            if($info[$m][$column_to_validate]){
+                                $path = $this->getBackPath($info, $column_real, $column_to_validate, $column_road_path, $info[$m][$column_to_validate], $path, true);
+                            }
+                            break;
+                        }
+                    }
+                    return $path;  
+                }
+        // Get Friendly URL
+            function getFriendlyUrl($string, $include_init_value = null) {
+                $end = preg_replace('/\s+/', ' ', $string);
+                $end = trim($end);
+                $end = str_replace(
+                    array('á','à','ä','â','ª','Á','À','Â','Ä','ã','Ã','Å','å'),
+                    array('a','a','a','a','a','a','a','a','a','a','a','a','a'),
+                    $end
+                );
+                $end = str_replace(
+                    array('é','è','ë','ê','É','È','Ê','Ë'),
+                    array('e','e','e','e','e','e','e','e'),
+                    $end
+                );
+                $end = str_replace(
+                    array('í','ì','ï','î','Í','Ì','Ï','Î'),
+                    array('i','i','i','i','i','i','i','i'),
+                    $end
+                );
+                $end = str_replace(
+                    array('ó','ò','ö','ô','Ó','Ò','Ö','Ô','Õ','õ'),
+                    array('o','o','o','o','o','o','o','o','o','o'),
+                    $end
+                );
+                $end = str_replace(
+                    array('ú', 'ù', 'ü', 'û', 'Ú', 'Ù', 'Û', 'Ü'),
+                    array('u', 'u', 'u', 'u', 'u', 'u', 'u', 'u'),
+                    $end
+                );
+                $end = str_replace(
+                    array('ñ', 'Ñ', 'ç', 'Ç'),
+                    array('n', 'n', 'c', 'c',),
+                    $end
+                );
+                $end = str_replace(
+                    array("\\", "¨", "º", "~",
+                         "#", "@", "|", "!", "\"",
+                         "·", "$", "%", "&", "/",
+                         "(", ")", "?", "'", "¡",
+                         "¿", "[", "^", "`", "]",
+                         "+", "}", "{", "¨", "´",
+                         ">", "< ", ";", ",", ":"),
+                    '',
+                    $end
+                );
+                $delete=array("’","!","¡","?","¿","‘","\"","$","(",")",":",";","\\","\$","%","@","#",",", "«", "»");
+                $search=array(" ","á","é","í","ó","ú","Á","É","Í","Ó","Ú","ñ","Ñ","ü","à","è","ì","ò","ù","À","È","Ì","Ò","Ù","_",".");
+                $sustitut=array("-","a","e","i","o","u","a","e","i","o","u","n","n","u","a","e","i","o","u","A","E","I","O","U","-","-");
+                $end=str_replace($search,$sustitut,str_replace($delete,"",$end));
+                //$end=strtolower(str_replace($search,$sustitut,str_replace($delete,"",$end)));
+                $end = preg_replace('/\-+/', '-', $end);
+                if($include_init_value) $end = $include_init_value."/".$end;
+                return $end;
+            }
+        // Get a array with all values in the url, example: ?/news/18-title-article 
+        // $language_reference = the file json loaded if you want try convert translate or convert the path
+            function getUrlVars($pathString = null, $number_return = false, $language_reference_file = null, $convert_to_friendy_url = false){
+                if(is_array($pathString)) $pathString = join("/", $pathString);
+                if($pathString === null) $pathString = trim(@$_SERVER["QUERY_STRING"]);
+                if($pathString === null) $pathString = trim(@$_SERVER["PATH_INFO"]);
+                $pathString = str_replace("path=", "", $pathString);
+                $pathString = htmlspecialchars($pathString);
+                $tmp_array = explode('/', $pathString);
+                $array = array();
+                foreach($tmp_array as $row){  
+                    if($row){
+                        $number_value = $row;
+                        if($number_return){
+                            $number_value = (int) $row;
+                            if($number_value) 
+                                array_push($array, $number_value); 
+                            else{
+                                $row = explode(".",$row);
+                                $row = @$row[0];
+                                if(@$language_reference_file){
+                                    $row_translated = @$this->getKeyFromValue($row, $language_reference_file);
+                                    $row = (@$row_translated) ? @$row_translated : $row;
+                                    if($convert_to_friendy_url) $row = $this->getFriendlyUrl($row);
+                                }
+                                array_push($array, @$row);
+                            }
+                        }else{
+                            $row = explode(".",$row);
+                            $row = @$row[0];
+                            if(@$language_reference_file){
+                                    $row_translated = @$this->getKeyFromValue($row, $language_reference_file);
+                                    $row = (@$row_translated) ? @$row_translated : $row;
+                                    if($convert_to_friendy_url) $row = $this->getFriendlyUrl($row);
+                                }
+                            array_push($array, @$row);
+                        }
+                    } 
+                }
+                //++ substract GET values
+                    if(count($array)){
+                        $last_item = "&".@$array[count($array)-1];
+                        $last_item = str_replace("amp;", "", $last_item);
+                        $last_item = preg_replace('/&+/', '&', $last_item);
+                        $get_data = explode("&", $last_item);
+                        array_shift($get_data);
+                        if(@strpos($get_data[0], "=") !== false){
+                            
+                        }else{
+                            @$array[count($array)-1] = $get_data[0];
+                        }
+                        for($i = 0; $i < count($get_data); $i++){
+                            $item = explode("=", $get_data[$i]);
+                            $item = str_replace("?", "", $item);
+                            if(@$item[1] != '') $array[$item[0]] = $item[1];
+                        }
+                    }
+                //--
+                if(count($array)) return $array;
+                else return null;
+            }
+        // Get data form url string ?value1=value&value2=value&value3=value
+            function getVarsFromURLString($string, $return_object = false, $base64_decode = false){
+                $data = "";
+                if($base64_decode) $string = base64_decode($string);
+                parse_str($string,$data);
+                if($return_object) $data = (object) $data;
+                return $data;
+            }
+        // Pass a string and key word and the function return part of string before or after the key word
+        // $invert = true, return all before to the key word 
+            function getStringPart($string, $word, $includeWord = false, $invert = false, $explode_delimiter = ""){
+                if(is_array($string)) $string = join("/", $string);
+                $new_string = $string;
+                if($invert){
+                    $new_string = @substr($string, @strpos($string, $word));
+                    if(!$includeWord){ $new_string = preg_replace('/'.$word.'/', '', $new_string, 1); }
+                }else{
+                    $new_string = @substr($string,0, @strpos($string, $word) );
+                    if($includeWord) $new_string .= $word;
+                }
+                if($explode_delimiter && $new_string){
+                    $new_string = array_filter(explode($explode_delimiter, $new_string));
+                    $new_string = array_values($new_string);
+                }
+                return $new_string;
+            }
+        // Get key from value
+            function getKeyFromValue($value, $array, $forced_url_friendy_format = false){
+                $array = (array) $array;
+                $key = "";
+                foreach ($array as $key_array => $value_array) {
+                    if($value == $value_array){
+                        $key = $key_array;
+                        break;
+                    }
+                    //++ If not found, convert the value to url friendy and compare again
+                        $value_array = $this->getFriendlyUrl($value_array);
+                        if($value == $value_array){
+                            $key = $key_array;
+                            break;
+                        }
+                    //--
+                }
+                if($forced_url_friendy_format) $key = $this->getFriendlyUrl($key);
+                return $key;
+            }
+        // Get value from key
+            function getValueFromKey($key, $array, $forced_url_friendy_format = false){
+                $array = (array) $array;
+                $value = "";
+                foreach ($array as $key_array => $value_array) {
+                    if($key == $key_array){
+                        $value = $value_array;
+                        break;
+                    }
+                    //++ If not found, convert the value to url friendy and compare again
+                        $key_array = $this->getFriendlyUrl($key_array);
+                        if($key == $key_array){
+                            $value = $value_array;
+                            break;
+                        }
+                    //--
+                    //++ If not found, convert the key to url friendy and compare again
+                        $key = $this->getFriendlyUrl($key);
+                        if($key == $key_array){
+                            $value = $value_array;
+                            break;
+                        }
+                    //--
+                }
+                if($forced_url_friendy_format) $value = $this->getFriendlyUrl($value);
+                return $value;
+            }
+        // Eval data
+            function evalString($string){
+                $string = eval("return $string;");
+                return $string;
+            }
+        // Get a array with all var names inside of Object 
+            function getObjectVars($object){
+                $array = @get_object_vars($object);
+                if(!$array) return null;
+                $array_result = array();
+                foreach ( $array as $key => $value ){ array_push($array_result, $key); }
+                return $array_result;
+            }
+        // Encode to sha1Salt
+            function sha1Salt($value, $salt = "M519geetUdWQHhU8g8vZL_CbIDxlca8m"){
+                $value = sha1($value).sha1($salt.$value);
+                return $value;
+            }
+        // Get aviable links from plain HTML string
+           function getAviableLinks($string){
+                $regexp = "<a\s[^>]*href=(\"??)([^\" >]*?)\\1[^>]*>(.*)<\/a>";
+                if(preg_match_all("/$regexp/siU", $string, $matches, PREG_SET_ORDER)) {
+                    return $matches;
+                }else{
+                    return "";
+                }
+            }
+        // Generate random string
+            function getRandomString($length = 10){
+                $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                $randstring = '';
+                for ($i = 0; $i < $length; $i++) { $randstring .= $characters[rand(0, strlen($characters)-1)]; }
+                return $randstring;
+            }
+        // Generate unique string
+            function getUniqueString($initial = ""){
+                if($initial) $string = $initial;
+                $string .= time().rand(1,9999);
+                return $string;
+            }
+        // Echo Special String, print a string content, if there are code php inside labels like: {? ?} print it.
+        //    - Labels allowed: {?, ?}, [?, ?], {?php, [?php, {php}, [php]
+            function echoSpecialString($string, $document_root = ""){
+                $cuppa = Cuppa::getInstance();
+                $current_language = $cuppa->language->current();
+                $current_country = $cuppa->country->current();
+                $dir = array_values(array_filter(explode("/",str_replace(array("\\", "classes"), array("/", ""), __DIR__))));
+                $dir = array_pop($dir);
+                $string = str_replace("media/", $dir."/media/", $string);
+                $string = str_replace(array("<?", "<?php","?>", "&lt;?php","&lt;?","?&gt;","{?", "?}", "[?", "?]", "{?php", "[?php", "{php}", "[php]"), "{?", $string);
+                $string = str_replace(array("#lang#","#language#"), array($current_language, $current_language),$string);
+                $string = str_replace("#country#", $current_country,$string);
+                $string = str_replace(array("#web_path#","#administrator_path#"), array($cuppa->getDocumentPath("web"), $cuppa->getDocumentPath()),$string);
+                $string = str_replace(array("#path_web#","#path_administrator#"), array($cuppa->getDocumentPath("web"), $cuppa->getDocumentPath()),$string);
+                $data = explode("{?", $string);
+                for($i = 0; $i < count($data); $i++){
+                    if($i%2){
+                        //++ add $document_root reference to include/requiere
+                            $search = array('include"','include "',"include'","include '");
+                            $replace = array('include_once "'.$document_root,'include_once "'.$document_root,"include_once '".$document_root,"include_once '".$document_root);
+                                //$data[$i] = str_replace($search, $replace, $data[$i]);                            
+                            $search = array('require"','require "',"require'","require '");
+                            $replace = array('require_once "'.$document_root,'require_once "'.$document_root,"require_once '".$document_root,"require_once '".$document_root);
+                                //$data[$i] = str_replace($search, $replace, $data[$i]);
+                        //--
+                        $data[$i] = str_replace("&nbsp;","", $data[$i]);
+                        $data[$i] = str_replace("&gt;",">", $data[$i]);
+                        $data[$i] = $data[$i].";";
+                        $data[$i] = str_replace(";;",";", $data[$i]);
+                        eval(@$data[$i]);
+                    }else{
+                        echo $data[$i];
+                    }
+                }
+            }
+        // Join Path array
+            function joinPath($array, $remove_first_element = false, $remove_last_element = false, $string = "/"){
+                $tmp_array = json_decode(json_encode($array));
+                if($remove_first_element) array_shift($tmp_array);
+                if($remove_last_element) array_pop($tmp_array); 
+                return join($string, $tmp_array);
+            }
+        // JSON Endoce
+            function jsonEncode($value, $base64_encode = true){
+                $value = json_encode($value);
+                if($base64_encode) $value = base64_encode($value);
+                return $value;
+            }
+        // JSON Decode
+            function jsonDecode($value, $base64_decode = true){
+                if($base64_decode) $value = base64_decode($value);
+                $value = json_decode($value);
+                return $value;
+            }
+        // Get Browser inf
+            function getBrowser(){ 
+                $u_agent = $_SERVER['HTTP_USER_AGENT']; 
+                $bname = 'Unknown';
+                $platform = 'Unknown';
+                $version= "";
+                // Next get the name of the useragent yes seperately and for good reason
+                    if(preg_match('/MSIE/i',$u_agent) && !preg_match('/Opera/i',$u_agent)) { 
+                        $bname = 'Internet Explorer'; 
+                        $ub = "MSIE"; 
+                    }elseif(preg_match('/Firefox/i',$u_agent)) { 
+                        $bname = 'Mozilla Firefox'; 
+                        $ub = "Firefox"; 
+                    }elseif(preg_match('/Chrome/i',$u_agent)){ 
+                        $bname = 'Google Chrome'; 
+                        $ub = "Chrome"; 
+                    }elseif(preg_match('/Safari/i',$u_agent)){ 
+                        $bname = 'Apple Safari'; 
+                        $ub = "Safari"; 
+                    }elseif(preg_match('/Opera/i',$u_agent)){ 
+                        $bname = 'Opera'; 
+                        $ub = "Opera"; 
+                    }elseif(preg_match('/Netscape/i',$u_agent)){ 
+                        $bname = 'Netscape'; 
+                        $ub = "Netscape"; 
+                    } 
+                // finally get the correct version number
+                    $known = array('Version', $ub, 'other');
+                    $pattern = '#(?<browser>' . join('|', $known) .')[/ ]+(?<version>[0-9.|a-zA-Z.]*)#';
+                    if (!preg_match_all($pattern, $u_agent, $matches)) { }
+                
+                // see how many we have
+                    $i = count($matches['browser']);
+                    if ($i != 1) {
+                        //we will have two since we are not using 'other' argument yet
+                        //see if version is before or after the name
+                        if (strripos($u_agent,"Version") < strripos($u_agent,$ub)){ $version= $matches['version'][0]; }
+                        else { $version= $matches['version'][1]; }
+                    }else { $version= $matches['version'][0]; }
+                // check if we have a number
+                    if ($version==null || $version=="") {$version="?"; }       
+                return array( 'userAgent' => $u_agent, 'name' => $bname, 'version' => $version, 'pattern' => $pattern );
+            }
+        // santize String
+            public function sanitizeString($string){
+                return htmlspecialchars(trim(@$string));
+            }
+        // Get SO info
+            function getOS() {
+                $useragent= strtolower($_SERVER['HTTP_USER_AGENT']);
+                if (strpos($useragent, 'windows nt 5.1') !== FALSE){ return 'Windows XP';
+                }elseif (strpos($useragent, 'windows nt 6.1') !== FALSE) { return 'Windows 7';
+                }elseif (strpos($useragent, 'windows nt 6.0') !== FALSE) { return 'Windows Vista';
+                }elseif (strpos($useragent, 'windows 98') !== FALSE) { return 'Windows 98';
+                }elseif (strpos($useragent, 'windows nt 5.0') !== FALSE) { return 'Windows 2000';
+                }elseif (strpos($useragent, 'windows nt 5.2') !== FALSE) { return 'Windows 2003 Server';
+                }elseif (strpos($useragent, 'windows nt') !== FALSE) { return 'Windows NT';
+                }elseif (strpos($useragent, 'win 9x 4.90') !== FALSE && strpos($useragent, 'win me')) { return 'Windows ME';
+                }elseif (strpos($useragent, 'win ce') !== FALSE) { return 'Windows CE';
+                }elseif (strpos($useragent, 'win 9x 4.90') !== FALSE) { return 'Windows ME';
+                }elseif (strpos($useragent, 'windows phone') !== FALSE) { return 'Windows Phone';
+                }elseif (strpos($useragent, 'iphone') !== FALSE) { return 'iPhone';
+                }elseif (strpos($useragent, 'ipad') !== FALSE) { return 'iPad';
+                }elseif (strpos($useragent, 'webos') !== FALSE) { return 'webOS';
+                }elseif (strpos($useragent, 'symbian') !== FALSE) { return 'Symbian';
+                }elseif (strpos($useragent, 'android') !== FALSE) { return 'Android';
+                }elseif (strpos($useragent, 'blackberry') !== FALSE) { return 'Blackberry';
+                }elseif (strpos($useragent, 'mac os x') !== FALSE) { return 'Mac OS X';
+                }elseif (strpos($useragent, 'macintosh') !== FALSE) { return 'Macintosh';
+                }elseif (strpos($useragent, 'linux') !== FALSE) { return 'Linux';
+                }elseif (strpos($useragent, 'freebsd') !== FALSE) { return 'Free BSD';
+                }elseif (strpos($useragent, 'symbian') !== FALSE) { return 'Symbian';
+                }else { return 'Desconocido'; }
+            }
+        /* Cookie, 
+            expire_time = 0, end when browser close
+            expire_time = 10 // 10 days
+        */
+            function setCookie($name, $value = null, $expire_time = 0, $httponly = false, $secure = false){
+                if(!$expire_time) $expire_time = 0;
+                else $expire_time = time() + 86400*$expire_time;
+                @setcookie($name, $value, $expire_time, '/', "", $secure, $httponly);
+                @$_COOKIE[$name] = $value;
+            }
+            function getCookie($name){
+                return $this->sanitizeString(@$_COOKIE[$name]);
+            }
+	}
+?>

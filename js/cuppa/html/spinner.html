@@ -1,0 +1,23 @@
+<style>
+    .spinner{ display: inline-block; width: 60px; height: 60px; overflow: hidden;  }
+    .spinner svg{ animation: spinner_rotate 2s linear infinite; width: 60px; height: 60px; }
+    .spinner svg circle{
+      stroke-dasharray: 1,200;
+      stroke-dashoffset: 0;
+      animation:  dash 1.5s ease-in-out infinite, color 6s ease-in-out infinite;
+      fill:none;
+      stroke: #56BCD4;
+      stroke-width:4px
+    }
+    @keyframes spinner_rotate{ 100%{ transform: rotate(360deg); } }
+    @keyframes dash{
+        0%{ stroke-dasharray: 1,200; stroke-dashoffset: 0; }
+        50%{ stroke-dasharray: 120,200; stroke-dashoffset: -45; }
+        100%{ stroke-dasharray: 120,200; stroke-dashoffset: -160; } 
+    }
+</style>
+<div class="spinner" >
+    <svg>
+       <circle class="path" cx="30" cy="30" r="26" />
+    </svg>
+</div>

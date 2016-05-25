@@ -1,0 +1,18 @@
+INSERT INTO `cu_menu_items` VALUES (99,'Shop','shop','',0,'',NULL,NULL,1,'{}',0,1,9,'',1);
+INSERT INTO `cu_menu_items` VALUES (100,'Categories','shop-categories','',0,'',NULL,NULL,2,'{\"table_name\":\"ex_shop_categories\",\"defined_task\":\"\"}',99,1,3,'',1);
+INSERT INTO `cu_menu_items` VALUES (101,'Features','shop-features','',0,'',1,'',2,'{\"table_name\":\"ex_shop_features\",\"defined_task\":\"\"}',99,1,4,'',1);
+INSERT INTO `cu_menu_items` VALUES (102,'Values','shop-features-values','',0,'',NULL,NULL,2,'{\"table_name\":\"ex_shop_features_values\",\"defined_task\":\"\"}',101,1,1,'',1);
+INSERT INTO `cu_menu_items` VALUES (103,'Products','shop-products','',0,'',NULL,NULL,2,'{\"table_name\":\"ex_shop_products\",\"defined_task\":\"\"}',99,1,2,'',1);
+INSERT INTO `cu_menu_items` VALUES (104,'Images','shop-product-images','',0,'',NULL,NULL,2,'{\"table_name\":\"ex_shop_product_images\",\"defined_task\":\"\"}',103,1,1,'',1);
+INSERT INTO `cu_menu_items` VALUES (105,'Prices','shop-product-prices','',0,'',NULL,NULL,2,'{\"table_name\":\"ex_shop_product_prices\",\"defined_task\":\"\"}',103,1,2,'',1);
+INSERT INTO `cu_menu_items` VALUES (106,'Countries','shop-countries','',0,'',NULL,NULL,2,'{\"table_name\":\"ex_shop_countries\",\"defined_task\":\"\"}',99,1,8,'',1);
+INSERT INTO `cu_menu_items` VALUES (107,'Taxes','shop-taxes','',0,'',NULL,NULL,2,'{\"table_name\":\"ex_shop_taxes\",\"defined_task\":\"\"}',99,1,5,'',1);
+INSERT INTO `cu_menu_items` VALUES (108,'Form info','shop-form-info','',0,'',NULL,NULL,2,'{\"table_name\":\"ex_shop_form\",\"defined_task\":\"\"}',109,1,2,'',1);
+INSERT INTO `cu_menu_items` VALUES (109,'Sales','shop-sales','',0,'',1,'',1,'{}',99,1,7,'',1);
+INSERT INTO `cu_menu_items` VALUES (110,'States','shop-order-states','',0,'',NULL,NULL,2,'{\"table_name\":\"ex_shop_order_states\",\"defined_task\":\"\"}',109,1,3,'',1);
+INSERT INTO `cu_menu_items` VALUES (111,'Orders','shop-orders','',0,'',NULL,NULL,2,'{\"table_name\":\"ex_shop_orders\",\"defined_task\":\"\"}',109,1,1,'',1);
+INSERT INTO `cu_menu_items` VALUES (112,'Shipping','shop-shipping','',0,'',NULL,NULL,2,'{\"table_name\":\"ex_shop_shipping\",\"defined_task\":\"\"}',99,1,6,'',1);
+INSERT INTO `cu_menu_items` VALUES (113,'Brands','shop-brands','',0,'',1,'',2,'{\"table_name\":\"ex_shop_brands\",\"defined_task\":\"\"}',99,1,1,'',1);
+INSERT INTO `cu_permissions_data` VALUES (0,'3','104','eyJ2YWx1ZV8xXzEiOiI0IiwidmFsdWVfMl8xIjoiNCIsInZhbHVlXzNfMSI6IjQiLCJ2YWx1ZV80XzEiOiI0IiwiZGVmYXVsdF8xXzEiOiIiLCJkZWZhdWx0XzJfMSI6IiIsImRlZmF1bHRfM18xIjoiIiwiZGVmYXVsdF80XzEiOiIifQ==');
+INSERT INTO `cu_permissions_data` VALUES (0,'3','105','eyJ2YWx1ZV8xXzEiOiI0IiwidmFsdWVfMl8xIjoiNCIsInZhbHVlXzNfMSI6IjQiLCJ2YWx1ZV80XzEiOiI0IiwiZGVmYXVsdF8xXzEiOiIiLCJkZWZhdWx0XzJfMSI6IiIsImRlZmF1bHRfM18xIjoiIiwiZGVmYXVsdF80XzEiOiIifQ==');
+INSERT INTO `cu_permissions_data` VALUES (0,'3','102','eyJ2YWx1ZV8xXzEiOiI0IiwidmFsdWVfMl8xIjoiNCIsInZhbHVlXzNfMSI6IjQiLCJ2YWx1ZV80XzEiOiI0IiwiZGVmYXVsdF8xXzEiOiIiLCJkZWZhdWx0XzJfMSI6IiIsImRlZmF1bHRfM18xIjoiIiwiZGVmYXVsdF80XzEiOiIifQ==');

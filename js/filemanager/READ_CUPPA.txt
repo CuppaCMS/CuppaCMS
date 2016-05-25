@@ -1,0 +1,11 @@
+UPDATE FILES:
+config/config.php
+	$base_url, line 27
+	$convert_spaces = true, line 71
+	$MaxSizeUpload, line 59
+	$ext, line 177
+js/include.min.js
+	function apply_link
+
+ERRORS.
+	Some server brock upload.php, when we upload it... re-upload it with the web-file-manager and check
