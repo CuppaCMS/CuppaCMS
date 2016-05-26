@@ -79,7 +79,7 @@
                         <option value="<?php echo $language_availables[$i] ?>"><?php echo $language_availables[$i] ?></option>
                     <?php } ?>
                 </select>
-                <input class="button_blue" type="submit" value="Sign up" />
+                <input class="button_blue" type="submit" value="<?php echo $language->log_in ?>" />
                 <input type="hidden" id="task" name="task" value="login"/>
             </form>
         </div>
