@@ -76,6 +76,9 @@
             }
         // Create Tree
             private $tmp_info;
+            function tree($info, $column_real, $column_to_validate, $column_road_path = "alias", $on_fail_return_info = true, $init_id_reference = 0, $include_init_reference = false, $character_depth = "|&mdash;&nbsp;&nbsp;"){
+                return $this->createTree($info, $column_real, $column_to_validate, $column_road_path = "alias", $on_fail_return_info = true, $init_id_reference = 0, $include_init_reference = false, $character_depth = "|&mdash;&nbsp;&nbsp;");
+            }
             function createTree($info, $column_real, $column_to_validate, $column_road_path = "alias", $on_fail_return_info = true, $init_id_reference = 0, $include_init_reference = false, $character_depth = "|&mdash;&nbsp;&nbsp;"){
                 if(!$info) return null;
                 $this->tmp_info = array();

@@ -4,14 +4,19 @@
     $language = $cuppa->language->load();
     $current_language = $cuppa->language->current();
     if(!@$path) $path = $cuppa->utils->getUrlVars(@$_POST["path"]);
-    $sql = "SELECT cs.*, 'home' as title FROM ex_content_by_sections as cs
+    $sql = "SELECT * FROM (
+            SELECT 1 as id, 'home' as title, 0 as parent_id, s.contents, 0 as `order` FROM ex_content_by_sections as s
             WHERE section = 0
-            UNION (
-            SELECT cs.*, m.title FROM ex_content_by_sections as cs
-            JOIN cu_menu_items as m ON m.id = cs.section
-            ORDER BY m.title ASC
-            )";
+            UNION
+            SELECT m.id, m.title, m.parent_id, s.contents, m.`order` FROM cu_menu_items as m
+            JOIN ex_content_by_sections as s ON s.section = m.id
+            WHERE m.menus_id NOT IN (1,2)    
+            UNION
+            SELECT m.id, m.title, m.parent_id, '' as contents, m.`order` FROM cu_menu_items as m
+            WHERE m.menus_id NOT IN (1,2)    
+        ) as data GROUP BY id  ORDER BY parent_id, `order` ASC";
     $sections = $cuppa->dataBase->sql($sql, true);
+    $sections = $cuppa->utils->tree($sections, "id", "parent_id", "title");
 ?>
 <div class="content_list">
     <style>
@@ -48,20 +53,16 @@
         //--
     </script>
     <div class="filter_section filter_content" style="margin-bottom: 5px; float: left;">
-        <?php
-            //include_once $cuppa->getDocumentPath()."components/table_manager/fields/Select.php";
-            //$config = '{"data":{"table_name":"cu_menu_items","data_column":"id","label_column":"title","where_column":"menus_id NOT IN (1,2)","nested_column":"id","parent_column":"parent_id","init_id":"","dinamic_update_field":"","dinamic_update_column":""},"extraParams":{"add_custom_item":1,"custom_data":"0","custom_label":"Home","no_translate":true,"width":""},"tooltip":""}';
-            //$select = new Select();
-            //echo $select->GetItem('section', '', $config, false, '','onchange="content_list.submit()"', true);
-        ?>
         <select name="section" onchange='content_list.submit()' width="200px" >
             <option value=""><?php echo $language->section ?></option>
             <?php forEach($sections as $index => $item){ ?>
-                <?php $ids = join(",", json_decode($item->contents)); ?>
-                <option value="<?php echo $index ?>" data="<?php echo $ids ?>"><?php echo $item->title ?></option>
+                <?php
+                    $item = (object) $item;
+                    $ids = join(",", json_decode($item->contents));
+                ?>
+                <option value="<?php echo $index ?>" data="<?php echo $ids ?>"><?php echo $item->deep_string.$item->title ?></option>
             <?php } ?>
         </select>
-        <!---->
         <input name="custom_condition" value="" type="hidden" />
     </div>
 </div>
