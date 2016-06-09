@@ -6,6 +6,7 @@
         <script src="src-noconflict/ace.js"></script>
         <script src="src-noconflict/ext-language_tools.js"></script>
         <script src="jquery.js"></script>
+        <script src="cuppa.js"></script>
         <script src="code_beautify.js"></script>
 	</head>
 	<body>
@@ -73,13 +74,13 @@
                             text1 = text1.replace("!--", "");
                             text1 = text1.replace("// ]]>", "");
                     //--
-                    var html_tag = "";
                     //++ inside "" tags
-                        html_tag = text1.split("<"); 
-                        html_tag = html_tag[html_tag.length-1];
-                        html_tag = html_tag.split(">");
-                        html_tag = (html_tag.length == 1) ? html_tag[0] : null;
-                        try{ 
+                        var html_tag = "";
+                            html_tag = text1.split("<"); 
+                            html_tag = html_tag[html_tag.length-1];
+                            html_tag = html_tag.split(">");
+                            html_tag = (html_tag.length == 1) ? html_tag[0] : null;
+                        try{
                             html_tag = html_tag.split('"'); 
                             html_tag.pop();
                             html_tag = html_tag.pop();
@@ -91,7 +92,8 @@
                     //--
                     //++ normal tags
                         if(!html_tag){
-                            html_tag = text1.split("<"); 
+                            html_tag = text1.split("<");
+                            html_tag = html_tag.filter(function(item){ if(cuppa.trim(item.charAt(0)) != "" && cuppa.trim(item.charAt(0)) != "=" ) return cuppa.trim(item); });
                             html_tag = html_tag[html_tag.length-1];
                             html_tag = html_tag.split("/");
                             html_tag = html_tag[0];
@@ -103,10 +105,10 @@
                         }
                     //--
                     //++ set code
-                        //if(html_tag == "style") editor.getSession().setMode("ace/mode/css");
-                        if(html_tag == "?php") editor.getSession().setMode("ace/mode/php");
-                        else if(html_tag == "script") editor.getSession().setMode("ace/mode/javascript");
-                        else editor.getSession().setMode("ace/mode/html");
+                        if(html_tag == "?php") mode = "ace/mode/php";
+                        else if(html_tag == "script") mode = "ace/mode/javascript";
+                        else mode = "ace/mode/html";
+                        editor.getSession().setMode(mode);
                     //--
                 }; $("#editor").bind("keydown click focus keyup", changeMode);
             //--

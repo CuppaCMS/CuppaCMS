@@ -10,6 +10,7 @@
     @include_once("MenuManager.php");
     @include_once("LanguageManager.php");
     @include_once("CountryManager.php");
+    @include_once("View.php");
     @include_once("Utils.php");
     @include_once("FileManager.php");
     @include_once("ImageManager.php");
@@ -22,6 +23,7 @@
         public $dataBase; public $db;
         public $security;
         public $user;
+        public $view;
         public $menu;
         public $language;
         public $country;
@@ -43,6 +45,7 @@
             $this->image = ImageManager::getInstance();
             $this->mail = new SendMail(); $this->mail->configure();
             $this->user = UserManager::getInstance();
+            $this->view = View::getInstance();
             $this->menu = MenuManager::getInstance();
             $this->paginator = new Paginator();
             $this->permissions = Permissions::getInstance();
@@ -94,6 +97,7 @@
                 $this->setCookie($name."_document_path", $document_path);
                 return $document_path;
             }
+        // Get Document root
             public function documentRoot(){
                 return @$_SERVER['DOCUMENT_ROOT'];
             }
@@ -168,16 +172,27 @@
                 $decrypttext = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $crypttext, MCRYPT_MODE_ECB, $key2);
                 return trim($decrypttext);
             }
-        // instance, data = object
-            function instance($url, $data = null, $name = null){
-                if(!$name) $name = $this->utils->getUniqueString("instance");
-                $file = $this->utils->sendAndLoad($url, $data);
-                $file_name = $this->file->getDescription($url)->name;
-                $file = str_replace($file_name, $name, $file);
+        /* instance, 
+            $data = 'folder/file.php'
+            or 
+            $data = new stdClass;
+            $data->url = 'folder/file.php';
+            $data->data = new stdClass;
+            $data->class = 'string';
+            $data->instance = 'The class of the current class of file';
+        */
+            function instance($data = null){
+                if(is_string($data)) $data = (object) array(['url'=>$data]);
+                if(!$data) $data =  new stdClass;
+                if(!@$data->unique) $data->unique = $this->utils->getUniqueString("instance");
+                if(!@$data->instance) $data->instance = $this->file->getDescription($data->url)->name;
+                $file = file_get_contents($data->url);
+                $file = str_replace($data->instance, $data->unique, $file);
+                if(@$data->class){ $file = preg_replace('/'.$data->unique.'/', $data->unique." ".$data->class,$file, 1); }
                 $this->echoString($file);
-                echo "<script> try{ $name.constructor(".json_encode($data)."); }catch(err){} </script>";
-                echo "<script> try{ $name.$name(".json_encode($data)."); }catch(err){} </script>";
-                return $name;
+                echo "<script> try{ {$data->unique}.constructor(".json_encode(@$data->data)."); }catch(err){} </script>";
+                echo "<script> try{ {$data->unique}.{$data->unique}(".json_encode(@$data->data)."); }catch(err){} </script>";
+                return $data->unique;
             }
         // Encript / Decript ID's
             // Example: $cuppa->encryptIds(987654);

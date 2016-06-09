@@ -26,7 +26,7 @@
     $zoom = $places[0]->zoom;
 ?>
 <style>
-    .map{ position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; background: #000; }
+    .map{ position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; background: #E9E5DC; }
     .map .map-canvas{ position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; }
     .map_info_title{ overflow: hidden; color: #0B4A66 !important; font-weight: bold !important; }
     .map_info_description{ margin-top: 5px !important; } 
@@ -129,7 +129,7 @@
         map.init = function(){
             cuppa.addEventListener("resize", map.resize, window, "map"); map.resize(); $(".map img").load(map.resize); TweenMax.delayedCall(0.1, map.resize);
             cuppa.addEventListener("removed", map.removed, ".map", "map");
-            TweenMax.delayedCall(0.2, map.config);
+            map.config(); $(window).load(map.config);
             //++ categories events
                 $(".map .buttons .button").bind("mouseenter", function(){
                     map.tooltip.showTooltip(this, true, 5, 8);

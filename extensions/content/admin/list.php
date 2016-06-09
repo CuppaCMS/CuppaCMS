@@ -48,6 +48,12 @@
         //--
     </script>
     <div class="filter_section filter_content" style="margin-bottom: 5px; float: left;">
+        <?php
+            //include_once $cuppa->getDocumentPath()."components/table_manager/fields/Select.php";
+            //$config = '{"data":{"table_name":"cu_menu_items","data_column":"id","label_column":"title","where_column":"menus_id NOT IN (1,2)","nested_column":"id","parent_column":"parent_id","init_id":"","dinamic_update_field":"","dinamic_update_column":""},"extraParams":{"add_custom_item":1,"custom_data":"0","custom_label":"Home","no_translate":true,"width":""},"tooltip":""}';
+            //$select = new Select();
+            //echo $select->GetItem('section', '', $config, false, '','onchange="content_list.submit()"', true);
+        ?>
         <select name="section" onchange='content_list.submit()' width="200px" >
             <option value=""><?php echo $language->section ?></option>
             <?php forEach($sections as $index => $item){ ?>
@@ -55,6 +61,7 @@
                 <option value="<?php echo $index ?>" data="<?php echo $ids ?>"><?php echo $item->title ?></option>
             <?php } ?>
         </select>
+        <!---->
         <input name="custom_condition" value="" type="hidden" />
     </div>
 </div>

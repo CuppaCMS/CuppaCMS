@@ -1,0 +1,4 @@
+Es importante actuzalizar la base de datos GeoIP.dat ya que esta se actualiza cada mes
+Se puede descargar una actualizacion en: 
+http://www.maxmind.com/app/geoip_country
+http://dev.maxmind.com/geoip/legacy/geolite/

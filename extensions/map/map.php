@@ -15,7 +15,7 @@
     $categories = $cuppa->dataBase->getList("ex_map_categories", "enabled = 1", "", "`order` ASC", true);
 ?>
 <style>
-    .map{ position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; background: #000; }
+    .map{ position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; background: #E9E5DC; }
     .map .map-canvas{ position: absolute; left: 0px; top: 0px; right: 0px; bottom: 0px; }
     .map .buttons{ position: absolute; top: 50%; left: 0px; transform: translate(0px, -50%); }
     .map .buttons .button{ transition: 0.3s; display: block; width: 49px; height: 49px; background: #999 no-repeat left center; background-size: cover; }
@@ -127,7 +127,7 @@
         map.init = function(){
             cuppa.addEventListener("resize", map.resize, window, "map"); map.resize(); $(".map img").load(map.resize); TweenMax.delayedCall(0.1, map.resize);
             cuppa.addEventListener("removed", map.removed, ".map", "map");
-            TweenMax.delayedCall(0.2, map.config);
+            map.config(); $(window).load(map.config);
             //++ categories events
                 $(".map .buttons .button").bind("mouseenter", function(){
                     map.tooltip.showTooltip(this, true, 5, 8);
