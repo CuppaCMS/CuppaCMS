@@ -24,17 +24,18 @@
         <td style="padding-left: 20px;">Port</td>
         <td><input type="text" title=" " name="email_port" value="<?php echo @$cuppa->configuration->email_port ?>" /></td>
     </tr>
+	<tr>
+        <td style="padding-left: 20px;"><?php echo $language->password ?></td>
+        <td><input type="password" title=" " name="email_password" value="<?php echo @$cuppa->configuration->email_password ?>" /></td>
+    </tr>
     <tr>
-        <td style="padding-left: 20px;">SMTPSecure</td>
+        <td style="padding-left: 20px;"><?php echo $language->security ?></td>
         <td>
-            <select class="smtp_secure" name="smtp_secure">
+            <select class="smtp_security" name="smtp_security">
+                <option value="">No</option>
                 <option value="ssl">SSL</option>
                 <option value="tls">TLS</option>
             </select>
         </td>
-    </tr>
-	<tr>
-        <td style="padding-left: 20px;"><?php echo $language->password ?></td>
-        <td><input type="password" title=" " name="email_password" value="<?php echo @$cuppa->configuration->email_password ?>" /></td>
     </tr>
 </table>

@@ -26,7 +26,7 @@
 		public $smtp = "0";
 		public $email_host = "";
 		public $email_port = "";
-		public $smtp_secure = "ssl";
+		public $smtp_security = "";
 		public $email_password = "";
 		public $ga_client_id = "";
 		public $ga_view = "";

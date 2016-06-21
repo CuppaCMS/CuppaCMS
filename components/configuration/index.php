@@ -53,7 +53,7 @@
                 $(".country_default").val('<?php echo @$cuppa->configuration->country_default ?>');
                 $(".global_encode").val('<?php echo @$cuppa->configuration->global_encode ?>');
                 $(".smtp").val('<?php echo @$cuppa->configuration->smtp ?>');
-                $(".smtp_secure").val('<?php echo @$cuppa->configuration->smtp_secure ?>');
+                $(".smtp_security").val('<?php echo @$cuppa->configuration->smtp_security ?>');
                 $(".ssl").val('<?php echo @$cuppa->configuration->ssl ?>');
             //--
             cuppa.tooltip();

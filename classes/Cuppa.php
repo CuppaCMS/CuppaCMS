@@ -44,6 +44,7 @@
             $this->file = FileManager::getInstance();
             $this->image = ImageManager::getInstance();
             $this->mail = new SendMail(); $this->mail->configure();
+            if($this->configuration->smtp) $this->mail->configure( @$this->configuration->email_outgoing, @$this->configuration->email_password, @$this->configuration->email_host, @$this->configuration->email_port, @$this->configuration->smtp_security);
             $this->user = UserManager::getInstance();
             $this->view = View::getInstance();
             $this->menu = MenuManager::getInstance();
