@@ -131,6 +131,18 @@
                     echo htmlspecialchars(trim($string));
                 }
             }
+        // return the current URL in the browser
+            public function url($return_string = false){
+                $url = trim(@$_SERVER["QUERY_STRING"]);
+                if(!$url) $url = trim(@$_SERVER["PATH_INFO"]);
+                $url = str_replace("path=", "", $url);
+                $array = explode("/",$url);
+                function filter($item){ if(trim($item)) return $item; }
+                $array = @array_filter($array,filter);
+                if(!count($array)) return null;
+                if($return_string) return join("/", $array);
+                return $array;
+            }
         // santize String
             public function sanitizeString($string){ return $this->utils->sanitizeString($string); }
         // get
