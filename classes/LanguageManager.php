@@ -77,15 +77,6 @@
             public function set($language = "", $forced = false, $config = null){
                 return $this->setCurrentLanguage($language, $forced, $config);
             }
-        // Get keys values (transform multilanguage path to the origin path)
-            public function getKeys($array, $language_file_reference){
-                $cuppa = Cuppa::getInstance();
-                for($i = 0; $i < count($array); $i++){
-                    $key = $cuppa->utils->getKeyFromValue($array[$i], $language_file_reference, true);
-                    if($key) $array[$i] = $key; 
-                }
-                return $array;
-            }
         // Get Language Value
             public function getValue($key = "", $language_file_reference = "administrator", $convert_to_url_friendy = false){
                 if(!$key) return '';
@@ -101,7 +92,7 @@
                 if(!@$data){ $key = ucfirst($key); $data = @$language_file_reference->{$key}; }
                 if(!@$data){ $key = ucwords($key); $data = @$language_file_reference->{$key}; }
                 if(!@$data){ $key = strtoupper($key); $data = @$language_file_reference->{$key}; } 
-                if($data && $convert_to_url_friendy){ $data = $cuppa->utils->getFriendlyUrl($data); }
+                if($data && $convert_to_url_friendy){ $data = strtolower($cuppa->utils->getFriendlyUrl($data)); }
                 if(@$data) return @$data;
                 else if($convert_to_url_friendy) return $cuppa->utils->getFriendlyUrl($real_key);
                 else return @$real_key;
@@ -116,6 +107,28 @@
                 }
                 if($return_string) $array_values = implode("/",$array_values);
                 return $array_values;
+            }
+        // Get key
+            public function key($value, $language_file_reference = "administrator", $convert_to_url_friendy = false){
+                return $this->getKey($value, $language_file_reference, $convert_to_url_friendy);
+            }
+            public function getKey($value, $language_file_reference = "administrator", $convert_to_url_friendy = false){
+               $cuppa = Cuppa::getInstance();
+               if(is_string(@$language_file_reference) ){ $language_file_reference = $this->load($language_file_reference); }
+               $key = $cuppa->utils->getKeyFromValue($value, $language_file_reference, true);
+               if($key) return $key;
+               return $value;
+            }
+        // Get keys values (transform multilanguage path to the origin path)
+            public function getKeys($array, $language_file_reference = "administrator", $convert_to_url_friendy = false){
+                if(is_string(@$language_file_reference) ){ $language_file_reference = $this->load($language_file_reference); }
+                if(is_string(@$array) ){ $array = explode("/", $array); }
+                $cuppa = Cuppa::getInstance();
+                for($i = 0; $i < count($array); $i++){
+                    $key = $cuppa->utils->getKeyFromValue($array[$i], $language_file_reference, true);
+                    if($key) $array[$i] = $key; 
+                }
+                return $array;
             }
         // Get File info
             public function getFileInfo($file){
@@ -162,18 +175,27 @@
                 else return @$data;
             }
         // Translate path, $path = array or string
-            function translatePath($path, $language, $frienly_url = false, $get_string = false){
+            function translatePath($path = null, $language, $frienly_url = false, $get_string = false, $invert = false){
+                //++ get path
+                    if($path === null){ 
+                        $path = trim(@$_SERVER["QUERY_STRING"]);
+                        if(!$path) $path = trim(@$_SERVER["PATH_INFO"]);
+                        $path = str_replace("path=", "", $path);
+                    }
+                //--
                 if(is_string($language) ){ $language = $this->load($language); }
-                $cuppa = Cuppa::getInstance();
-                if(is_string($path)){
-                   $path = explode("/", $path);
-                }
-                for($i = 0; $i < count($path); $i++){
-                    $path[$i] = $cuppa->language->getValue($path[$i], $language, $frienly_url);
+                if(is_string($path)){ $path = explode("/", $path); }
+                if($invert){
+                    for($i = 0; $i < count($path); $i++){
+                        $path[$i] = $this->key($path[$i], $language,$frienly_url);
+                    }
+                }else{
+                    for($i = 0; $i < count($path); $i++){
+                        $path[$i] = $this->getValue($path[$i], $language, $frienly_url);
+                    }
                 }
                 if($get_string) $path = join("/", $path);
                 return $path;
-                
             }
         // Save info
             public function saveFile($name, $info){

@@ -155,6 +155,8 @@
                     return $path;  
                 }
         // Get Friendly URL
+            function urlFrienly($string, $include_init_value = null) { return $this->getFriendlyUrl($string, $include_init_value); }
+            function frienlyURL($string, $include_init_value = null) { return $this->getFriendlyUrl($string, $include_init_value); }
             function getFriendlyUrl($string, $include_init_value = null) {
                 $end = preg_replace('/\s+/', ' ', $string);
                 $end = trim($end);
@@ -210,13 +212,13 @@
             }
         // Get a array with all values in the url, example: ?/news/18-title-article 
         // $language_reference = the file json loaded if you want try convert translate or convert the path
-            function getUrlVars($pathString = null, $number_return = false, $language_reference_file = null, $convert_to_friendy_url = false){
-                if(is_array($pathString)) $pathString = join("/", $pathString);
-                if($pathString === null) $pathString = trim(@$_SERVER["QUERY_STRING"]);
-                if($pathString === null) $pathString = trim(@$_SERVER["PATH_INFO"]);
-                $pathString = str_replace("path=", "", $pathString);
-                $pathString = htmlspecialchars($pathString);
-                $tmp_array = explode('/', $pathString);
+            function getUrlVars($path = null, $number_return = false, $language_reference_file = null, $convert_to_friendy_url = false){
+                if(is_array($path)) $path = join("/", $path);
+                if($path === null) $path = trim(@$_SERVER["QUERY_STRING"]);
+                if($path === null) $path = trim(@$_SERVER["PATH_INFO"]);
+                $path = str_replace("path=", "", $path);
+                $path = htmlspecialchars($path);
+                $tmp_array = explode('/', $path);
                 $array = array();
                 foreach($tmp_array as $row){  
                     if($row){
@@ -300,7 +302,7 @@
                 $array = (array) $array;
                 $key = "";
                 foreach ($array as $key_array => $value_array) {
-                    if($value == $value_array){
+                    if(strtolower($this->frienlyURL($value)) == strtolower( $this->frienlyURL( $value_array ) )){
                         $key = $key_array;
                         break;
                     }
