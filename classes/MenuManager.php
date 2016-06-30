@@ -16,36 +16,7 @@
 			if (self::$instance == NULL) { self::$instance = new MenuManager(); } 
 			return self::$instance;
 		}
-		// Functions
-            // Return list ul li
-			public function getList($menu_name, $language_file_name = "administrator", $include_language = false, $include_country = false, $item_start = 0){
-                $this->include_language = $include_language;
-                $this->include_country = $include_country;
-                $cuppa = Cuppa::getInstance();
-                if(is_string($language_file_name)){
-                    $this->language = LanguageManager::getInstance()->load($language_file_name);
-                }else{ 
-                    $this->language = $language_file_name; 
-                }
-				$configuration = new Configuration();
-				$sql = 	"SELECT mi.*, '' as table_name, m.name AS menu_name, mit.name AS menu_item_type
-						FROM ".$configuration->table_prefix."menu_items AS mi 
-						JOIN ".$configuration->table_prefix."menus AS m 
-                        JOIN ".$configuration->table_prefix."menu_item_type AS mit ON mi.menu_item_type_id = mit.id
-						WHERE mi.menus_id = m.id AND m.name = '$menu_name' AND mi.enabled = 1 ";     
-                $sql.= " AND (m.language = '' OR m.language = '". @$cuppa->language->getCurrentLanguage()."') ";
-                $sql.= " AND (mi.language = '' OR mi.language = '". @$cuppa->language->getCurrentLanguage()."') ";
-                $sql.= " ORDER BY mi.order ASC ";
-				$result = $this->database->sql($sql);
-				if($result != 0 && $result != 1){
-				    $menu = $this->createMenu($result, $item_start);
-                    $no_menu = '<ul class="cuppa_menu_list"><li class="vertical_divider vertical_last_divider"><div class="menu_divider menu_divider_10"></div></li></ul>';
-                    if($menu != $no_menu) return $menu;
-                    else return null;
-				}
-				return null;
-			}
-            // Return Array
+        // Return Array
             public function get($menu_name, $condition = "", $language_file_name = "administrator", $init_id_reference = 0, $include_init_reference = false){
                 $cuppa = Cuppa::getInstance();
                 if(is_string($language_file_name)){
@@ -125,9 +96,9 @@
                 if(!@$finish_array[0]) return null;
                 return $finish_array;
             }
-            // Get all info about a item
-            // $menu = id,name
-            // $reference = id, alias
+        // Get all info about a item
+        // $menu = id,name
+        // $reference = id, alias
             public function getInfo($menu, $reference, $language_file_reference = "administrator", $object_return = true){
                 if(!$reference) return null;
                 $cuppa = Cuppa::getInstance();
@@ -153,6 +124,7 @@
                 if($object_return && $info) $info = (object) $info;
                 return @$info;
             }
+        // Get Childrens
             public function getChildrens($menu, $reference, $language_file_reference = "administrator", $object_return = true){
                 $cuppa = Cuppa::getInstance();
                 if(is_string($language_file_reference) ){ $language_file_reference = $cuppa->language->load($language_file_reference); }
@@ -170,7 +142,36 @@
                     }
                 }
                 return @$info;
-            }
+            }    
+        // Return list ul li
+			public function getList($menu_name, $language_file_name = "administrator", $include_language = false, $include_country = false, $item_start = 0){
+                $this->include_language = $include_language;
+                $this->include_country = $include_country;
+                $cuppa = Cuppa::getInstance();
+                if(is_string($language_file_name)){
+                    $this->language = LanguageManager::getInstance()->load($language_file_name);
+                }else{ 
+                    $this->language = $language_file_name; 
+                }
+				$configuration = new Configuration();
+				$sql = 	"SELECT mi.*, '' as table_name, m.name AS menu_name, mit.name AS menu_item_type
+						FROM ".$configuration->table_prefix."menu_items AS mi 
+						JOIN ".$configuration->table_prefix."menus AS m 
+                        JOIN ".$configuration->table_prefix."menu_item_type AS mit ON mi.menu_item_type_id = mit.id
+						WHERE mi.menus_id = m.id AND m.name = '$menu_name' AND mi.enabled = 1 ";     
+                $sql.= " AND (m.language = '' OR m.language = '". @$cuppa->language->getCurrentLanguage()."') ";
+                $sql.= " AND (mi.language = '' OR mi.language = '". @$cuppa->language->getCurrentLanguage()."') ";
+                $sql.= " ORDER BY mi.order ASC ";
+				$result = $this->database->sql($sql);
+				if($result != 0 && $result != 1){
+				    $menu = $this->createMenu($result, $item_start);
+                    $no_menu = '<ul class="cuppa_menu_list"><li class="vertical_divider vertical_last_divider"><div class="menu_divider menu_divider_10"></div></li></ul>';
+                    if($menu != $no_menu) return $menu;
+                    else return null;
+				}
+				return null;
+			}
+            
 			private function createMenu($data, $item_start = 0){
                 $cuppa = Cuppa::getInstance();
 				$field = '<ul class="cuppa_menu_list" >';

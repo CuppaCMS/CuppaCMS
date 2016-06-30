@@ -378,7 +378,10 @@
                                     <option value=""></option>
                                 </select>
                                 <script>
-                                    cuppa.autoLoadSelect("<?php echo @$menu_item_params->other_menu_item ?>", "[name=other_menu]", "[name=other_menu_item]" ,"cu_menu_items", "id", "title", "", "menus_id", true, "classes/ajax/Functions.php");
+                                    var opts = {}
+                                        opts.nested_column = "id";
+                                        opts.parent_column = "parent_id";
+                                    cuppa.autoLoadSelect("<?php echo @$menu_item_params->other_menu_item ?>", "[name=other_menu]", "[name=other_menu_item]" ,"cu_menu_items", "id", "title", "", "menus_id", true, "classes/ajax/Functions.php", opts);
                                 </script>
                             </td>
                         </tr>

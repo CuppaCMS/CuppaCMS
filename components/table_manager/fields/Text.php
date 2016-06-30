@@ -88,7 +88,7 @@
                 }else if(@$this->config->type == "number" && @$this->config->number_fortmat == "money" ){
                     $field .= "<script> cuppa.moneyInput('#".$name."')  </script>";
                 }else if(@$this->config->type == "tags"){
-                    $field .= "<script> $('#".$name."').tagsInput({width:'".@$this->config->width."',defaultText:'".@$language->add."'})  </script>";
+                    $field .= "<script> cuppa.tags('#".$name."'); </script>";
                 }
             }
 			return $field;

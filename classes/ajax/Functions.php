@@ -71,13 +71,16 @@
                 //--
                 $data = $cuppa->dataBase->getList(@$_POST["table"], $condition, "", "", true);
                 if(is_array($data)){
+                    if($cuppa->POST("nested_column")){
+                        $data = $cuppa->utils->tree($data, $cuppa->POST("nested_column"), $cuppa->POST("parent_column"), "alias", true, 0, false, "|&mdash;&nbsp;&nbsp;", true);
+                    }
                     $object = new stdClass();
                     $object->{$_POST["value"]} = "";
                     $object->{$_POST["label"]} = $language->select;
                     array_unshift($data, $object);
                     for($i = 0; $i < count($data); $i++){
                         $label = $_POST["label"];
-                        $data[$i]->{$label} = $cuppa->language->getValue($data[$i]->{$label}, $language);
+                        $data[$i]->{$label} = @$data[$i]->deep_string." ".$cuppa->language->getValue($data[$i]->{$label}, $language);
                     }
                 }else{
                     $data = array();
