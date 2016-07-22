@@ -90,7 +90,7 @@
             }; cuppa.addEventListener("ready",  banners.init, document, "banners");
         //--
     </script>
-    <div class="banners <?php echo str_replace(","," ", $section_banners->classes) ?>" style="<?php echo @$section_banners->css; ?>" >
+    <div class="banners <?php echo str_replace(","," ", $section_banners->classes) ?>" >
         <div class="list cover">
             <?php forEach($banners as $item){ ?>
                 <div class="item item_<?php echo @$item->id ?> cover" style="background-image: url(administrator/<?php echo $item->background ?>); <?php echo @$item->general_css ?>" >
@@ -107,5 +107,6 @@
         </div>
         <div class="btn_back"><span><</span></div>
         <div class="btn_next"><span>></span></div>
+        <?php @$cuppa->echoString(@$section_banners->code); ?>
     </div>
 <?php } ?>
