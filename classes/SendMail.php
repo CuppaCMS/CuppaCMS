@@ -20,7 +20,7 @@
             if($pass) $this->transport->setPassword($pass);
             $this->mailer = Swift_Mailer::newInstance($this->transport);
         }
-        function send($fromName, $fromEmail, $subject, $to = "", $body = "", $bcc = ""){
+        function send($fromName, $fromEmail, $subject, $to = "", $body = "", $cc = "", $bcc = ""){
             $message = Swift_Message::newInstance();
             $message->setSubject($subject);
             $message->setFrom(array($fromEmail => $fromName));
@@ -35,6 +35,19 @@
                             else $message->addTo(trim($email[0]), trim($email[1]));
                         }
                     }
+                }
+            //--
+            //++ cc
+                if($cc){
+                    if(is_array($cc)){
+                        $tmp = array();
+                        forEach($cc as $i => $email){
+                            if(is_string($email)) array_push($tmp,"<".trim($email).">");
+                            else array_push($tmp, trim($email[1])." <".trim($email[0]).">");
+                        }
+                        $cc = join(",", $tmp);
+                    }
+                    $headers .= 'Cc: '.$cc."\r\n";
                 }
             //--
             //++ bcc
@@ -55,7 +68,7 @@
             if(count($failedRecipients)) return 0;
             else return 1;
 		}
-        function sendNative($fromName, $fromEmail, $subject, $to = "", $body = "", $bcc = ""){
+        function sendNative($fromName, $fromEmail, $subject, $to = "", $body = "", $cc = "", $bcc = ""){
             $headers  = 'MIME-Version: 1.0' . "\r\n";
             $headers .= 'Content-type: text/html; charset=utf-8' . "\r\n";
             $headers .= 'From: '.$fromName.' <'.$fromEmail.'>' . "\r\n";
@@ -69,6 +82,19 @@
                         }
                         $to = join(",", $tmp);
                     }
+                }
+            //--
+            //++ cc
+                if($cc){
+                    if(is_array($cc)){
+                        $tmp = array();
+                        forEach($cc as $i => $email){
+                            if(is_string($email)) array_push($tmp,"<".trim($email).">");
+                            else array_push($tmp, trim($email[1])." <".trim($email[0]).">");
+                        }
+                        $cc = join(",", $tmp);
+                    }
+                    $headers .= 'Cc: '.$cc."\r\n";
                 }
             //--
             //++ bcc

@@ -63,7 +63,7 @@
                     if(!data.id) data.id = $(".menu_list .table_info td input[type=checkbox]:checked").val();
                     if(!data.id){
                         cuppa.blockade({duration:0.2, opacity:0.2, autoDeleteContent:".cuppa_alert"});
-                        cuppa.instance({url:"js/cuppa/html/alert.php", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_delete_edit ?>"}, add:"body"})
+                        cuppa.instance({url:"js/cuppa/cuppa_html/alert.html", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_delete_edit ?>", accept:"<?php echo $language->accept ?>"}, add:"body"})
                         return;
                     }
                     stage.loadRightContent("components/menu/html/edit.php", data);
@@ -72,11 +72,11 @@
                 $(".menu_list .table_info td input[type=checkbox]:checked").each(function(e){ ids.push($(this).val()); });
                 if(!ids.length){
                     cuppa.blockade({duration:0.2, opacity:0.2});
-                    cuppa.instance({url:"js/cuppa/html/alert.php", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_delete_edit ?>"}, add:"body"})
+                    cuppa.instance({url:"js/cuppa/cuppa_html/alert.html", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_delete_edit ?>", accept:"<?php echo $language->accept ?>"}, add:"body"})
                     return;
                 }
                 cuppa.blockade({duration:0.2, opacity:0.2});
-                cuppa.instance({url:"js/cuppa/html/confirm.php", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->tooltip_delete_item ?>"}, add:"body"})
+                cuppa.instance({url:"js/cuppa/cuppa_html/alert.html", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->tooltip_delete_item ?>", show_cancel:true, cancel:"<?php echo $language->cancel ?>", accept:"<?php echo $language->accept ?>"}, add:"body"})
                 function onConfirm(e, value){
                     $(cuppa).unbind("share", onConfirm);
                     if(value){

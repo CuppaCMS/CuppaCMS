@@ -23,7 +23,7 @@
             if(task == "new"){
                 if(!$(".list_table_manager .table_name").val()){ 
                     cuppa.blockade({duration:0.2, opacity:0.2, autoDeleteContent:".cuppa_alert"});
-                    cuppa.instance({url:"js/cuppa/html/alert.php", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_new_table ?>"}, add:"body"})
+                    cuppa.instance({url:"js/cuppa/cuppa_html/alert.html", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_new_table ?>", accept:"<?php echo $language->accept ?>"}, add:"body"})
                     return;
                 }
                 data.id = 0;
@@ -34,7 +34,7 @@
                 if(!id) id = $(".list_table_manager .table_info td input[type=checkbox]:checked").val();
                 if(!id){
                     cuppa.blockade({duration:0.2, opacity:0.2, autoDeleteContent:".cuppa_alert"});
-                    cuppa.instance({url:"js/cuppa/html/alert.php", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_delete_edit ?>"}, add:"body"})
+                    cuppa.instance({url:"js/cuppa/cuppa_html/alert.html", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_delete_edit ?>", accept:"<?php echo $language->accept ?>"}, add:"body"})
                     return;
                 }
                 data.task = task;
@@ -45,7 +45,7 @@
                 $(".list_table_manager .table_info td input[type=checkbox]:checked").each(function(e){ ids.push($(this).val()); });
                 if(!ids.length){
                     cuppa.blockade({duration:0.2, opacity:0.2, autoDeleteContent:".cuppa_alert"});
-                    cuppa.instance({url:"js/cuppa/html/alert.php", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_delete_edit ?>"}, add:"body"})
+                    cuppa.instance({url:"js/cuppa/cuppa_html/alert.html", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_delete_edit ?>", accept:"<?php echo $language->accept ?>"}, add:"body"})
                     return;
                 }
                 data.task = task;

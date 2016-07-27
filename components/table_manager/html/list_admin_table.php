@@ -14,7 +14,7 @@
         $field_types = $db->getList($configuration->table_prefix."tables", "table_name='".$view."'");
 	    $field_types = json_decode(base64_decode($field_types[0]["params"]));
     // Filters
-        @$filters_params = $db->getList($configuration->table_prefix."permissions_data", "`group` = 4 AND reference LIKE '".$view.",%'","","id ASC", true);
+        @$filters_params = $db->getList($configuration->table_prefix."permissions_data", "`group` = 4 AND reference LIKE '".$view.",%'","","`order` ASC, id ASC", true);
         $filter_array = Array();
         if(is_array($filters_params)){
             for($i = 0; $i < count($filters_params); $i++){
@@ -421,7 +421,7 @@
                 if(!id) id = $(".list_admin_table .table_info td input[type=checkbox]:checked").val();
                 if(!id){
                     cuppa.blockade({duration:0.2, opacity:0.2, autoDeleteContent:".cuppa_alert"});
-                    cuppa.instance({url:"js/cuppa/html/alert.php", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_delete_edit ?>"}, add:"body"})
+                    cuppa.instance({url:"js/cuppa/cuppa_html/alert.html", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_delete_edit ?>", accept:"<?php echo $language->accept ?>"}, add:"body"})
                     return;
                 }
                 data.id = id;
@@ -431,11 +431,11 @@
                 $(".list_admin_table .table_info td input[type=checkbox]:checked").each(function(e){ ids.push($(this).val()); });
                 if(!ids.length){
                     cuppa.blockade({duration:0.2, opacity:0.2, autoDeleteContent:".cuppa_alert"});
-                    cuppa.instance({url:"js/cuppa/html/alert.php", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_delete_edit ?>"}, add:"body"})
+                    cuppa.instance({url:"js/cuppa/cuppa_html/alert.html", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_delete_edit ?>", accept:"<?php echo $language->accept ?>"}, add:"body"})
                     return;
                 }
                 cuppa.blockade({duration:0.2, opacity:0.2, autoDeleteContent:".cuppa_alert"});
-                cuppa.instance({url:"js/cuppa/html/confirm.php", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->tooltip_delete_item ?>"}, add:"body"})
+                cuppa.instance({url:"js/cuppa/cuppa_html/alert.html", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->tooltip_delete_item ?>", show_cancel:true, cancel:"<?php echo $language->cancel ?>", accept:"<?php echo $language->accept ?>"}, add:"body" })
                 function onConfirm(e, value){
                     $(cuppa).unbind("share", onConfirm);
                     if(value){
@@ -451,7 +451,7 @@
                 if(!id) id = $(".list_admin_table .table_info td input[type=checkbox]:checked").val();
                 if(!id){
                     cuppa.blockade({duration:0.2, opacity:0.2, autoDeleteContent:".cuppa_alert"});
-                    cuppa.instance({url:"js/cuppa/html/alert.php", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_delete_edit ?>"}, add:"body"})
+                    cuppa.instance({url:"js/cuppa/cuppa_html/alert.html", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->alert_delete_edit ?>", accept:"<?php echo $language->accept ?>"}, add:"body" })
                     return;
                 }
                 data.id = id;
