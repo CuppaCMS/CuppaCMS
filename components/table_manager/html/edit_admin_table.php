@@ -97,6 +97,7 @@
     //++ Save
         edit_admin_table.save = function(task){
             if(!$('.edit_admin_table form').valid()) return;
+            $(".ace_autocomplete").hide();
             cuppa.tinyMCEUpdate();
             menu.showCharger();
             cuppa.blockadeScreen();

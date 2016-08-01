@@ -93,7 +93,7 @@
     <div class="banners <?php echo str_replace(","," ", $section_banners->classes) ?>" >
         <div class="list cover">
             <?php forEach($banners as $item){ ?>
-                <div class="item item_<?php echo @$item->id ?> cover" style="background-image: url(administrator/<?php echo $item->background ?>); <?php echo @$item->general_css ?>" >
+                <div class="item item_<?php echo @$item->id ?> cover" style="background-image: url(administrator/<?php echo $item->background ?>); <?php echo @$item->css ?>" >
                     <div class="item_wrapper cover">
                         <?php $cuppa->echoString($item->content); ?>
                     </div>

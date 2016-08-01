@@ -64,7 +64,9 @@
     <script>
         content = {}
         //++ resize
-            content.resize = function(){ cuppa.grid(".content .content_item, .content .content_item *"); }; 
+            content.resize = function(){ 
+                cuppa.grid(".content .content_item, .content .content_item *");
+            }; 
         //--
         //++ end
             content.removed = function(e){ cuppa.removeEventGroup("content"); }
@@ -79,7 +81,7 @@
     </script>
     <div class="content content_extension">
         <?php forEach($content as $item){ ?>
-            <div class="content_item <?php echo str_replace(",", " ", @preg_replace("/(inner)\w+/","", @$item->classes) ); ?>" id="<?php echo $item->id ?>" style="<?php  if($item->background_image) echo "background-image:url(administrator/".$item->background_image.")"; ?>" >
+            <div class="content_item <?php echo str_replace(",", " ", @preg_replace("/(inner)\w+/","", @$item->classes) ); ?>" id="<?php echo $item->id ?>" style="<?php echo @$item->css ?>" >
                 <?php if(@$item->anchor){ ?> <a name="<?php echo @$item->anchor ?>" style="display: block !important; height: 0px!important; width: 0px !important; visibility: hidden !important; position: absolute !important;"></a><?php } ?>
                 <?php $cuppa->echoString($item->content); ?>
             </div>

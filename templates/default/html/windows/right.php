@@ -33,6 +33,7 @@
     //--
     //++ close
         w_right.close = function(){
+            $(".ace_autocomplete").hide();
             var w_right = $(".w_right").last();
             TweenMax.to(w_right, 0.3, {right:"-100%", ease:Cubic.easeIn, onComplete:function(){
                 cuppa.setContent({load:false, name:".window_right", last:true});
