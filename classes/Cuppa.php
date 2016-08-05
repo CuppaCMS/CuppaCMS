@@ -188,11 +188,11 @@
         /* instance, 
             $data = 'folder/file.php'
             or 
-            $data = new stdClass;
-            $data->url = 'folder/file.php';
-            $data->data = new stdClass;
-            $data->class = 'string';
-            $data->instance = 'The class of the current class of file';
+            $data = new stdClass();
+                $data->url = 'folder/file.php';
+                $data->data = new stdClass;
+                $data->class = 'string';
+                $data->instance = 'The class of the current class of file';
         */
             function instance($data = null){
                 if(is_string($data)) $data = (object) array(['url'=>$data]);

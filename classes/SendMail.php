@@ -7,7 +7,7 @@
         array_push($emails, array('email', 'name'));
         
         $cuppa->mail->configure("user@gmail.com", "password", "smtp.gmail.com", 465, "ssl");
-        echo $globalControl->mail->send("fromName", "fromEmail", "affair", emails,  body, body);
+        echo $cuppa->mail->send("fromName", "fromEmail", "affair", emails,  body, body);
     */
 	class SendMail{
         public $mailer = null;
