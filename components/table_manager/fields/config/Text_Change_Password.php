@@ -31,11 +31,11 @@
             var verification_password = cuppa.trim(jQuery("#verification_password").val());
             if(!new_password){
                 cuppa.blockade({duration:0.2, opacity:0.2, autoDeleteContent:".cuppa_alert"});
-                cuppa.instance({url:"js/cuppa/html/alert.php", data:{title:"<?php echo @$language->error ?>", message:"<?php echo $language->password_new_write ?>"}, add:"body"});
+                cuppa.instance({url:"js/cuppa/cuppa_html/alert.html", data:{title:"<?php echo @$language->error ?>", message:"<?php echo $language->password_new_write ?>"}, add:"body"});
                 return;
             }else if(new_password != verification_password){
                 cuppa.blockade({duration:0.2, opacity:0.2, autoDeleteContent:".cuppa_alert"});
-                cuppa.instance({url:"js/cuppa/html/alert.php", data:{title:"<?php echo @$language->error ?>", message:"<?php echo $language->password_verification_incorrect ?>"}, add:"body"});                   
+                cuppa.instance({url:"js/cuppa/cuppa_html/alert.html", data:{title:"<?php echo @$language->error ?>", message:"<?php echo $language->password_verification_incorrect ?>"}, add:"body"});                   
                 return;
             }
             //++ Get data
@@ -57,15 +57,15 @@
                 cuppa.blockadeScreen(false);
                 if(result == 0){
                     cuppa.blockade({duration:0.2, opacity:0.2, autoDeleteContent:".cuppa_alert"});
-                    cuppa.instance({url:"js/cuppa/html/alert.php", data:{title:"<?php echo @$language->error ?>", message:"<?php echo $language->password_error_message ?>"}, add:"body"});                   
+                    cuppa.instance({url:"js/cuppa/cuppa_html/alert.html", data:{title:"<?php echo @$language->error ?>", message:"<?php echo $language->password_error_message ?>"}, add:"body"});                   
                     return;
                 }else if(result == -1){ 
                     cuppa.blockade({duration:0.2, opacity:0.2, autoDeleteContent:".cuppa_alert"});
-                    cuppa.instance({url:"js/cuppa/html/alert.php", data:{title:"<?php echo @$language->error ?>", message:"<?php echo $language->password_invalid_current_password ?>"}, add:"body"});
+                    cuppa.instance({url:"js/cuppa/cuppa_html/alert.html", data:{title:"<?php echo @$language->error ?>", message:"<?php echo $language->password_invalid_current_password ?>"}, add:"body"});
                     return;
                 }else{ 
                     cuppa.blockade({duration:0.2, opacity:0.2, autoDeleteContent:".cuppa_alert"});
-                    cuppa.instance({url:"js/cuppa/html/alert.php", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->password_changed_correctly ?>"}, add:"body"});
+                    cuppa.instance({url:"js/cuppa/cuppa_html/alert.html", data:{title:"<?php echo @$language->message ?>", message:"<?php echo $language->password_changed_correctly ?>"}, add:"body"});
                 }
                 CloseDefaultAlert();
             }   
