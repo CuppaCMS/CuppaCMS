@@ -90,8 +90,9 @@
             <div class="content_item <?php echo str_replace(",", " ", @preg_replace("/(inner)\w+/","", @$item->classes) ); ?>" id="<?php echo $item->id ?>" style="<?php echo @$item->css ?>" >
                 <?php if(@$item->anchor){ ?> <a class="anchor" name="<?php echo @$item->anchor ?>" style="display: block !important; height: 0px!important; width: 0px !important; visibility: hidden !important; position: absolute !important;"></a><?php } ?>
                 <?php $cuppa->echoString($item->content); ?>
+                <?php $cuppa->echoString(@$item->code); ?>
             </div>
         <?php } ?>
-        <?php echo @$section_content->code; ?>
+        <?php echo $cuppa->echoString(@$section_content->code); ?>
     </div>
 <?php } ?>

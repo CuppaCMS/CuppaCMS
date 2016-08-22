@@ -105,6 +105,7 @@
                         <?php $cuppa->echoString($item->content); ?>
                     </div>
                 </div>
+                <?php @$cuppa->echoString(@$item->code); ?>
             <?php } ?>
         </div>
         <div class="points noselect">
