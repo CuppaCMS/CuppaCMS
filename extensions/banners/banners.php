@@ -29,20 +29,14 @@
                 //++ search banners up sections
                     if(!$banners_ids){
                         $rev = array_reverse($path); array_shift($rev);
-                        if(count($rev)){
-                            forEach($rev as $item){
-                                $condition = "menus_id NOT IN (1,2) AND alias = '".$item."' AND (language = '' OR language = '".$cuppa->language->current()."')";
-                                $section_tmp = $cuppa->dataBase->getRow("cu_menu_items", $condition, true);
-                                $section_banners = $cuppa->dataBase->getRow("ex_banners_by_sections", "show_in_subsection = 1 AND section = ".@$section_tmp->id, true);
-                                $banners_ids = @$section_banners->banners;
-                                if($banners_ids){ break; }
-                            }
+                        for($i = 0; $i < count($rev); $i++){
+                            $condition = "menus_id NOT IN (1,2) AND alias = '".@$rev[$i]."' AND (language = '' OR language = '".$cuppa->language->current()."')";
+                            $section_tmp = $cuppa->dataBase->getRow("cu_menu_items", $condition, true);
+                            $show_in_subsection = $cuppa->dataBase->getColumn("ex_banners_by_sections","show_in_subsection","section = ".@$section_tmp->id);
+                            if($show_in_subsection){ $section = $section_tmp; break; }
                         }
-                        if(!$banners_ids){
-                            $section_banners = $cuppa->dataBase->getRow("ex_banners_by_sections", "section = 0", true);
-                            if($section_banners->show_in_subsection) $banners_ids = $section_banners->banners;
-                        }
-                        
+                        $section_banners = $cuppa->dataBase->getRow("ex_banners_by_sections", "section = ".@$section->id, true);
+                        $banners_ids = @$section_banners->banners;
                     }
                 //--
             }else{
@@ -76,7 +70,6 @@
                 }else{
                     var time = new TimelineMax();
                         time.fromTo(params.element, 0.7, {alpha:0}, {alpha:1, ease:Cubic.easeInOut} );
-                        time.set( $(params.elements).not(params.element), {alpha:0} );                        
                     $(".banners .list").append(params.element);
                 }
             }

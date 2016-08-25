@@ -526,7 +526,7 @@
             function setCookie($name, $value = null, $expire_time = 0, $httponly = false, $secure = false){
                 if(!$expire_time) $expire_time = 0;
                 else $expire_time = time() + 86400*$expire_time;
-                @setcookie(@$name, @$value, @$expire_time, '/', "", @$secure, @$httponly);  
+                @setcookie($name, $value, $expire_time, '/', "", $secure, $httponly);
                 @$_COOKIE[$name] = $value;
             }
             function getCookie($name){

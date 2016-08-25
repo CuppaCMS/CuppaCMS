@@ -69,7 +69,7 @@
                     $condition = (@$_POST["condition"]) ? $_POST["condition"]." AND " : "";
                     $condition .= "`".@$_POST["compare_column"]."` = '".@$_POST["compare_column_value"]."'";
                 //--
-                $data = $cuppa->dataBase->getList(@$_POST["table"], $condition, "", $_POST["label"]." ASC", true);
+                $data = $cuppa->dataBase->getList(@$_POST["table"], $condition, "", "", true);
                 if(is_array($data)){
                     if($cuppa->POST("nested_column")){
                         $data = $cuppa->utils->tree($data, $cuppa->POST("nested_column"), $cuppa->POST("parent_column"), "alias", true, 0, false, "|&mdash;&nbsp;&nbsp;", true);

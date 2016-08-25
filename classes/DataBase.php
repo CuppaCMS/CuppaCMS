@@ -9,8 +9,8 @@
 		
 		public function DataBase($db = "", $host = "", $user = "", $password = ""){
 			if($db) $this->db = $db; if($host) $this->host = $host; if($user) $this->user = $user; if($password) $this->password = $password;
-            if(!$this->db || !$this->user) return "No database data";
-            $this->con = mysqli_connect($this->host, $this->user, $this->password, $this->db);
+            if(!$this->db || !$this->user || !$this->password) return "No database data";
+            $this->con = @mysqli_connect($this->host, $this->user, $this->password, $this->db);
 			if (!$this->con){ return "Error de Conexion: ".mysqli_error();}
 			mysqli_query($this->con, "SET NAMES 'utf8'");
 		}

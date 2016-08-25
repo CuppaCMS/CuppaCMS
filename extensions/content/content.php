@@ -33,19 +33,13 @@
             //++ search up sections
                 if(!$content_ids){
                     $rev = array_reverse($path); array_shift($rev);
-                    if(count($rev)){
-                        forEach($rev as $item){
-                            $condition = "menus_id NOT IN (1,2) AND alias = '".$item."' AND (language = '' OR language = '".$cuppa->language->current()."')";
-                            $section_tmp = $cuppa->dataBase->getRow("cu_menu_items", $condition, true);
-                            $section_content = $cuppa->dataBase->getRow("ex_content_by_sections", "show_in_subsection = 1 AND section = ".@$section_tmp->id, true);
-                            $content_ids = @$section_content->contents;
-                            if($content_ids){ break; }
-                        }
+                    for($i = 0; $i < count($rev); $i++){
+                        $condition = "menus_id NOT IN (1,2) AND alias = '".$rev[$i]."' AND (language = '' OR language = '".$cuppa->language->current()."')";
+                        $section_tmp = $cuppa->dataBase->getRow("cu_menu_items", $condition, true);
+                        $section_content = $cuppa->dataBase->getRow("ex_content_by_sections", "section = ".@$section_tmp->id, true);
+                        if(@$section_content->show_in_subsection){ $section = $section_tmp; break; }
                     }
-                    if(!$content_ids){
-                        $section_content = $cuppa->dataBase->getRow("ex_content_by_sections", "section = 0", true);
-                        if($section_content->show_in_subsection) $content_ids = $section_content->contents;
-                    }
+                    $content_ids = $cuppa->dataBase->getColumn("ex_content_by_sections","contents","section = ".@$section->id);
                 }
             //--
             $content_ids = @join(",",json_decode($content_ids));
@@ -88,7 +82,7 @@
     <div class="content content_extension">
         <?php forEach($content as $item){ ?>
             <div class="content_item <?php echo str_replace(",", " ", @preg_replace("/(inner)\w+/","", @$item->classes) ); ?>" id="<?php echo $item->id ?>" style="<?php echo @$item->css ?>" >
-                <?php if(@$item->anchor){ ?> <a class="anchor" name="<?php echo @$item->anchor ?>" style="display: block !important; height: 0px!important; width: 0px !important; visibility: hidden !important; position: absolute !important;"></a><?php } ?>
+                <?php if(@$item->anchor){ ?> <a name="<?php echo @$item->anchor ?>" style="display: block !important; height: 0px!important; width: 0px !important; visibility: hidden !important; position: absolute !important;"></a><?php } ?>
                 <?php $cuppa->echoString($item->content); ?>
                 <?php $cuppa->echoString(@$item->code); ?>
             </div>
