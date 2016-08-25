@@ -44,7 +44,7 @@
                     $value = $this->getCountryPath();
                 }else if($this->valid($this->current()) && !$this->valid($country) ){
                     $value = $utils->getCookie("country");
-                }else if($this->valid($this->countryByIP())){
+                }else if($this->countryByIP()){
                     $value = $this->countryByIP();
                 }else if($this->valid($country)){
                     $value = @$country;
@@ -64,6 +64,7 @@
                 include_once __DIR__."/geoIP/geoip.inc";
                 $gi = geoip_open(__DIR__."/geoIP/GeoIP.dat", GEOIP_STANDARD);
                 $country = geoip_country_code_by_addr ($gi, $ip);
+                if($lowercase) $country = strtolower($country);
                 return @$country;
             }
         // set country lanuguage

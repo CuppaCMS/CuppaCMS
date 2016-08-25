@@ -195,7 +195,7 @@
                 $data->instance = 'The class of the current class of file';
         */
             function instance($data = null){
-                if(is_string($data)) $data = (object) array(['url'=>$data]);
+                if(is_string($data)) $data = (object) array('url'=>$data);
                 if(!$data) $data =  new stdClass;
                 if(!@$data->unique) $data->unique = $this->utils->getUniqueString("instance");
                 if(!@$data->instance) $data->instance = $this->file->getDescription($data->url)->name;
@@ -207,6 +207,18 @@
                 echo "<script> try{ {$data->unique}.{$data->unique}(".json_encode(@$data->data)."); }catch(err){} </script>";
                 return $data->unique;
             }
+        /* includeInstance
+        */
+            function includeInstance($path, $add_cover_template = true){
+                if($add_cover_template){
+                    echo '<div id="template_'.$this->utils->getFriendlyUrl($path).'" style="display:none;"><template>';
+                    include $path;
+                    echo '</template></div>';
+                }else{
+                    include $path;
+                }
+            }
+            function instanceInclude($path, $add_cover_template = true){ $this->includeInstance($path, $add_cover_template); }
         // Encript / Decript ID's
             // Example: $cuppa->encryptIds(987654);
             // To Decript: $cuppa->encryptIds('encripted', true);
