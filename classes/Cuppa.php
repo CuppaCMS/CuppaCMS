@@ -33,6 +33,7 @@
         public $mail;
         public $paginator;
         public $permissions;
+        public $browser;
         public function Cuppa(){
             @include_once realpath(__DIR__ . '/..')."/Configuration.php";
             $this->security = Security::getInstance();
@@ -51,6 +52,7 @@
             $this->paginator = new Paginator();
             $this->permissions = Permissions::getInstance();
             $this->country->set("", false, $this->configuration, true);
+            $this->browser = $this->utils->getBrowser();
             //++ validate SSL active
                 if(@$this->configuration->ssl){
                     if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == ""){
@@ -185,35 +187,15 @@
                 $decrypttext = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $crypttext, MCRYPT_MODE_ECB, $key2);
                 return trim($decrypttext);
             }
-        /* instance, 
-            $data = 'folder/file.php'
-            or 
-            $data = new stdClass();
-                $data->url = 'folder/file.php';
-                $data->data = new stdClass;
-                $data->class = 'string';
-                $data->instance = 'The class of the current class of file';
-        */
-            function instance($data = null){
-                if(is_string($data)) $data = (object) array('url'=>$data);
-                if(!$data) $data =  new stdClass;
-                if(!@$data->unique) $data->unique = $this->utils->getUniqueString("instance");
-                if(!@$data->instance) $data->instance = $this->file->getDescription($data->url)->name;
-                $file = file_get_contents($data->url);
-                $file = str_replace($data->instance, $data->unique, $file);
-                if(@$data->class){ $file = preg_replace('/'.$data->unique.'/', $data->unique." ".$data->class,$file, 1); }
-                $this->echoString($file);
-                echo "<script> try{ {$data->unique}.constructor(".json_encode(@$data->data)."); }catch(err){} </script>";
-                echo "<script> try{ {$data->unique}.{$data->unique}(".json_encode(@$data->data)."); }catch(err){} </script>";
-                return $data->unique;
-            }
         /* includeInstance
+                $tag = template // template, xmp (old browsers compatibility)
         */
             function includeInstance($path, $add_cover_template = true){
+                $tag = ($this->browser->name == "Internet Explorer") ? "xmp" : "template";
                 if($add_cover_template){
-                    echo '<div id="template_'.$this->utils->getFriendlyUrl($path).'" style="display:none;"><template>';
+                    echo '<div id="template_'.$this->utils->getFriendlyUrl($path).'" style="display:none;"><'.$tag.'>';
                     include $path;
-                    echo '</template></div>';
+                    echo '</'.$tag.'></div>';
                 }else{
                     include $path;
                 }

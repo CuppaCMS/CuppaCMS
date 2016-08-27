@@ -9,5 +9,6 @@
 	$ga
 	$tracking_codes
 	$tinify_key
-. Uncoment on index.php , line 7 // Check if the directory installation exist
+. Uncoment on index.php , line 3 // Check if the directory installation exist
+. Remove all .git files
 . rename zip like 'cuppa_cms'
