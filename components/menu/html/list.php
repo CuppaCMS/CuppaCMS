@@ -14,13 +14,13 @@
 		$filters = " AND mi.menus_id = '$menu_filter' ";
 	//--
     //++ Get menu list
-    	$sql = "SELECT mi.id, mi.title, mi.alias, mi.language, mi.enabled, mi.parent_id, '' as parent_title, mit.id as menu_item_type_id, mit.name as menu_item_type_name, m.name as menu_name, mi.order
+    	$sql = "SELECT mi.id, mi.title, mi.alias, mi.language, mi.enabled, mi.default_page, mi.parent_id, '' as parent_title, mit.id as menu_item_type_id, mit.name as menu_item_type_name, m.name as menu_name, mi.order
     			FROM ".$cuppa->configuration->table_prefix."menu_items as mi
     			JOIN ".$cuppa->configuration->table_prefix."menu_item_type as mit
     			JOIN ".$cuppa->configuration->table_prefix."menus as m
     			WHERE mit.id = mi.menu_item_type_id AND m.id = mi.menus_id AND mi.parent_id = '' $filters
     			UNION
-    			SELECT mi.id, mi.title, mi.alias, mi.language, mi.enabled, mi.parent_id, mi2.title as parent_title, mit.id as menu_item_type_id, mit.name as menu_item_type_name, m.name as menu_name, mi.order
+    			SELECT mi.id, mi.title, mi.alias, mi.language, mi.enabled, mi.default_page, mi.parent_id, mi2.title as parent_title, mit.id as menu_item_type_id, mit.name as menu_item_type_name, m.name as menu_name, mi.order
     			FROM ".$cuppa->configuration->table_prefix."menu_items as mi
     			JOIN ".$cuppa->configuration->table_prefix."menu_item_type as mit
     			JOIN ".$cuppa->configuration->table_prefix."menus as m
@@ -136,6 +136,7 @@
                     <th ><?php echo @$language->language ?></th>
                     <th ><?php echo @$language->order ?></th>
                     <th ><?php echo @$language->enabled ?></th>
+                    <th ><?php echo @$language->default ?></th>
                     <th ><?php echo @$language->options ?></th>
                 </tr>
                 <?php for($i = 0; $i < count($info); $i++){ ?>
@@ -152,6 +153,7 @@
                         <td><?php echo (@$info[$i]["language"]) ?  @$info[$i]["language"] : @$language->all ?></td>
                         <td style="text-align:center; width:30px;"><?php echo $info[$i]["order"] ?></td>
                         <td style="text-align:center; width:30px;"><?php echo ($info[$i]["enabled"] == 1) ? $language->true : $language->false ?></td>
+                        <td style="text-align:center; width:30px;"><?php echo ($info[$i]["default_page"] == 1) ? $language->true : $language->false ?></td>
                         <td style="text-align: right; white-space: nowrap;">
                         	<?php if($info[$i]["order"] > 1){ ?>
                             	<a onclick="menu_list.submit('moveTop','<?php echo $info[$i]["id"] ?>')"  class="tooltip" title="<?php echo @$language->tooltip_move_field ?>">

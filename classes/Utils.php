@@ -405,24 +405,17 @@
                 $string = str_replace("#country#", $current_country,$string);
                 $string = str_replace(array("#web_path#","#administrator_path#"), array($cuppa->getDocumentPath("web"), $cuppa->getDocumentPath()),$string);
                 $string = str_replace(array("#path_web#","#path_administrator#"), array($cuppa->getDocumentPath("web"), $cuppa->getDocumentPath()),$string);
+                $string = str_replace(array("#textarea#", "#textarea_end#"), array("<textarea", "></textarea>"), $string);
                 $data = explode("{?", $string);
-                for($i = 0; $i < count($data); $i++){
+                forEach($data as $i => $item){
                     if($i%2){
-                        //++ add $document_root reference to include/requiere
-                            $search = array('include"','include "',"include'","include '");
-                            $replace = array('include_once "'.$document_root,'include_once "'.$document_root,"include_once '".$document_root,"include_once '".$document_root);
-                                //$data[$i] = str_replace($search, $replace, $data[$i]);                            
-                            $search = array('require"','require "',"require'","require '");
-                            $replace = array('require_once "'.$document_root,'require_once "'.$document_root,"require_once '".$document_root,"require_once '".$document_root);
-                                //$data[$i] = str_replace($search, $replace, $data[$i]);
-                        //--
-                        $data[$i] = str_replace("&nbsp;","", $data[$i]);
-                        $data[$i] = str_replace("&gt;",">", $data[$i]);
-                        $data[$i] = $data[$i].";";
-                        $data[$i] = str_replace(";;",";", $data[$i]);
-                        eval(@$data[$i]);
+                        $item = str_replace("&nbsp;","", $item);
+                        $item = str_replace("&gt;",">", $item);
+                        $item = $item.";";
+                        $item= str_replace(";;",";", $item);
+                        eval(@$item);
                     }else{
-                        echo $data[$i];
+                        echo $item;
                     }
                 }
             }
@@ -447,7 +440,7 @@
             }
         // Get Browser inf
             function getBrowser(){ 
-                $u_agent = $_SERVER['HTTP_USER_AGENT']; 
+                $u_agent = @$_SERVER['HTTP_USER_AGENT']; 
                 $bname = 'Unknown';
                 $platform = 'Unknown';
                 $version= "";
@@ -495,7 +488,7 @@
                     $bname = 'Netscape'; 
                     $ub = "Netscape"; 
                 } 
-                $known = array('Version', $ub, 'other');
+                $known = array('Version', @$ub, 'other');
                 $pattern = '#(?<browser>' . join('|', $known) .
                  ')[/|: ]+(?<version>[0-9.|a-zA-Z.]*)#';
                 if (!preg_match_all($pattern, $u_agent, $matches)) { }
@@ -505,7 +498,7 @@
                         $version= $matches['version'][0];
                     }
                     else {
-                        $version= $matches['version'][1];
+                        $version= @$matches['version'][1];
                     }
                 }
                 else {

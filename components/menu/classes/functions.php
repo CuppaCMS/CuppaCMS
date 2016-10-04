@@ -18,6 +18,8 @@
                 $data["language"] = "'".$cuppa->dataBase->escape($_POST["language_field"])."'";
     			$data["enabled"] = "'".$cuppa->dataBase->escape($_POST["enabled_field"])."'";
                 $data["tracking_codes"] = "'".$cuppa->dataBase->escape($_POST["tracking_codes"])."'";
+                $data["default_page"] = "'".$cuppa->dataBase->escape($_POST["default_page_field"])."'";
+                $data["error_page"] = "'".$cuppa->dataBase->escape($_POST["error_page_field"])."'";
             // Get old items info
                 $item = $cuppa->dataBase->getRow($cuppa->configuration->table_prefix."menu_items", "id = '".$cuppa->dataBase->escape($_POST["id"])."'", true);
             // validate neworder

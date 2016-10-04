@@ -7,7 +7,7 @@
 			return self::$instance;
 		}
         // Generate File
-            function createFile($data, $name, $path){
+            function createFile($data, $name, $path = ""){
                 $fp = @fopen($path.$name,'w');
                 $result = @fwrite($fp,$data);
                 @fclose($fp);

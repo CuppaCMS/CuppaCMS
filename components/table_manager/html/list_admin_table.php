@@ -390,6 +390,9 @@
     .list_admin_table .filter_content{ padding: 0px 0px 0px 5px; }
     .list_admin_table .filter_content .input{ max-width: 90px; margin: 0px 2px; }
     .list_admin_table .filter_content .select_cuppa{ max-width: 100px;}
+    .list_admin_table .pag_top .paginator{ margin: 1px 0 5px; }
+    .list_admin_table .pag_bottom .paginator{ margin: 5px 0 1px; }  
+    .list_admin_table .paginator .cuppa_select_page{ width: 108px !important; }
 /* Responsive */
     .r780  .list_admin_table .filters .right{ display: none !important; }
     .r650 .list_admin_table .h1_title{ display: none !important; }
@@ -621,6 +624,21 @@
                         } 
                     ?>
                 <!-- -->
+                <!-- Paginator Top -->
+                    <div class="pag_top">
+                       	<?php
+                            //++ if is not a tree list, show paginator
+                                if(!$field_types->show_list_like_tree){
+                                    if($search_word != " 1 "){
+                                        $search_word = str_replace(" 1  AND", " AND ",$search_word);
+                                        $conditions .= $search_word;
+                                    }
+                                    echo $cuppa->paginator->getAutoPaginator($view, @$_POST["page"], $list_limit, 1, @$conditions, false, "stage.changePage");
+                                }
+                            //--
+                    	?>
+                    </div>
+                <!-- End Paginator -->
                 <table class="table_info">
                     <thead>
                         <tr>
@@ -741,21 +759,22 @@
                     ?>
                 <!-- -->
                 <!-- Paginator -->
-                   	<?php
-                        //++ if is not a tree list, show paginator
-                            if(!$field_types->show_list_like_tree){
-                                if($search_word != " 1 "){
-                                    $search_word = str_replace(" 1  AND", " AND ",$search_word);
-                                    $conditions .= $search_word;
+                    <div class="pag_bottom">
+                       	<?php
+                            //++ if is not a tree list, show paginator
+                                if(!$field_types->show_list_like_tree){
+                                    if($search_word != " 1 "){
+                                        $search_word = str_replace(" 1  AND", " AND ",$search_word);
+                                        $conditions .= $search_word;
+                                    }
+                                    echo $cuppa->paginator->getAutoPaginator($view, @$_POST["page"], $list_limit, 1, @$conditions, false, "stage.changePage");
                                 }
-                                echo $cuppa->paginator->getAutoPaginator($view, @$_POST["page"], $list_limit, 1, @$conditions, false, "stage.changePage");
-                            }
-                        //--
-                	?>
+                            //--
+                    	?>
+                    </div>
                 <!-- End Paginator -->
             </div>
         <!-- -->
-
         <!-- Include file (end) -->
             <?php
                 for($i = 0; $i < count($include_files); $i++){

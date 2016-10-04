@@ -235,6 +235,7 @@
 			}
 			private function getItemType($k, $data, $principal_menu = true){
                 $cuppa = Cuppa::getInstance();
+                $image_path = ($cuppa->getPath()) ? $cuppa->getPath() : "administrator/";
                 $this->li_item++;
 				$json_value = json_decode($data[$k]["menu_item_params"]);
 				$class = "menu_button"; if(!$principal_menu) $class = "sub_menu_item";
@@ -246,14 +247,14 @@
                     $title = @$cuppa->language->getValue(@$data[$k]["title"], $this->language);
 					if($data[$k]["menu_item_type_id"] == "1"){
 						$field .= '<a style="display:block; cursor:default" class="'.$class.' '.$class."_".$data[$k]["id"].' no_link">';
-                        if(@$data[$k]["image"]) $field .= '<img src="'.$cuppa->getPath().@$data[$k]["image"].'">';
+                        if(@$data[$k]["image"]) $field .= '<img src="'.$image_path.@$data[$k]["image"].'">';
                         $field .= '<span class="text">'.$title.'</span>';
                         $field .= '</a>';
 					}else if($data[$k]["menu_item_type_id"] == "2"){
 						$field .= '<a title="'.$title.'" href="component/table_manager/view/'.@$json_value->table_name;
                         if(@$json_value->defined_task) $field .= "/".@$json_value->defined_task;
                         $field .= '" style="cursor:pointer; display:block" class="'.$class.' '.$class."_".$data[$k]["id"].'">';
-                        if(@$data[$k]["image"]) $field .= '<img src="'.$cuppa->getPath().@$data[$k]["image"].'">';
+                        if(@$data[$k]["image"]) $field .= '<img src="'.$image_path.@$data[$k]["image"].'">';
                         $field .= '<span class="text">'.$title.'</span>';
                         $field .= '</a>'; 
                         if($this->include_language && $this->include_country && strpos($field, 'href="http') === false ) $field = str_replace('href="', 'href="'.$cuppa->language->current()."-".$cuppa->country->current().'/', $field);
@@ -262,7 +263,7 @@
 					}else if($data[$k]["menu_item_type_id"] == "3"){
 						$field .= '<a title="'.$title.'" href="component/'.@$json_value->component_name;
                         $field .= '" style="cursor:pointer; display:block" class="'.$class.' '.$class."_".$data[$k]["id"].'">';
-                        if(@$data[$k]["image"]) $field .= '<img src="'.$cuppa->getPath().@$data[$k]["image"].'">';
+                        if(@$data[$k]["image"]) $field .= '<img src="'.$image_path.@$data[$k]["image"].'">';
                         $field .= '<span class="text">'.$title.'</span>';
                         $field .= '</a>';
                         if($this->include_language && $this->include_country && strpos($field, 'href="http') === false ) $field = str_replace('href="', 'href="'.$cuppa->language->current()."-".$cuppa->country->current().'/', $field);
@@ -273,24 +274,24 @@
                         $url = $json_value->url;
 						if(@$json_value->target == "iframe"){
 							$field .= '<a title="'.$title.'" onclick="cuppa.blockade({\'zIndex\':\'9\', \'autoDeleteContent\':\'#new_content\' }); cuppa.setContent({\'url\':\'alerts/alertIFrame.php\', \'data\':\'url='.@$url.'&description='.$title.'\' })"  style="cursor:pointer; display:block" class="'.$class.' '.$class."_".$data[$k]["id"].'">';
-                            if(@$data[$k]["image"]) $field .= '<img src="'.$cuppa->getPath().@$data[$k]["image"].'">';
+                            if(@$data[$k]["image"]) $field .= '<img src="'.$image_path.@$data[$k]["image"].'">';
                             $field .= '<span class="text">'.$title.'</span>';
                             $field .= '</a>';
 						}else{
 							$field .= '<a title="'.$title.'" target="'.@$json_value->target.'" href="'.@$url.'" style="cursor:pointer; display:block" class="'.$class.' '.$class."_".$data[$k]["id"].'">';
-                            if(@$data[$k]["image"]) $field .= '<img src="'.$cuppa->getPath().@$data[$k]["image"].'">';
+                            if(@$data[$k]["image"]) $field .= '<img src="'.$image_path.@$data[$k]["image"].'">';
                             $field .= '<span class="text">'.$title.'</span>';
                             $field .= '</a>';
 						}
 					}else if($data[$k]["menu_item_type_id"] == "5"){
                         $field .= '<a title="'.$title.'" onclick="'.@$json_value->js_function.'" style="cursor:pointer; display:block" class="'.$class.' '.$class."_".$data[$k]["id"].'">';
-                        if(@$data[$k]["image"]) $field .= '<img src="'.$cuppa->getPath().@$data[$k]["image"].'">';
+                        if(@$data[$k]["image"]) $field .= '<img src="'.$image_path.@$data[$k]["image"].'">';
                         $field .= '<span class="text">'.$title.'</span>';
                         $field .= '</a>'; 
 					}else if($data[$k]["menu_item_type_id"] == "6"){
 					    $url = $this->database->getRoadPath($cuppa->configuration->table_prefix."menu_items", $data[$k]["id"], "id", "parent_id", "alias", true, $this->language, true);
                         $field .= '<a title="'.$title.'" href="'.@$url.'" style="cursor:pointer; display:block" class="'.$class.' '.$class."_".$data[$k]["id"].'">';
-                        if(@$data[$k]["image"]) $field .= '<img src="'.$cuppa->getPath().@$data[$k]["image"].'">';
+                        if(@$data[$k]["image"]) $field .= '<img src="'.$image_path.@$data[$k]["image"].'">';
                         $field .= '<span class="text">'.$title.'</span>';
                         $field .= '</a>'; 
                         if($this->include_language && $this->include_country && strpos($field, 'href="http') === false ) $field = str_replace('href="', 'href="'.$cuppa->language->current()."-".$cuppa->country->current().'/', $field);
@@ -300,7 +301,7 @@
 					   $info = $this->getInfo($json_value->other_menu, $json_value->other_menu_item, $this->language, true);
                        $url = $info->path;
                        $field .= '<a title="'.$title.'" href="'.@$url.'" style="cursor:pointer; display:block" class="'.$class.' '.$class."_".$data[$k]["id"].'">';
-                       if(@$data[$k]["image"]) $field .= '<img src="'.$cuppa->getPath().@$data[$k]["image"].'">';
+                       if(@$data[$k]["image"]) $field .= '<img src="'.$image_path.@$data[$k]["image"].'">';
                        $field .= '<span class="text">'.$title.'</span>';
                        $field .= '</a>'; 
                        if($this->include_language && $this->include_country && strpos($field, 'href="http') === false ) $field = str_replace('href="', 'href="'.$cuppa->language->current()."-".$cuppa->country->current().'/', $field);

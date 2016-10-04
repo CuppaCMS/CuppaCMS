@@ -5,9 +5,13 @@
     $current_language = $cuppa->language->current();
     $current_country = $cuppa->country->current();
     if(!@$path) $path = $cuppa->utils->getUrlVars(@$_POST["path"]);
-    //section    
-        if(!$path || (( $cuppa->language->valid(@$path[0]) || $cuppa->country->valid(@$path[0])) && count($path) <= 1 ) ){
-            $section_banners = $cuppa->dataBase->getRow("ex_banners_by_sections", "section = 0", true);
+    //section
+        if(@$banners_ids){
+            // example: $banners_ids = '13,42,20';
+            $cond = " id IN (".@$banners_ids.")";
+        }else if(!$path || (( $cuppa->language->valid(@$path[0]) || $cuppa->country->valid(@$path[0])) && count($path) <= 1 ) ){
+            $default = $cuppa->dataBase->getRow("cu_menu_items", "default_page = 1", true);
+            $section_banners = $cuppa->dataBase->getRow("ex_banners_by_sections", "section = ".$default->id, true);
             $banners_ids = @$section_banners->banners;
         }else{
             $condition = "menus_id NOT IN (1,2) AND alias = '".@$path[count($path)-1]."' AND (language = '' OR language = '".$cuppa->language->current()."')";
@@ -23,7 +27,7 @@
                     }
                 }
             //--
-            $section_banners = $cuppa->dataBase->getRow("ex_banners_by_sections", "section = ".@$section->id, true);
+            $section_banners = $cuppa->dataBase->getRow("ex_banners_by_sections", "section = ".@$section->id." AND show_in_subsection = 1", true);
             if(!$section_banners){
                 $banners_ids = @$section_banners->banners;
                 //++ search banners up sections
@@ -36,6 +40,13 @@
                             if($show_in_subsection){ $section = $section_tmp; break; }
                         }
                         $section_banners = $cuppa->dataBase->getRow("ex_banners_by_sections", "section = ".@$section->id, true);
+                        $banners_ids = @$section_banners->banners;
+                    }
+                //--
+                //++ search home section
+                    if(!$banners_ids){
+                        $default = $cuppa->dataBase->getRow("cu_menu_items", "default_page = 1", true);
+                        $section_banners = $cuppa->dataBase->getRow("ex_banners_by_sections", "section = ".$default->id." AND show_in_subsection = 1", true);
                         $banners_ids = @$section_banners->banners;
                     }
                 //--
@@ -106,8 +117,10 @@
                 <div class="point"><div class="sub_point cover"></div></div>
             <?php } } ?>
         </div>
-        <div class="btn_back"><span><</span></div>
-        <div class="btn_next"><span>></span></div>
+        <?php if(count($banners) > 1){ ?>
+            <div class="btn_back"><span><</span></div>
+            <div class="btn_next"><span>></span></div>
+        <?php } ?>
         <?php @$cuppa->echoString(@$section_banners->code); ?>
     </div>
 <?php } ?>

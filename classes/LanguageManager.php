@@ -183,8 +183,10 @@
                         $path = str_replace("path=", "", $path);
                     }
                 //--
+                if(!$path) return "";
                 if(is_string($language) ){ $language = $this->load($language); }
                 if(is_string($path)){ $path = explode("/", $path); }
+                
                 if($invert){
                     for($i = 0; $i < count($path); $i++){
                         $path[$i] = $this->key($path[$i], $language,$frienly_url);

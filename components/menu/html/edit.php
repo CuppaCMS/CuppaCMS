@@ -201,7 +201,7 @@
                         </td>
                         <td>
                             <?php
-                                $config = '{"folder":"media/upload_files", "unique_name":"1"}';
+                                $config = '{"folder":"upload_files", "unique_name":"1"}';
                                 $file = new File(); echo $file->GetItem("image_field", @$info["image"], $config ); 
                              ?>
                         </td>
@@ -261,6 +261,29 @@
         					?>
                         </td>
                     </tr>
+                    <tr>
+                    	<td><?php echo @$language->default_page ?></td>
+                        <td>
+        					<?php 
+        						$className = "Select";
+        						$field = new $className();
+        						$params = '[["0","false"],["1","true"]]';
+        						echo $field->GetItem("default_page_field", @$info["default_page"], $params);
+        					?>
+                        </td>
+                    </tr>
+                    <tr>
+                    	<td><?php echo @$language->error_page ?></td>
+                        <td>
+        					<?php 
+        						$className = "Select";
+        						$field = new $className();
+        						$params = '[["0","false"],["1","true"]]';
+        						echo $field->GetItem("error_page_field", @$info["error_page"], $params);
+        					?>
+                        </td>
+                    </tr>
+                    
                     <tr>
                     	<td>View</td>
                         <td>
