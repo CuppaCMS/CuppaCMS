@@ -190,17 +190,50 @@
         /* includeInstance
                 $tag = template // template, xmp (old browsers compatibility)
         */
+            private $template_added =  array();
             function includeInstance($path, $add_cover_template = true){
+                if(@$this->template_added[$path]) return;
                 $tag = ($this->browser->name == "Internet Explorer") ? "xmp" : "template";
                 if($add_cover_template){
                     echo '<div id="template_'.$this->utils->getFriendlyUrl($path).'" style="display:none;"><'.$tag.'>';
                     include $path;
                     echo '</'.$tag.'></div>';
-                }else{
-                    include $path;
-                }
+                }else{ include $path; }
+                $this->template_added[$path] = "1";
             }
             function instanceInclude($path, $add_cover_template = true){ $this->includeInstance($path, $add_cover_template); }
+        /* instance, 
+            $data = 'folder/file.php'
+            or 
+            $data = new stdClass();
+                $data->url = 'folder/file.php';
+                $data->data = new stdClass;
+                $data->class = 'string';
+                $data->template = 'The class of the current class of file';
+        */
+            function instance($data = null, $keep_template = true){
+                if(is_string($data)) $data = (object) array('url'=>$data);
+                if(!$data) $data =  new stdClass;
+                if(!@$data->unique) $data->unique = $this->utils->getUniqueString("instance");
+                if(@$data->template) $data->instance = $data->template;
+                else $data->instance = $this->file->getDescription($data->url)->name;
+                $file = file_get_contents($data->url);
+                $file = str_replace($data->instance, $data->unique, $file);
+                if(@$data->class){ $file = preg_replace('/'.$data->unique.'/', $data->unique." ".$data->class,$file, 1); }
+                $this->echoString($file);
+                
+                echo "<script class='inst_script_tmp'>  {$data->unique}.instance_unique = '{$data->unique}'; 
+                                {$data->unique}.instance_name = '{$data->instance}';
+                                {$data->unique}.html = $('.{$data->unique}').get(0);    
+                                {$data->unique}.html.script = {$data->unique}; 
+                                {$data->unique}.state = new cuppa.state( {$data->unique}.html ); 
+                                try{ {$data->unique}.constructor(".json_encode(@$data->data)."); }catch(err){}
+                                try{ {$data->unique}.{$data->unique}(".json_encode(@$data->data)."); }catch(err){}
+                                $('.inst_script_tmp').remove(); 
+                     </script>";
+                if($keep_template){ $this->instanceInclude($data->url); }
+                return $data->unique;
+            }
         // Encript / Decript ID's
             // Example: $cuppa->encryptIds(987654);
             // To Decript: $cuppa->encryptIds('encripted', true);
