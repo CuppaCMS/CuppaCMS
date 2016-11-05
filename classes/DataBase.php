@@ -257,13 +257,16 @@
                     return null;
                 }
             //++ Ajust data to save, add to the string '' in all data to the object - example: name => 'name'
-                function ajust($object, $object_return = false, $escape = true){
+            // $no_scape = 'field1, field2' (string separated by , )
+                function ajust($object, $object_return = false, $escape = true, $no_scape = ""){
                     $object = (array) $object;
                     foreach ($object as $key => $value) {
                         if($value){
                             $object[$key] = "'".mysqli_real_escape_string($this->con, $value)."'";
                             $object[$key] = str_replace("''","'", $object[$key]);
-                            if($escape) $object[$key] = htmlspecialchars(trim($object[$key]));
+                            if($escape){ 
+                                if(strpos($key, $no_scape) === false){ $object[$key] = htmlspecialchars(trim($object[$key])); }
+                            }
                             else $object[$key] = trim($object[$key]);
                         }else{
                             $object[$key] = "''";
