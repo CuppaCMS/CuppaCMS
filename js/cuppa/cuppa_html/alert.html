@@ -1,76 +1,75 @@
-<template>
-    <div class="alert">
-        <!--
-            params: title: String                                   title of alert
-                    message: String                                 message
-                    show_cancel: false (default), true              show a cancel button
-                    hide_buttons: false (default), true             hide all buttons
-                    cancel: String,                                 set the cancel text
-                    accept: String,                                 set the accept text
-            Example:
-                cuppa.blockade({duration:0.3});
-                cuppa.instance({url:"js/cuppa_html/alert.php", data:{title:"Title", message:"Message", cancel:"cancel", accept:"accept"}, append:"body" });
-                function onConfirm(e, value){
-                    if(value){  };
-                }; $(cuppa).one("share", onConfirm);
-        -->
-        <style>
-            .alert{ position: fixed; display: block; width: 100%; max-width: 420px; padding: 10px; color: #333; transform: translate(-50%, -50%); left: 50%; top:50%; }
-            .alert .space{ position: relative; display: block; border-radius: 3px; background: #FFF; overflow: hidden; padding: 20px 30px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); }
-            .alert .btn_close{ position: absolute; top: 20px; right: 20px; cursor: pointer; width: 13px; height: 13px; background-position: center; background-repeat: no-repeat; background-size: contain; }
-            .alert .title{ font-size: 18px; line-height: normal; font-weight: bold; }
-            .alert .message{ margin: 10px 0px 20px; line-height: normal; }
-            .alert .alert_buttons{ position: relative; text-align: center; }
-            .alert .btn_accept{ border: 1px solid #3079ED; color: #FFF; border-radius: 3px; text-shadow: 0px 1px 1px rgba(0,0,0,0.2); cursor: pointer; background: #4d90fe; background: linear-gradient(to bottom,  #4d90fe 0%,#4787ee 100%); user-select: none; -moz-user-select: none; -webkit-user-select: none; height: 29px; padding: 0px 19px; text-transform: capitalize; width: auto; font-style: normal; }
-                .alert .btn_accept:hover{ border: 1px solid #196AEB; box-shadow: 0px 1px 2px rgba(0,0,0,0.20); background: #4a8dfc; background: linear-gradient(to bottom,  #4a8dfc 0%,#337bed 100%); }
-            .alert .btn_cancel{ border: 1px solid #C6322A !important; border-radius: 3px !important; color: #FFF !important; text-shadow: 0px 1px 1px rgba(0,0,0,0.2); cursor: pointer; background: #dd4b39; background: linear-gradient(to bottom,  #dd4b39 0%,#dd4b39 100%);  user-select: none; -moz-user-select: none; -webkit-user-select: none; height: 29px !important; text-transform: capitalize; width: auto; }
-                .alert .btn_cancel:hover{ border: 1px solid #B12D26 !important; box-shadow: 0px 1px 2px rgba(0,0,0,0.20) !important; background: #db4a38; background: linear-gradient(to bottom,  #db4a38 0%,#c13e2c 100%); }
-            .alert input[type=button]:active{ box-shadow: inset 0px 1px 3px rgba(0,0,0,0.20) !important; background: #2e76e8; }
-        </style>
-        <script>
-            alert = new function(){
-                //++ constructior
-                    this.constructor = function(data){
-                        if(data.title) $('.alert .title').html(data.title);
-                        else $('.alert .title').remove();
-                        if(data.message) $('.alert .message').html(data.message);
-                        else $('.alert .message').remove();
-                        if(data.hide_buttons) $(".alert .alert_buttons, .alert .btn_close").remove();
-                        if(data.show_cancel == undefined) $(".alert .btn_cancel").remove();
-                        if(data.cancel) $(".alert .btn_cancel").html(data.cancel);
-                        if(data.accept) $(".alert .btn_accept").html(data.accept);
-                        jQuery("*").blur();
-                        TweenMax.fromTo(".alert", 0.4, {alpha:0}, {alpha:1, ease:Cubic.easeOut, delay:0.2});
-                    }
-                //--
-                //++ accept
-                    this.accept = function(){
-                        jQuery("*").blur();                
-                        cuppa.setContent({load:false, duration:0.3, name:".alert", last:true});
-                        cuppa.blockade({load:false, name:".blockade", duration:0.2, delay:0.2, last:true});
-                        cuppa.shareObject(true);
-                        $(alert).trigger("response", [true]);
-                    }
-                //--
-                //++ close
-                    this.close = function(){
-                        jQuery("*").blur();                
-                        cuppa.setContent({load:false, duration:0.3, name:".alert", last:true});
-                        cuppa.blockade({load:false, name:".blockade", duration:0.2, delay:0.2, last:true});
-                        cuppa.shareObject(false);
-                        $(alert).trigger("response", [false]);
-                    }
-                //--
-            };
-        </script>
-        <div class="space">
-            <div class="title">Title</div>
-            <div class="message">Message</div>
-            <div onclick="alert.close()" class="btn_close btn_close_gray" ></div>
-            <div class="alert_buttons">
-                <button class="btn_cancel" type="button" onclick="alert.close()" >cancel</button>
-                <button class="btn_accept" type="button" onclick="alert.accept()" >accept</button>
-            </div>
+<div class="alert">
+    <!--
+        params: title: String                                   title of alert
+                message: String                                 message
+                show_cancel: false (default), true              show a cancel button
+                hide_buttons: false (default), true             hide all buttons
+                cancel: String,                                 set the cancel text
+                accept: String,                                 set the accept text
+        Example:
+            cuppa.blockade({duration:0.3});
+            cuppa.instance({url:"js/cuppa_html/alert.html", data:{title:"Title", message:"Message", cancel:"cancel", accept:"accept"}, append:"body" });
+            function onConfirm(e, value){
+                if(value){  };
+            }; $(cuppa).one("share", onConfirm);
+    -->
+    <style>
+        .alert{ position: fixed; display: block; width: 100%; max-width: 420px; padding: 10px; color: #333; transform: translate(-50%, -50%); left: 50%; top:50%; }
+        .alert .space{ position: relative; display: block; border-radius: 3px; background: #FFF; overflow: hidden; padding: 20px 30px; box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); }
+        .alert .btn_close{ position: absolute; top: 20px; right: 20px; cursor: pointer; width: 13px; height: 13px; background-position: center; background-repeat: no-repeat; background-size: contain; }
+        .alert .title{ font-size: 18px; line-height: normal; font-weight: bold; }
+        .alert .message{ margin: 10px 0px 20px; line-height: normal; }
+        .alert .alert_buttons{ position: relative; text-align: center; }
+        .alert .btn_accept{ border: 1px solid #3079ED; color: #FFF; border-radius: 3px; text-shadow: 0px 1px 1px rgba(0,0,0,0.2); cursor: pointer; background: #4d90fe; background: linear-gradient(to bottom,  #4d90fe 0%,#4787ee 100%); user-select: none; -moz-user-select: none; -webkit-user-select: none; height: 29px; padding: 0px 19px; text-transform: capitalize; width: auto; font-style: normal; }
+            .alert .btn_accept:hover{ border: 1px solid #196AEB; box-shadow: 0px 1px 2px rgba(0,0,0,0.20); background: #4a8dfc; background: linear-gradient(to bottom,  #4a8dfc 0%,#337bed 100%); }
+        .alert .btn_cancel{ border: 1px solid #C6322A !important; border-radius: 3px !important; color: #FFF !important; text-shadow: 0px 1px 1px rgba(0,0,0,0.2); cursor: pointer; background: #dd4b39; background: linear-gradient(to bottom,  #dd4b39 0%,#dd4b39 100%);  user-select: none; -moz-user-select: none; -webkit-user-select: none; height: 29px !important; text-transform: capitalize; width: auto; }
+            .alert .btn_cancel:hover{ border: 1px solid #B12D26 !important; box-shadow: 0px 1px 2px rgba(0,0,0,0.20) !important; background: #db4a38; background: linear-gradient(to bottom,  #db4a38 0%,#c13e2c 100%); }
+        .alert input[type=button]:active{ box-shadow: inset 0px 1px 3px rgba(0,0,0,0.20) !important; background: #2e76e8; }
+    </style>
+    <script>
+        alert = new function(){
+            //++ constructior
+                this.constructor = function(data){
+                    if(data.title) $('.alert .title').html(data.title);
+                    else $('.alert .title').remove();
+                    if(data.message) $('.alert .message').html(data.message);
+                    else $('.alert .message').remove();
+                    if(data.hide_buttons) $(".alert .alert_buttons, .alert .btn_close").remove();
+                    if(data.show_cancel == undefined) $(".alert .btn_cancel").remove();
+                    if(data.cancel) $(".alert .btn_cancel").html(data.cancel);
+                    if(data.accept) $(".alert .btn_accept").html(data.accept);
+                    jQuery("*").blur();
+                    TweenMax.fromTo(".alert", 0.4, {alpha:0}, {alpha:1, ease:Cubic.easeOut, delay:0.2});
+                    $(this.html).css("z-index", cuppa.maxZIndex()+1);
+                }
+            //--
+            //++ accept
+                this.accept = function(){
+                    jQuery("*").blur();                
+                    cuppa.setContent({load:false, duration:0.3, name:".alert", last:true});
+                    cuppa.blockade({load:false, name:".blockade", duration:0.2, delay:0.2, last:true});
+                    cuppa.shareObject(true);
+                    $(alert).trigger("response", [true]);
+                }
+            //--
+            //++ close
+                this.close = function(){
+                    jQuery("*").blur();                
+                    cuppa.setContent({load:false, duration:0.3, name:".alert", last:true});
+                    cuppa.blockade({load:false, name:".blockade", duration:0.2, delay:0.2, last:true});
+                    cuppa.shareObject(false);
+                    $(alert).trigger("response", [false]);
+                }
+            //--
+        };
+    </script>
+    <div class="space">
+        <div class="title">Title</div>
+        <div class="message">Message</div>
+        <div onclick="alert.close()" class="btn_close btn_close_gray" ></div>
+        <div class="alert_buttons">
+            <button class="btn_cancel" type="button" onclick="alert.close()" >cancel</button>
+            <button class="btn_accept" type="button" onclick="alert.accept()" >accept</button>
         </div>
     </div>
-</template>
+</div>

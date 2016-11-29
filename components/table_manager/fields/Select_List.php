@@ -22,6 +22,7 @@
 		
 		public function GetItem($name = "select", $value = "", $config = NULL, $required = false, $errorMessage = "", $eventsString = "", $include_clear_item = false, $language_translation = true, $language_reference = ""){
             $this->cuppa = Cuppa::getInstance();
+            $language = $this->cuppa->language->load();
             $this->name = $name;
 			$this->value = json_decode($value);
 			$this->config = json_decode($config);
@@ -31,7 +32,7 @@
                 $this->extraParams = $this->config->extraParams;
             }
 			$this->required = $required;
-			$this->errorMessage = $errorMessage; if(!$errorMessage) $this->errorMessage = " ";
+			$this->errorMessage = ($errorMessage) ? $errorMessage : $language->this_field_is_required;
 			$this->eventsString = $eventsString;
 			$this->include_clear_item = $include_clear_item;
 			if(is_array($this->config->data)){
@@ -88,14 +89,14 @@
     			}
 			$field .= "</select>";
             if(@$this->config->extraParams->mirrorList){
-                echo "<script> cuppa.selectListMirror('#".$this->name."') </script>";
+                echo "<script> cuppa.selectListMirror('#".$this->name."', '".json_encode(@$this->value)."') </script>";
             };
 			return $field;
 		}
 		private function TableType($table_name, $data_column, $label_column){
             $labels = explode(",", $label_column);
             $label_column = trim($labels[0]);
-            array_shift($labels);            
+            array_shift($labels);
             if($this->language_translation){
                 $this->language = $this->cuppa->language->load($this->language_reference);
             } 
@@ -107,7 +108,7 @@
                     $config[$i][$label_column] = @$config[$i]["deep_string"] . $config[$i][$label_column];
                 }
             }else{
-                $config = $db->getList($table_name, @$this->config->data->where_column, "", $label_column . " ASC");
+                $config = $db->getList($table_name, @$this->config->data->where_column, "", "`".$label_column."`" . " ASC");
             }
             $size = @$this->config->extraParams->listHeight;
 			$field =  "<select name='$this->name' size='$size' id='$this->name' $this->eventsString ";
@@ -135,7 +136,7 @@
                     $field .= "</option>";
                 }
             // Other info
-    			if($config &&  (!@$this->config->data->dinamic_update_field || !@$this->config->data->dinamic_update_column) ){
+    			if($config &&  (!@$this->config->data->dinamic_update_field || !@$this->config->data->dinamic_update_column) ){ 
     				for($i = 0; $i < count($config); $i++){
     				    $selectedItem = false;
                         for($j = 0; $j < count($this->value); $j++){
@@ -148,11 +149,13 @@
                             if(@$this->extraParams->no_translate){
                                 $field .= $config[$i][$label_column];
                             }else{
-                                $field .= $this->cuppa->language->getValue($config[$i][$label_column], $this->language);
+                                $label = $db->getConstraintValue($table_name, $label_column, @$config[$i][$label_column] );
+                                $field .= $this->cuppa->language->getValue(@$label, $this->language);
                             }
                             //++ add more labels info
                                 for($k = 0; $k < count($labels); $k++){
-                                    if($config[$i][trim($labels[$k])]) $field.= ", " . $config[$i][trim($labels[$k])];
+                                    $label = $db->getConstraintValue($table_name, $labels[$k], @$config[$i][trim($labels[$k])] );
+                                    if($label) $field.= ", " . $label;
                                 }
                             //--
                         $field.= "</option>";

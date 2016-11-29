@@ -42,7 +42,6 @@
     .section{ position: relative; display: block; width: 100%; }
     .section div{ position: absolute; top:50%; left: 0px; height: 0px; border-bottom: 1px solid #E9E9E9; width: 100%; }
     .section span{ position: relative; margin-left: 0px !important; top: 0px !important; background: #FFF; color: #444; font-weight: bold; text-transform: capitalize; padding: 0px 10px 0px 0px; text-transform: uppercase; font-size: 11px; }
-    label.error{ display: none !important;}
     .frame{ position: relative; display: block; clear: both; overflow: hidden; overflow-x: auto; border: 1px solid #DDDDDD; padding: 4px; }
     .table_info th{ text-align: left; font-weight: normal; color: #333333; border: 1px solid #DDDDDD; vertical-align: top; font-size: 14px; text-transform: capitalize; padding: 10px; }
     .table_info .checkbox{ width: 45px; text-align: center; }
@@ -106,11 +105,13 @@
         padding: 7px !important;
         vertical-align: middle;
     }
-    input.error, textarea.error{ background: rgba(255,0,0,0.07); }
     input[type='checkbox'], input[type='radio']{ width: auto !important; height: auto !important; }
     input[type=text]:hover, input[type=text]:focus, input[type=password]:hover, input[type=password]:focus,  input:not([type]):hover, input:not([type]):focus, textarea:hover, textarea:focus{
         border: 1px solid #B0B0B0 !important; box-shadow: inset 0px 1px 2px rgba(0,0,0,0.10) !important;
     }
+    label.error{ pointer-events: none; position: absolute; display: inline-block; top: calc(100% - 2px); left: 10px; background: #ea973d; color: #FFF; padding: 7px 10px 5px; z-index: 1; border-radius: 3px; box-shadow: 0px 2px 3px rgba(0,0,0,0.1); font-size: 12px; white-space: nowrap !important; }
+    label.error:before{ content: ''; position: absolute; bottom: 100%; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid #ea973d; left: 8px; }
+    
     .button_blue, .button_form{
         border: 1px solid #3079ED !important;
         border-radius: 3px !important;

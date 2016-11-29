@@ -88,6 +88,21 @@
 			}
             return false;
 		}
+        public function getUserInfo(){
+            @session_start();
+            $cuppa = Cuppa::getInstance();
+            $user = $cuppa->db->getRow("cu_users", "id = ".@$cuppa->user->getValue("id"), true);
+            return $user;
+        }
+        public function getInfo(){ return $this->getUserInfo(); }
+        public function getUser(){ return $this->getUserInfo(); }
+        public function info(){ return $this->getUserInfo(); }
+        public function update($data, $return_data = false){
+            $cuppa = Cuppa::getInstance();
+            if(!$cuppa->user->getValue("id")) return 0;
+            $result = $cuppa->dataBase->update("cu_users", $data, "id = ".@$cuppa->user->getValue("id"), $return_data, true);
+            return $result;
+        }
         public function setVar($name, $value){
             @session_start();
             if(!@$_SESSION['cuSession']->user) @$_SESSION['cuSession']->user = new stdClass();

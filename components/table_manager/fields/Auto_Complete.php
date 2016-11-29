@@ -18,11 +18,12 @@
 		
 		public function GetItem($name = "select", $value = "", $config = NULL, $required = false, $errorMessage = "", $extraParams = ""){
 			$this->cuppa = Cuppa::getInstance();
+            $language = $this->cuppa->language->load();
             $this->name = $name;
 			$this->value = $value;
 			$this->config = json_decode($config);
             $this->required = $required;
-            $this->errorMessage = (!$errorMessage) ? " " : $errorMessage;
+            $this->errorMessage = ($errorMessage) ? $errorMessage : $language->this_field_is_required;
             $this->extraParams = $extraParams;
             
 			if(is_array($this->config->data)){

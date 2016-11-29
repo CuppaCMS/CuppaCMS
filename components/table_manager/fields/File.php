@@ -7,14 +7,17 @@
 	class File{
 		private $config;
 		private $errorMessage;
+        private $cuppa = null;
 		public $urlConfig = "File.php";
         
         public function GetItem($name, $value = "", $config = NULL, $required = false, $errorMessage = "", $eventsString = ""){
+            $this->cuppa = Cuppa::getInstance();
+            $language = $this->cuppa->language->load();
             $path_resource = @$_SESSION["cuSession"]->paths->administrator->path;
             if(!$config) $config = '{"folder":"media/upload_files"}';
 			$configuration = new Configuration();
 			if(!$value) $value = "";
-			$this->errorMessage = $errorMessage; if(!$errorMessage) $this->errorMessage = " ";
+			$this->errorMessage = ($errorMessage) ? $errorMessage : $language->this_field_is_required;
 			$this->config = json_decode($config);
 			$field = "<div class='file_field' style='position:relative;'>";
 			$field .= "<input $eventsString id='".$name."' name='".$name."' value='$value' ";

@@ -328,7 +328,6 @@
                                     }else if($field_types->{$infoColumns[$j]}->type == "Text"){
                                         // link indicator init
                                             if(@$infoColumns[$j] == @$field_types->link_indicator && ($cuppa->permissions->getValue(2,$view, "4") || $cuppa->permissions->getValue(2,$view, "2")) ) $field .= '<a onclick="list_admin_table.submit(\'edit\',\''.$info[$i][$field_types->primary_key].'\' )">';
-                                        
                                         // text
                                             if(@$config->type == "number" && @$config->number_fortmat == "money"){
                                                 $field .= @number_format(@$info[$i][$infoColumns[$j]], 2);
@@ -339,7 +338,12 @@
                                             if(@$infoColumns[$j] == @$field_types->link_indicator && ($cuppa->permissions->getValue(2,$view, "4") || $cuppa->permissions->getValue(2,$view, "2")) ) $field .= '</a>';
                                     
                                     }else{
-                                        $field .= @$info[$i][$infoColumns[$j]];
+                                        // link indicator init
+                                            if(@$infoColumns[$j] == @$field_types->link_indicator && ($cuppa->permissions->getValue(2,$view, "4") || $cuppa->permissions->getValue(2,$view, "2")) ) $field .= '<a onclick="list_admin_table.submit(\'edit\',\''.$info[$i][$field_types->primary_key].'\' )">';
+                                        // text
+                                            $field .= @$info[$i][$infoColumns[$j]];
+                                        // link indicator end
+                                            if(@$infoColumns[$j] == @$field_types->link_indicator && ($cuppa->permissions->getValue(2,$view, "4") || $cuppa->permissions->getValue(2,$view, "2")) ) $field .= '</a>';
                                     }
                                 $fields[$infoColumns[$j]] = @$field;
                                 $fields[$infoColumns[$j]."_real_data"] = @$real_info[$i][$infoColumns[$j]];
@@ -479,7 +483,8 @@
     //--
     //++ init
         list_admin_table.init = function(){
-            cuppa.selectStyle(".list_admin_table select");
+            cuppa.selectStyle(".list_admin_table select"); 
+                $(".list_admin_table .filters select[disabled=disabled]").parent().css("opacity", 0.6);
             cuppa.tooltip();
             if("<?php echo $cuppa->REQUEST("task") ?>" == "new"){
                 stage.loadRightContent("components/table_manager/html/edit_admin_table.php", {redirect:"component/table_manager/view/<?php echo @$view ?>"});
@@ -494,9 +499,8 @@
             <?php
                 for($i = 0; $i < count($include_files); $i++){
                     if( $include_files[$i]->add_to == "list" && $include_files[$i]->position == "top" ){
-                        $search = array("#administrator#");
-                        $replace = array($cuppa->getDocumentPath());
-                        @include(str_replace($search, $replace, $include_files[$i]->path));
+                        $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                        @include($include_file);
                     }
                 } 
             ?>
@@ -617,9 +621,8 @@
                     <?php
                         for($i = 0; $i < count($include_files); $i++){
                             if( $include_files[$i]->add_to == "list" && $include_files[$i]->position == "before_to_table" ){
-                                $search = array("#administrator#");
-                                $replace = array($cuppa->getDocumentPath());
-                                @include(str_replace($search, $replace, $include_files[$i]->path));
+                                $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                                @include($include_file);
                             }
                         } 
                     ?>
@@ -751,9 +754,8 @@
                     <?php
                         for($i = 0; $i < count($include_files); $i++){
                             if( $include_files[$i]->add_to == "list" && $include_files[$i]->position == "after_to_table" ){
-                                $search = array("#administrator#");
-                                $replace = array($cuppa->getDocumentPath());
-                                @include(str_replace($search, $replace, $include_files[$i]->path));
+                                $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                                @include($include_file);
                             }
                         } 
                     ?>
@@ -779,9 +781,8 @@
             <?php
                 for($i = 0; $i < count($include_files); $i++){
                     if( $include_files[$i]->add_to == "list" && $include_files[$i]->position == "end" ){
-                        $search = array("#administrator#");
-                        $replace = array($cuppa->getDocumentPath());
-                        @include(str_replace($search, $replace, $include_files[$i]->path));
+                        $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                        @include($include_file);
                     }
                 } 
             ?>

@@ -558,5 +558,21 @@
             function getCookie($name){
                 return $this->sanitizeString(@$_COOKIE[$name]);
             }
+        /**
+         * Calculate the difference in months between two dates in String YYYY-MM-DD
+         * @param String $date1
+         * @param String $date2
+         * @return int
+         */
+        public function dateDiffMonths($date1, $date2){
+            $date1 = new DateTime($date1);
+            $date2 = new DateTime($date2);
+            $diff =  $date1->diff($date2);
+            $months = $diff->y * 12 + $diff->m + $diff->d / 30;
+            return $months;
+        }
+        public function  dateDiff($date1, $date2){
+            
+        }
 	}
 ?>

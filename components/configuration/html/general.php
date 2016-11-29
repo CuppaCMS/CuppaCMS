@@ -82,4 +82,13 @@
             </select>
         </td>
     </tr>
+    <tr>
+        <td><?php echo $cuppa->langValue("Lateral menu", $language) ?></td>
+        <td>
+            <select class="lateral_menu" name="lateral_menu" style="width: 100px;">
+                <option value="expanded"><?php echo $cuppa->langValue("expanded", $language) ?></option>
+                <option value="collapsed"><?php echo $cuppa->langValue("collapsed", $language) ?></option>
+            </select>
+        </td>
+    </tr>
 </table>

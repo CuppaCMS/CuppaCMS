@@ -55,6 +55,7 @@
                 $(".smtp").val('<?php echo @$cuppa->configuration->smtp ?>');
                 $(".smtp_security").val('<?php echo @$cuppa->configuration->smtp_security ?>');
                 $(".ssl").val('<?php echo @$cuppa->configuration->ssl ?>');
+                $(".lateral_menu").val('<?php echo @$cuppa->configuration->lateral_menu ?>');
             //--
             cuppa.tooltip();
             cuppa.selectStyle(".configuration select");

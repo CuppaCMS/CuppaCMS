@@ -15,8 +15,9 @@
 		public $global_encode = "sha1Salt";
 		public $global_encode_salt = "C7FFgigeyQSmvWcSMiLAnce4Tl4KGX6j";
 		public $ssl = "0";
+		public $lateral_menu = "expanded";
 		public $table_prefix = "cu_";
-		public $allowed_extensions = "*.gif; *.jpg; *.jpeg; *.pdf; *.ico; *.png";
+		public $allowed_extensions = "*.gif; *.jpg; *.jpeg; *.pdf; *.ico; *.png; *.svg";
 		public $upload_default_path = "upload_files";
 		public $maximum_file_size = "5242880";
 		public $csv_column_separator = ",";
@@ -26,8 +27,8 @@
 		public $smtp = "0";
 		public $email_host = "";
 		public $email_port = "";
-		public $smtp_security = "";
 		public $email_password = "";
+		public $smtp_security = "";
 		public $ga_client_id = "";
 		public $ga_view = "";
 		public $tracking_codes = "";

@@ -50,7 +50,6 @@
             <script src="js/toastr/toastr.js" type="text/javascript"></script>
         <!-- Others Packages -->
             <script src="js/functions.js" type="text/javascript"></script>
-            <script src="https://www.google.com/jsapi" type="text/javascript"></script>
         <!-- JavaScripts code -->
             <script>
                 stage.language = cuppa.jsonDecode("<?php echo $cuppa->utils->jsonEncode($language, true) ?>");

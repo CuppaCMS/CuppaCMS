@@ -40,6 +40,15 @@
                 	if(close) tinyMCEPopup.close();
                 }
             //--
+            //++ c+s save
+                ctr_s = function(event){
+                    if((event.ctrlKey || event.metaKey) && event.which == 83) {
+                        event.preventDefault();
+                        tinyMCEPopup.editor.settings.save();
+                        return false;
+                    };
+                }; $(document).off("keydown").on("keydown", ctr_s);
+            //--
             //++ auto update content (realtime)
                 /*
                 editor.addEventListener('change', function(e){
@@ -92,22 +101,25 @@
                     //--
                     //++ normal tags
                         if(!html_tag){
-                            html_tag = text1.split("<");
-                            html_tag = html_tag.filter(function(item){ if(cuppa.trim(item.charAt(0)) != "" && cuppa.trim(item.charAt(0)) != "=" ) return cuppa.trim(item); });
-                            html_tag = html_tag[html_tag.length-1];
-                            html_tag = html_tag.split("/");
-                            html_tag = html_tag[0];
-                            html_tag = html_tag.split(">");
-                            html_tag = html_tag[0];
-                            html_tag = html_tag.split(" ");
-                            html_tag = html_tag[0];
-                            html_tag = html_tag.replace(/(\r\n|\n|\r)/gm,"");
+                            try{
+                                html_tag = text1.split("<");
+                                html_tag = html_tag.filter(function(item){ if(cuppa.trim(item.charAt(0)) != "" && cuppa.trim(item.charAt(0)) != "=" ) return cuppa.trim(item); });
+                                html_tag = html_tag[html_tag.length-1];
+                                html_tag = html_tag.split("/");
+                                html_tag = html_tag[0];
+                                html_tag = html_tag.split(">");
+                                html_tag = html_tag[0];
+                                html_tag = html_tag.split(" ");
+                                html_tag = html_tag[0];
+                                html_tag = html_tag.replace(/(\r\n|\n|\r)/gm,"");
+                            }catch(err){ }
                         }
                     //--
                     //++ set code
-                        if(html_tag == "?php") mode = "ace/mode/php";
-                        else if(html_tag == "script") mode = "ace/mode/javascript";
-                        else mode = "ace/mode/html";
+                        //if(html_tag == "?php") mode = "ace/mode/php";
+                        //else if(html_tag == "script") mode = "ace/mode/javascript";
+                        //else 
+                        mode = "ace/mode/html";
                         editor.getSession().setMode(mode);
                     //--
                 }; $("#editor").bind("keydown click focus keyup", changeMode);

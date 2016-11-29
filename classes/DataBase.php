@@ -72,6 +72,10 @@
 			}
 			public function insert($table, $data, $return_row = false, $object_return = false){ 
 				$data = (array) $data;
+                forEach($data as $key => $value){
+                    $value = str_replace('\\"', '',@$value);
+                    $data[$key] = $value;
+                }
 				for($i = 0; $i < count($data); $i++){ unset($data[$i]); }
 				$sql = "INSERT INTO $table ( `";
 				$sql .= implode("` , `", array_keys($data));
@@ -98,6 +102,7 @@
 				$sql = "UPDATE $table SET ";
 				$current_key = 0;
                 foreach ($data as $key => $value) {
+                    $value = str_replace('\\"', '',@$value);
                     if($current_key  == count($data)-1) $sql .= "`" . $key . "`=" . $value . "";
 					else $sql .= "`" .$key . "`=" . $value . ", ";
 					$current_key++;
@@ -140,6 +145,18 @@
 				}
 				return null;
 			}
+            // return array with the vaue like 'key' values.
+            public function getDictionary($table, $condition = '', $limit = '', $order_by = '', $key_column = "id", $key_to_lower = true){
+                $result = $this->getList($table, $condition, $limit, $order_by, true);
+                if(!$result) return "";
+                $data = array();
+                forEach($result as $item){
+                    $key_data = $item->{$key_column};
+                    if($key_to_lower) $key_data = strtolower($key_data);
+                    $data[$key_data] = $item;
+                }
+                return $data;
+            }
 			public function delete($table, $condition){
                 if(!$condition) return;
 				$sql = "DELETE FROM $table WHERE $condition";
@@ -238,6 +255,14 @@
                 $info = $this->getList($table, $condition, $limit, $order_by, true);
                 return @$info[0]->{$return_column};
             }
+            public function getColumnValues($table, $return_column, $condition = "", $limit = "", $order_by = ""){
+                $info = $this->getList($table, $condition, $limit, $order_by, true);
+                $array = array();
+                forEach(@$info as $item){
+                    array_push($array, @$item->{$return_column});
+                }
+                return $array;
+            }
             public function getColumnValueOnTable($table, $validation_column, $value, $return_column, $condition = "", $limit = "", $order_by = ""){
                 $info = $this->getList($table, $condition, $limit, $order_by, true);
                 if(!$validation_column || ! $value){
@@ -262,10 +287,15 @@
                     $object = (array) $object;
                     foreach ($object as $key => $value) {
                         if($value){
-                            $object[$key] = "'".mysqli_real_escape_string($this->con, $value)."'";
-                            $object[$key] = str_replace("''","'", $object[$key]);
-                            if($escape){ 
-                                if(strpos($key, $no_scape) === false){ $object[$key] = htmlspecialchars(trim($object[$key])); }
+                            if($escape){
+                                if(@strpos($no_scape, $key) === false){
+                                    $object[$key] = "'".mysqli_real_escape_string($this->con, $value)."'";
+                                    $object[$key] = str_replace("''","'", $object[$key]);
+                                    @$object[$key] = htmlspecialchars(trim($object[$key]));
+                                }else{
+                                    $object[$key] = "'".$value."'";
+                                    $object[$key] = str_replace("''","'", $object[$key]);
+                                }
                             }
                             else $object[$key] = trim($object[$key]);
                         }else{
@@ -308,6 +338,48 @@
                     return mysqli_real_escape_string($this->con, $string);
                 }
                 public function escape($string){ return $this->scape($string); }
+            // get Foreing Keys
+                public function getConstraints($table){
+                    $sql = "SHOW CREATE TABLE ".$table;
+                    $constraints =  $this->sql($sql, true);
+                    $constraints = $constraints[0];
+                    $constraints = $constraints->{'Create Table'};
+                    $constraints = explode("\n", @$constraints);
+                    $array = array(); 
+                    $search = array("`","(",")"); $replace = array("", "", "");
+                    forEach($constraints as $item){
+                        if(strpos($item, "CONSTRAINT") !== false){
+                            $data = new stdClass();
+                            $item = explode(" ", trim($item));
+                            $data->column = str_replace($search, $replace, trim($item[1]));
+                            $data->type = str_replace($search, $replace, trim($item[2]));
+                            $data->table = str_replace($search, $replace, trim($item[6]));
+                            $data->table_column = str_replace($search, $replace, trim($item[7]));
+                            array_push($array, $data);
+                        };
+                    };
+                    return $array;
+                }
+            // isContraints
+                public function getConstraint($table, $column){
+                    $constraints = $this->getConstraints($table);
+                    $data = null;
+                    if($constraints){
+                        forEach($constraints as $item){
+                            if(trim($item->column) == trim($column)) $data = $item;
+                        }
+                    }
+                    return $data;
+                }
+            // getContraintsValue
+                public function getConstraintValue($table, $column, $value, $column_to_return = "name"){
+                    $constraint = $this->getConstraint($table, $column);
+                    if(@$constraint){
+                        $tmp = $this->getColumn($constraint->table, $column_to_return, $constraint->table_column." = ".$value);
+                        if($tmp) $value = $tmp;
+                    }
+                    return $value;
+                }
 			//++ Personal functions
 				public function getTablesNoRegistered(){
 					$configuration = new Configuration();

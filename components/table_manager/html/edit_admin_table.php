@@ -91,10 +91,11 @@
             jQuery.ajax({url:"classes/ajax/Functions.php", type:"POST", data:data, success:Ajax_Result});
                 function Ajax_Result(result){
                     TweenMax.delayedCall(10, edit_admin_table.updating_User_TableLog);                    
-                }     
+                }
         };
     //--
     //++ Save
+        edit_admin_table.callback = null;
         edit_admin_table.save = function(task){
             if(!$('.edit_admin_table form').valid()) return;
             $(".ace_autocomplete").hide();
@@ -107,6 +108,7 @@
                 data["function"] = "saveAdminTable";
                 $.ajax({url:"components/table_manager/classes/functions.php", type:"POST", data:data, success:Ajax_Result});
                 function Ajax_Result(result){
+                    if(edit_admin_table.callback) edit_admin_table.callback(result, data);
                     menu.showCharger(false);
                     //++ Set path
                         var path = cuppa.managerURL.path;
@@ -163,11 +165,21 @@
             cuppa.removeEventGroup("edit_admin_table");
         }; cuppa.addRemoveListener(".edit_admin_table", edit_admin_table.end);
     //--
+    //++ c+s save
+        edit_admin_table.ctr_s = function(event){
+            if((event.ctrlKey || event.metaKey) && event.which == 83) {
+                event.preventDefault();
+                try{ edit_admin_table.save('save_and_edit'); }catch(err){ };
+                return false;
+            };
+        }; $(document).off("keydown").on("keydown", edit_admin_table.ctr_s);
+    //--
     //++ init
         edit_admin_table.init = function(){
             cuppa.tinyMCEDestroy();
             edit_admin_table.updating_User_TableLog();
-            cuppa.selectStyle(".edit_admin_table select");
+            cuppa.selectStyle(".edit_admin_table select"); 
+                $(".edit_admin_table select[disabled=disabled]").parent().css("opacity", 0.6);
             cuppa.tooltip();
             edit_admin_table.chageTab(null, $(".edit_admin_table .tabs .tab").get(0));
         }; cuppa.addEventListener("ready",  edit_admin_table.init, document, "edit_admin_table");
@@ -178,9 +190,8 @@
         <?php
             for($i = 0; $i < count($include_files); $i++){
                 if( $include_files[$i]->add_to == "form" && $include_files[$i]->position == "top" ){
-                    $search = array("#administrator#");
-                    $replace = array($cuppa->getDocumentPath());
-                    @include(str_replace($search, $replace, $include_files[$i]->path));
+                    $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                    @include($include_file);
                 }
             } 
         ?>
@@ -192,16 +203,16 @@
                 <div class="tools">
                     <?php if( ( $cuppa->permissions->getValue(2,$view, 3) || $cuppa->permissions->getValue(2,$view, 4) ) && ( !isset($_REQUEST["save"]) || @$_REQUEST["save"] == "true") ){ ?>
                         <?php if( $cuppa->permissions->getValue(2,$view, 3) && !@$_POST["id"] ){ ?>
-                            <input class="button_blue" type="button" value="<?php echo $language->save ?>" onclick="edit_admin_table.save('save')" />
+                            <input class="button_blue btn_save" type="button" value="<?php echo $language->save ?>" onclick="edit_admin_table.save('save')" />
                         <?php }else if($cuppa->permissions->getValue(2,$view, 4) && @$_POST["id"]){ ?>
-                            <input class="button_blue" type="button" value="<?php echo $language->save ?>" onclick="edit_admin_table.save('save')" />
+                            <input class="button_blue btn_save" type="button" value="<?php echo $language->save ?>" onclick="edit_admin_table.save('save')" />
                         <?php } ?>
                     <?php } ?>
                     <?php if( ( $cuppa->permissions->getValue(2,$view, 3) || $cuppa->permissions->getValue(2,$view, 4) ) && (!isset($_REQUEST["save_and_edit"]) || @$_REQUEST["save_and_edit"] == "true") ){ ?>
                         <?php if( $cuppa->permissions->getValue(2,$view, 3) && !@$_POST["id"] ){ ?>
-                            <input class="button_blue" type="button" value="<?php echo $language->save_edit ?>" onclick="edit_admin_table.save('save_and_edit')" />
+                            <input class="button_blue btn_save_and_edit" type="button" value="<?php echo $language->save_edit ?>" onclick="edit_admin_table.save('save_and_edit')" />
                         <?php }else if($cuppa->permissions->getValue(2,$view, 4) && @$_POST["id"]){ ?>
-                            <input class="button_blue" type="button" value="<?php echo $language->save_edit ?>" onclick="edit_admin_table.save('save_and_edit')" />
+                            <input class="button_blue btn_cancel" type="button" value="<?php echo $language->save_edit ?>" onclick="edit_admin_table.save('save_and_edit')" />
                         <?php } ?>
                     <?php } ?>
                     <?php if( !isset($_REQUEST["cancel"]) || @$_REQUEST["cancel"] == "true"){ ?>
@@ -227,9 +238,8 @@
                 <?php
                     for($i = 0; $i < count($include_files); $i++){
                         if( $include_files[$i]->add_to == "form" && $include_files[$i]->position == "before_to_fields" ){
-                            $search = array("#administrator#");
-                            $replace = array($cuppa->getDocumentPath());
-                            @include(str_replace($search, $replace, $include_files[$i]->path));
+                            $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                            @include($include_file);
                         }
                     } 
                 ?>
@@ -412,9 +422,8 @@
                 <?php
                     for($i = 0; $i < count($include_files); $i++){
                         if( $include_files[$i]->add_to == "form" && $include_files[$i]->position == "after_to_fields" ){
-                            $search = array("#administrator#");
-                            $replace = array($cuppa->getDocumentPath());
-                            @include(str_replace($search, $replace, $include_files[$i]->path));
+                            $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                            @include($include_file);
                         }
                     } 
                 ?>
@@ -425,9 +434,8 @@
         <?php
             for($i = 0; $i < count($include_files); $i++){
                 if( $include_files[$i]->add_to == "form" && $include_files[$i]->position == "end" ){
-                    $search = array("#administrator#");
-                    $replace = array($cuppa->getDocumentPath());
-                    @include(str_replace($search, $replace, $include_files[$i]->path));
+                    $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                    @include($include_file);
                 }
             } 
         ?>

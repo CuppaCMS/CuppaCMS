@@ -79,7 +79,11 @@
 				    if(@is_array(@$_REQUEST[$infoColumns[$i]."_field"]) || @is_object(@$_REQUEST[$infoColumns[$i]."_field"])){
                         @$_REQUEST[$infoColumns[$i]."_field"] = json_encode(@$_REQUEST[$infoColumns[$i]."_field"]);
                     }
-                    $data_to_save[$infoColumns[$i]] = "'".trim(str_replace("\\\\", "\\",str_replace("'","\'",@$_REQUEST[$infoColumns[$i]."_field"])))."'";
+                    $_REQUEST[$infoColumns[$i]."_field"] = str_replace("'","\'",@$_REQUEST[$infoColumns[$i]."_field"]);
+                    $_REQUEST[$infoColumns[$i]."_field"] = str_replace("\\\\", "\\",@$_REQUEST[$infoColumns[$i]."_field"]);
+                    //$_REQUEST[$infoColumns[$i]."_field"] = str_replace('\\"', '\\\\"',@$_REQUEST[$infoColumns[$i]."_field"]);
+                    $_REQUEST[$infoColumns[$i]."_field"] = trim(@$_REQUEST[$infoColumns[$i]."_field"]);
+                    $data_to_save[$infoColumns[$i]] = "'".$_REQUEST[$infoColumns[$i]."_field"] ."'";
                 }
 			}
             $result = $db->add($view, $data_to_save, true, true);

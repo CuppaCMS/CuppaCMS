@@ -178,7 +178,7 @@
                 scroll.hideBar(null, 1.5);            
         }; cuppa.addEventListener("ready",  menu.init, document, "menu");
     //--
-    if( cuppa.getCookie("menu_collapsed") == "true" )  menu.collapseMenu(true);
+    if( cuppa.getCookie("menu_collapsed") == "true" || ("<?php echo @$cuppa->configuration->lateral_menu ?>" == "collapsed" && !cuppa.getCookie("menu_collapsed")) )  menu.collapseMenu(true);
 </script>
 <div class="menu">
     <div class="logo_area">

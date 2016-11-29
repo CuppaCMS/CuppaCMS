@@ -9,14 +9,17 @@
 		private $eventsString;
 		private $value;
 		private $name;
+        private $cuppa = null;
 		public $urlConfig = "Date.php";
 		
 		public function GetItem($name = "input", $value = "", $config = NULL, $required = false, $errorMessage = "", $eventsString = ""){
+            $this->cuppa = Cuppa::getInstance();
+            $language = $this->cuppa->language->load();
 			$this->name = $name;
 			$this->value = $value;
 			$this->config = json_decode($config);
 			$this->required = $required;
-			$this->errorMessage = $errorMessage; if(!$errorMessage) $this->errorMessage = " ";
+			$this->errorMessage = ($errorMessage) ? $errorMessage : $language->this_field_is_required;
 			$this->eventsString = $eventsString;
 			if($this->config->type == "datePicker"){
 				return $this->GetDataPiker();

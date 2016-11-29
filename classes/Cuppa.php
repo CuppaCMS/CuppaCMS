@@ -168,23 +168,32 @@
         // JSON Decode
             function jsonDecode($value, $base64_decode = true){
                 if($base64_decode) $value = base64_decode($value);
-                $value = json_decode($value);
+                $value = json_decode(htmlspecialchars_decode($value));
+                return $value;
+            }
+        // Base64 Endoce
+            function base64Encode($value){
+                $value = htmlspecialchars_decode($value);
+                $value = base64_encode($value);
                 return $value;
             }
         // Encript / Decript
-            function encrypt($string, $key = "", $key2 = ""){
+        // keys = 'C7FFgigeyQSmvWcSMiLAnce4Tl4KGX6j' (256)
+            function encrypt($string, $key = ""){
                 if(!$string) return false;
                 if(!$key) $key = $this->configuration->global_encode_salt;
-                if(!$key2) $key2 = $this->security->sessionKey;
-                $crypttext = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $string, MCRYPT_MODE_ECB, $key2);
+                $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+                $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
+                $crypttext = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $string, MCRYPT_MODE_CBC, $iv);
                 return trim(base64_encode($crypttext));
             }
-            function decrypt($string, $key = "", $key2 = ""){
+            function decrypt($string, $key = ""){
                 if(!$string) return false;
                 if(!$key) $key = $this->configuration->global_encode_salt;
-                if(!$key2) $key2 = $this->security->sessionKey;
+                $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+                $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
                 $crypttext = base64_decode($string);
-                $decrypttext = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $crypttext, MCRYPT_MODE_ECB, $key2);
+                $decrypttext = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $crypttext, MCRYPT_MODE_CBC, $iv);
                 return trim($decrypttext);
             }
         /* includeInstance
@@ -202,7 +211,10 @@
                 $this->template_added[$path] = "1";
             }
             function instanceInclude($path, $add_cover_template = true){ $this->includeInstance($path, $add_cover_template); }
-        /* instance, 
+            function instance($path, $add_cover_template = true){ $this->includeInstance($path, $add_cover_template); }
+            function import($path, $add_cover_template = true){ $this->includeInstance($path, $add_cover_template); }
+            
+        /* instanceCreate, create automatically the instance and keep the template
             $data = 'folder/file.php'
             or 
             $data = new stdClass();
@@ -211,7 +223,8 @@
                 $data->class = 'string';
                 $data->template = 'The class of the current class of file';
         */
-            function instance($data = null, $keep_template = true){
+            function instanceCreate($data = null, $keep_template = true){
+                $data = (object) $data;
                 if(is_string($data)) $data = (object) array('url'=>$data);
                 if(!$data) $data =  new stdClass;
                 if(!@$data->unique) $data->unique = $this->utils->getUniqueString("instance");
@@ -234,6 +247,22 @@
                 if($keep_template){ $this->instanceInclude($data->url); }
                 return $data->unique;
             }
+        // includeJS
+            public function includeJS($path){ echo "<script>"; include $path; echo "</script>"; }
+            public function importJS($path){ $this->includeJS($path); }
+        // includeCSS
+            public function includeCSS($path, $root_resources = "css/"){
+                if(!$root_resources){
+                    echo "<style>"; include $path; echo "</style>";
+                }else{
+                    $file = file_get_contents($path);
+                    $search = array("url(");
+                    $replace = array("url(css/");
+                    $file = str_replace($search, $replace, $file);
+                    echo "<style>"; echo $file; echo "</style>";
+                }
+            }
+            public function importCSS($path, $root_resources = "css/"){ $this->includeCSS($path, $root_resources); }
         // Encript / Decript ID's
             // Example: $cuppa->encryptIds(987654);
             // To Decript: $cuppa->encryptIds('encripted', true);
@@ -298,18 +327,17 @@
             public function langCurrent(){
                 return $this->language->current();
             }
-        // Curl
-            public function curl($str){
+        /* curl */
+            function curl($str){
                 $data = explode("\\", $str);
                 $url = trim(substr($data[0], strpos($data[0],"http"))); array_shift($data);
                 $curl = curl_init();
                         curl_setopt($curl, CURLOPT_URL, $url);
-                        curl_setopt($curl, CURLOPT_HEADER, false);
-                        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-                        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true); 
-                        curl_setopt($curl, CURLOPT_POST, true);
+                        curl_setopt($curl, CURLOPT_HEADER, 0);
+                        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
+                        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); 
+                        curl_setopt($curl, CURLOPT_POST, 1);
                         curl_setopt($curl, CURLOPT_TIMEOUT, 10);
-                
                 $array_header = array();
                 $data_array = array();
                 //++ Analyze
@@ -327,23 +355,26 @@
                                 $key = @$row[0]; $value = @$row[1];
                                 $data_array[$key] = $value;
                             }else{
-                                array_push($data_array, $row);
+                                $row = explode("=", $row);
+                                $key = @$row[0]; $value = @$row[1];
+                                $data_array[$key] = $value;
                             }
                         }else if(strpos($row, "-H") !== false ){
                            $row = trim(str_replace("-H", "",$row));
                            array_push($array_header, $row);
+                        }else if(strpos($row, "-X") !== false ){
+                           $row = trim(str_replace("-X", "",$row));
+                           curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $row);
                         }
                     }
                     // Add Header
                         curl_setopt($curl, CURLOPT_HTTPHEADER, $array_header);
                     // Add Data
-                        if(count($data_array) < 2) $data_array = @$data_array[0];
-                        curl_setopt($curl, CURLOPT_POSTFIELDS, $data_array);
+                        if(count($data_array) <= 1) $data_array = @$data_array[0];
+                        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data_array));
                 //--
-                
                 $res = curl_exec($curl); curl_close($curl);
-                print_r($res);
+                return @$res;
             }
-        
     }
 ?>

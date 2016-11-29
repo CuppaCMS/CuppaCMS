@@ -78,7 +78,7 @@
         .include_file_pane li *{  vertical-align: middle; }
         .include_file_pane .item span{ margin: 0px 5px; }
     .conf_input{ display: none; margin-left: 5px; width: 0px; }
-    .conf_input.error{ display: inline-block; }
+    .conf_input.error, .conf_input.show{ display: inline-block !important; width: 100px !important; }
     /* Tabs */
         .tabs ul{ margin: 0px; padding: 0px; list-style: none; list-style-type: none; }
         .tabs li{
@@ -280,7 +280,7 @@
     		if(urlConfig){
     			var newField = "<div style='float:left' name='" + itemName + "_div" + "' id='" + itemName +"_div"+"'>";
     				newField += "<input style='margin-left: 5px;' class='button_blue' type='button' value='<?php echo @$language->config_field ?>' onclick='stage.loadConfigAlert(\""+itemName+"\", \"" + urlConfig + "\")'/>";
-    				newField += "<input class='conf_input required readonly' title=' ' name='" + itemName + "_config" +"' id='" + itemName + "_config" +"' />"
+    				newField += "<input class='conf_input required readonly' title='<?php echo $language->this_field_is_required ?>' name='" + itemName + "_config" +"' id='" + itemName + "_config" +"' />"
     				newField += "</div>";
     			$("." + itemName + " .configuration_field_info").append(newField);
     		}
@@ -311,6 +311,10 @@
                 }
         }
     //--
+    //++ show configuration input
+        edit_table.showConfInput = function(){
+            $(".edit_table .conf_input").toggleClass("show");  
+        };
     //++ end
         edit_table.end = function(){
             cuppa.removeEventGroup("edit_table");
@@ -456,16 +460,19 @@
                         <th style="width:100px; text-align:center;"><?php echo @$language->required ?></th>
                         <th style="width:100px; text-align:center;"><?php echo @$language->language_button ?></th>
                         <th style="width:100px; text-align:center;"><?php echo @$language->primary_key ?></th>
-                        <th><?php echo @$language->configuration_field ?></th>
+                        <th>
+                            <?php echo @$language->configuration_field ?>
+                            <img class="button_alpha tooltip" class="btn_show_config" title="<?php echo @$language->show_configuration ?>" onclick="edit_table.showConfInput()" src="media/upload_files/icon-eye.svg" style="position: absolute; top: 10px; right: 10px; height: 15px; cursor: default; cursor: pointer;" />
+                        </th>
                     </tr>
                     <?php for($i = 0; $i < count($infoColumbs); $i++){ ?>
                         <?php if(($i%2) != 0){ echo "<tr>"; }else{ echo "<tr class='grey'>"; } ?>
                             <td><?php echo $infoColumbs[$i]; ?></td>
                             <td>
                             	<?php  if(isset($default_info->{$infoColumbs[$i]}->label)){ ?>
-                                	<input style="width: 100%;" class="text_field required" title=" " id="<?php echo $infoColumbs[$i] ?>_label" name="<?php echo $infoColumbs[$i] ?>_label" value="<?php echo @$default_info->{$infoColumbs[$i]}->label ?>" />
+                                	<input style="width: 100%;" class="text_field required" title="<?php echo $language->this_field_is_required ?>" id="<?php echo $infoColumbs[$i] ?>_label" name="<?php echo $infoColumbs[$i] ?>_label" value="<?php echo @$default_info->{$infoColumbs[$i]}->label ?>" />
                                 <?php } else{ ?>
-                                	<input style="width: 100%;" class="text_field required" title=" " id="<?php echo $infoColumbs[$i] ?>_label" name="<?php echo $infoColumbs[$i] ?>_label" value="<?php echo ucfirst( str_replace("_"," ",$infoColumbs[$i])) ?>" />
+                                	<input style="width: 100%;" class="text_field required" title="<?php echo $language->this_field_is_required ?>" id="<?php echo $infoColumbs[$i] ?>_label" name="<?php echo $infoColumbs[$i] ?>_label" value="<?php echo ucfirst( str_replace("_"," ",$infoColumbs[$i])) ?>" />
                                 <?php } ?>
         					</td>
                             <td style="text-align:center;" >

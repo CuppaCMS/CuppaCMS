@@ -12,10 +12,10 @@
         
 		public function GetItem($name = "input", $value = "", $config = NULL, $required = false, $errorMessage = "", $eventsString = ""){
 			$this->cuppa = Cuppa::getInstance();
+            $this->language = $this->cuppa->language->load();
             $this->required = $required;
 			$this->config = json_decode($config);            
-			$this->errorMessage = $errorMessage; if(!$errorMessage) $this->errorMessage = " ";
-            $this->language = LanguageManager::getInstance()->load();
+			$this->errorMessage = ($errorMessage) ? $errorMessage : $this->language->this_field_is_required;
 			// Create Field
                 $field = "";      
     			for($i = 0; $i < count($this->config->data); $i ++){
