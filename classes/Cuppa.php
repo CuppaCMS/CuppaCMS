@@ -314,6 +314,11 @@
             public function getCookie($name){ return $this->utils->getCookie($name); }
         // ip
             public function ip(){ return $this->utils->ip(); }
+        // object
+            public function object(){
+                $args = func_get_args();
+                return $args;
+            }
         // language value
             public function langValueRich($label, $return_all = false, $return_column = "content"){
                 return $this->language->getValueRich($label, $return_all, $return_column);

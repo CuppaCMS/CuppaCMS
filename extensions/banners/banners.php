@@ -96,6 +96,7 @@
                 cuppa.addEventListener("resize", banners.resize, window, "banners"); banners.resize();
                 cuppa.addEventListener("removed", banners.removed, ".banners", "banners");
                 cuppa.responsiveImagesWidth(".banners img");
+                cuppa.svgSwitch(".banners .svg");
                 banners.slide = new cuppa.slider(".banners .item", {callback:banners.change, duration:<?php echo @$section_banners->duration ?>, nextButton:".banners .btn_next", backButton:".banners .btn_back", points:".banners .points .point"});
                 banners.slide.change(0);
             }; cuppa.addEventListener("ready",  banners.init, document, "banners");

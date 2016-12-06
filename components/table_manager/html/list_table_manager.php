@@ -113,11 +113,14 @@
                         <td><a onclick="list_table_manager.submit('edit','<?php echo $info[$i]["id"] ?>')" ><?php echo $info[$i]["table_name"] ?></a></td>
                         <td><?php echo $language->json_params ?></td>
                         <td style="text-align: right; white-space: nowrap;">
-                            <a onclick="stage.loadPermissionsFilterLightbox('<?php echo $info[$i]["table_name"] ?>', 'Filters by <?php echo @$info[$i]["table_name"]  ?> ')"  class="tooltip" title="<?php echo @$language->tooltip_admin_filters ?>" >
+                            <a onclick="stage.loadPermissionsFilterLightbox('<?php echo $info[$i]["table_name"] ?>', 'Filters for <?php echo @$info[$i]["table_name"]  ?> ')"  class="tooltip" title="<?php echo @$language->tooltip_admin_filters ?>" >
                                 <img src="templates/default/images/template/filters.png" />
                             </a>
                             <a href="component/menu/&task=new&type_field=2&table_name_field=<?php echo @$info[$i]["table_name"] ?>" title="<?php echo @$language->add_menu_tooltip ?>" class="link tooltip">
                                 <img src="templates/default/images/template/menu.png" />
+                            </a>
+                            <a onclick="stage.loadPermissionsApiKeyLightbox('<?php echo $info[$i]["table_name"] ?>', 'Api Keys permissions for <?php echo @$info[$i]["table_name"]  ?> ')" class="tooltip" title="<?php echo @$language->tooltip_admin_api_key_permissions ?>" >
+                                <img src="templates/default/images/template/api.png" />
                             </a>
                         
                         </td>

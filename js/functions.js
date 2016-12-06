@@ -103,6 +103,15 @@ stage.currentLanguage;
         cuppa.blockade({'autoDeleteContent':'#new_content'});
         cuppa.setContent({'url':'alerts/alertLightbox.php', 'data':data, 'preload':false});
 	};
+    stage.loadPermissionsApiKeyLightbox = function(table_name, title){
+        if(!title) title = "Permissions";
+        var data = {}
+            data.url = "components/permissions/list_permissions_api_key_lightbox.php";
+            data.title = title;
+            data.params = {table_name:table_name};
+        cuppa.blockade({'autoDeleteContent':'#new_content'});
+        cuppa.setContent({'url':'alerts/alertLightbox.php', 'data':data, 'preload':false});
+	};
 //--
 //++ Load Lightbox
     stage.loadLightbox = function(title, url, params){

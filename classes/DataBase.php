@@ -286,7 +286,9 @@
                 function ajust($object, $object_return = false, $escape = true, $no_scape = ""){
                     $object = (array) $object;
                     foreach ($object as $key => $value) {
-                        if($value){
+                        if($value == "NOW()"){
+                            $object[$key] = $value;
+                        }else if($value){
                             if($escape){
                                 if(@strpos($no_scape, $key) === false){
                                     $object[$key] = "'".mysqli_real_escape_string($this->con, $value)."'";
@@ -296,8 +298,10 @@
                                     $object[$key] = "'".$value."'";
                                     $object[$key] = str_replace("''","'", $object[$key]);
                                 }
+                            }else{
+                                $object[$key] = "'".$value."'";
+                                $object[$key] = str_replace("''","'", $object[$key]);   
                             }
-                            else $object[$key] = trim($object[$key]);
                         }else{
                             $object[$key] = "''";
                         }

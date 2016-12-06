@@ -91,6 +91,7 @@
                 cuppa.addEventListener("resize", contents.resize, window, "contents"); contents.resize();
                 cuppa.addEventListener("removed", contents.removed, ".contents", "contents");
                 cuppa.responsiveImagesWidth(".contents img");
+                cuppa.svgSwitch(".contents .svg");
             }; cuppa.addEventListener("ready",  contents.init, document, "contents");
         //--
     </script>
