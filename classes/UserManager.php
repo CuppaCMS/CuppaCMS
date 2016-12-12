@@ -21,7 +21,7 @@
                 else if($configuration->global_encode == "sha1" && @$_POST["password"]) @$_POST["password"] = sha1($db->scape(@$_POST["password"]));
                 else if($configuration->global_encode == "sha1Salt" && @$_POST["password"]) @$_POST["password"] = $cuppa->utils->sha1Salt($db->scape(@$_POST["password"]), $cuppa->configuration->global_encode_salt);
             //--            
-			$sql = "SELECT * FROM ".$configuration->table_prefix."users AS u WHERE enabled = '1' AND username = '".$db->scape(@$_POST["user"])."' AND password = '".@$_POST["password"]."'";
+			$sql = "SELECT * FROM ".$configuration->table_prefix."users AS u WHERE enabled = '1' AND (username = '".$db->scape(@$_POST["user"])."' OR email = '".$db->scape(@$_POST["user"])."') AND password = '".@$_POST["password"]."'";
 			$result = $db->sql($sql);
 			if($result == 1 || !$result){
 			    @$_POST["email"] = @$_POST["user"];

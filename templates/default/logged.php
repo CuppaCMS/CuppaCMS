@@ -54,7 +54,6 @@
             <script>
                 stage.language = cuppa.jsonDecode("<?php echo $cuppa->utils->jsonEncode($language, true) ?>");
                 stage.currentLanguage = "<?php echo @$cuppa->language->current() ?>";
-                try{ google.load('visualization', '1.0', {'packages':['corechart']}); }catch(err){ }
             </script>
     </head>
     <body>

@@ -7,7 +7,7 @@
 		if((float) @phpversion() >= 5.3) $phpVersion = "<font style='color:#46882B'>Yes</font>";
 	// MySQL Version
 		$mySQL = "<font style='color:#CC0000'>No</font>";
-		if(@extension_loaded("mysql")) $mySQL = "<font style='color:#46882B'>Yes</font>";
+		if(@extension_loaded("mysqli")) $mySQL = "<font style='color:#46882B'>Yes</font>";
 	// Json support
 		@$json_support = "<font style='color:#CC0000'>No</font>";
 		if(@extension_loaded("json")) $json_support = "<font style='color:#46882B'>Yes</font>";

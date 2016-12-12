@@ -118,7 +118,6 @@
                 TweenMax.to(".menu_mobile_blockade", 0.3, {display:"none", alpha:0, ease:Cubic.easeOut});
                 TweenMax.to(".menu_mobile", 0.2, {left:-250, ease:Cubic.easeIn});
             }
-           
         }
     //--
     //++ show/hide settings
@@ -171,7 +170,7 @@
         menu.init = function(){
             cuppa.managerURL.updateLinks(".menu .buttons_left a, .menu_settings a, .menu_mobile a", true);
             $(".menu_mobile a").click(menu.toggleMenuMobile);
-            $(".menu_settings .item_logout a").unbind("click");
+            $(".menu_settings .item_logout a, .menu_mobile .item_logout a").unbind("click");
             var scroll = new cuppa.scroll(".scroll_settings .bar", ".scroll_settings .track", "y");
                 scroll.setContent(".menu_settings .buttons");
                 scroll.rollOutHide(true);

@@ -7,7 +7,7 @@
 $contentToSave = 
 '<?php 
 	class Configuration{
-		public $host = "'.trim($cuppa->POST("host")).'";
+	    public $host = "'.trim($cuppa->POST("host")).'";
 		public $db = "'.trim($cuppa->POST("db")).'";
 		public $user = "'.trim($cuppa->POST("user")).'";
 		public $password = "'.trim($cuppa->POST("password")).'";
@@ -22,8 +22,9 @@ $contentToSave =
 		public $global_encode = "sha1Salt";
 		public $global_encode_salt = "'.$global_encode_salt.'";
 		public $ssl = "0";
+		public $lateral_menu = "expanded";
 		public $table_prefix = "'.trim($cuppa->POST("table_prefix")).'";
-		public $allowed_extensions = "*.gif; *.jpg; *.jpeg; *.pdf; *.ico; *.png";
+		public $allowed_extensions = "*.gif; *.jpg; *.jpeg; *.pdf; *.ico; *.png; *.svg";
 		public $upload_default_path = "upload_files";
 		public $maximum_file_size = "5242880";
 		public $csv_column_separator = ",";
@@ -33,8 +34,8 @@ $contentToSave =
 		public $smtp = "0";
 		public $email_host = "";
 		public $email_port = "";
-		public $smtp_secure = "ssl";
 		public $email_password = "";
+		public $smtp_security = "";
 		public $ga_client_id = "";
 		public $ga_view = "";
 		public $tracking_codes = "";

@@ -182,18 +182,18 @@
             function encrypt($string, $key = ""){
                 if(!$string) return false;
                 if(!$key) $key = $this->configuration->global_encode_salt;
-                $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+                $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
                 $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-                $crypttext = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $string, MCRYPT_MODE_CBC, $iv);
+                $crypttext = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $string, MCRYPT_MODE_ECB, $iv);
                 return trim(base64_encode($crypttext));
             }
             function decrypt($string, $key = ""){
                 if(!$string) return false;
                 if(!$key) $key = $this->configuration->global_encode_salt;
-                $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_CBC);
+                $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
                 $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
                 $crypttext = base64_decode($string);
-                $decrypttext = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $crypttext, MCRYPT_MODE_CBC, $iv);
+                $decrypttext = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $crypttext, MCRYPT_MODE_ECB, $iv);
                 return trim($decrypttext);
             }
         /* includeInstance
@@ -332,6 +332,16 @@
             public function langCurrent(){
                 return $this->language->current();
             }
+        // check ssl activate
+            public function ssl() {
+                $secure = 1;
+                // if origen has http check a valid https
+                    if(substr($_SERVER["HTTP_REFERER"], 0, 4) == "http") $secure = (substr($_SERVER["HTTP_REFERER"], 0, 5) == "https");
+                // check server if origen is right
+                    if($secure) $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
+                return $secure;
+            }
+            public function isSecure(){ return $this->ssl(); }
         /* curl */
             function curl($str){
                 $data = explode("\\", $str);

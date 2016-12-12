@@ -138,6 +138,27 @@
             $cuppa = Cuppa::getInstance();
             echo $cuppa->user->login("site_login", $cuppa->POST("user"), $cuppa->POST("password"));
         }
+        function restore(){
+            $cuppa = Cuppa::getInstance();
+            $language = $cuppa->language->load();
+            $data = $cuppa->jsonDecode($cuppa->POST("info"));
+            $data_update = array("restore_password"=>1);
+            $user = $cuppa->db->update("cu_users", $data_update, "email = '".$data->email."' AND enabled = 1", true, true);
+            if($user){
+                $body = "The next link is valid to restore password one time, please click it to set your new password <br />#link#";
+                $body = str_replace("#link#", $cuppa->getPath()."?restore=".$cuppa->encrypt($user->id), $body);
+                echo $cuppa->mail->send($cuppa->langValue("email_from", $language), @$cuppa->configuration->email_outgoing, $cuppa->langValue("Restore password", $language), $user->email, $body);
+            }
+        }
+        function restore2(){
+            $cuppa = Cuppa::getInstance();
+            $data = $cuppa->jsonDecode($cuppa->POST("info"));
+            $ref = $cuppa->decrypt(@$data->ref);
+            $password = $data->password;
+            if(!$ref || !$password) exit("-1");            
+            $data_to_save = array(  "password"=>"'".$cuppa->utils->sha1Salt($password, $cuppa->configuration->global_encode_salt)."'","restore_password"=>0 );
+            echo $cuppa->db->update("cu_users", $data_to_save, "id = '".$ref."'");
+        }
 	//--
 	//++ Handler
 		$nameFunction = $_POST["function"];

@@ -8,7 +8,7 @@
                 accept: String,                                 set the accept text
         Example:
             cuppa.blockade({duration:0.3});
-            cuppa.instance({url:"js/cuppa_html/alert.html", data:{title:"Title", message:"Message", cancel:"cancel", accept:"accept"}, append:"body" });
+            cuppa.instance({url:"js/cuppa_html/alert.html", data:{title:"Title", message:"Message"}, append:"body" });
             function onConfirm(e, value){
                 if(value){  };
             }; $(cuppa).one("share", onConfirm);
@@ -30,6 +30,7 @@
         alert = new function(){
             //++ constructior
                 this.constructor = function(data){
+                    this.data = data;
                     if(data.title) $('.alert .title').html(data.title);
                     else $('.alert .title').remove();
                     if(data.message) $('.alert .message').html(data.message);
@@ -50,6 +51,7 @@
                     cuppa.blockade({load:false, name:".blockade", duration:0.2, delay:0.2, last:true});
                     cuppa.shareObject(true);
                     $(alert).trigger("response", [true]);
+                    if(this.data.callback) this.data.callback(true);
                 }
             //--
             //++ close
@@ -59,6 +61,7 @@
                     cuppa.blockade({load:false, name:".blockade", duration:0.2, delay:0.2, last:true});
                     cuppa.shareObject(false);
                     $(alert).trigger("response", [false]);
+                    if(this.data.callback) this.data.callback(false);
                 }
             //--
         };

@@ -110,7 +110,7 @@
                     $headers .= 'Bcc: '.$bcc."\r\n";
                 }
             //--
-            return mail($to, $subject, $body, $headers);
+            return @mail($to, $subject, $body, $headers);
         }
 	}
 ?>

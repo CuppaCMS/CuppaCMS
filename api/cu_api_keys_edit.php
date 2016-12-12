@@ -20,7 +20,7 @@
             // constructor
                 this.constructor = function(){
                     $(".window_right #key_field").after( $(".window_right .btn_generate") );
-                    if( !$(".window_right #key_field").val() ) cu_api_keys_edit.generate();
+                    if( !$(".window_right #key_field").val() ) this.generate();
                 }.bind(this); $(this.constructor);
         };
     </script>

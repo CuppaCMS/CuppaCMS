@@ -1,12 +1,5 @@
+<script src="scripts.js" type="text/javascript"></script>
 <div class="test">
-    <?php
-        include_once $_SERVER['DOCUMENT_ROOT'].$_COOKIE["web_document_path"]."administrator/classes/Cuppa.php";
-        $cuppa = Cuppa::getInstance();
-        $language = $cuppa->language->load("web");
-        $current_language = $cuppa->language->current();
-        $current_country = $cuppa->country->current();
-        if(!@$path) $path = $cuppa->utils->getUrlVars(@$_POST["path"]);
-    ?>
     <style>
         .test{ }
     </style>
@@ -15,11 +8,12 @@
             // submit
                 this.submit = function(){
                     var data = cuppa.serialize(".test form");
-                        data.table = "test";
-                        data.method = "insert";
-                        data.data = JSON.stringify({content:"dddd", date:"NOW()"});
-                    var headers = {"key": "x52gBNaaulfod0uwtqtnmI9OqkKr6jUY"};
-                        $.ajax({url:"administrator/api/", method:"POST", data:data, headers:headers}).done(function(result){
+                        data.table = "cu_api_keys";
+                        data.method = "consult";
+                        //data.sql = "SELECT u.*, ug.name as 'group_name' FROM cu_users AS u JOIN cu_user_groups AS ug ON u.user_group_id = ug.id";
+                        //data.data = JSON.stringify({content:"dddd", date:"NOW()"});
+                    var headers = {"key": "yX3ReNsPdELUCaeFONbMpa8hyKlXk889"};
+                        $.ajax({url:"http://int-server-tree.com/cuppa_test/administrator/api/", method:"POST", data:data, headers:headers}).done(function(result){
                             result = JSON.parse(result);
                             trace(result);
                         });

@@ -13,7 +13,7 @@
         $language = $cuppa->language->load("web");
         $current_language = $cuppa->language->current();
         $current_country = $cuppa->country->current();
-        $content = $cuppa->langValueRich($cuppa->POST("content"));
+        $content = $cuppa->langValueRich($cuppa->POST("content"), true);
         if(!$content) $content = $cuppa->POST("content");
     ?>
     <style>
@@ -43,7 +43,14 @@
         };
     </script>
     <div class="info">
-        <?php $cuppa->echoString($content); ?>
+        <?php
+            if($content->content){ 
+                $cuppa->echoString($content->content);
+                $cuppa->echoString($content->code);
+            }else{
+                $cuppa->echoString($content);
+            }
+        ?> 
     </div>
     <div onclick="lightbox.close()" class="btn_close btn_close_gray" ></div>
 </div>
