@@ -29,6 +29,8 @@
                 editor.setOptions({enableBasicAutocompletion: true, enableSnippets: true, enableLiveAutocompletion: true});
             //++ set value
                 var code = tinyMCEPopup.editor.getContent({source_view : true});
+                code = cuppa.replace(code, "<!--", "", {range:["<style", "</style>"]});
+                code = cuppa.replace(code, "-->", "", {range:["<style", "</style>"]});
                 code = vkbeautify.xml(code);
                 editor.getSession().setValue(code);
             //--

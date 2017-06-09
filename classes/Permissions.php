@@ -5,7 +5,7 @@
 	*/
 	class Permissions{
         private static $instance;
-		public function Permissions(){ }
+		public function __construct(){ }
         public static function getInstance() {
 			if (self::$instance == NULL) { self::$instance = new Permissions(); } 
 			return self::$instance;

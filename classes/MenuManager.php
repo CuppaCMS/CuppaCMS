@@ -9,7 +9,7 @@
         private $include_language = false;
         private $include_country = false;
 		
-		private function MenuManager(){
+		private function __construct(){
 			$this->database = DataBase::getInstance();
 		}
 		public static function getInstance() {
@@ -165,7 +165,7 @@
 				$result = $this->database->sql($sql);
 				if($result != 0 && $result != 1){
 				    $menu = $this->createMenu($result, $item_start);
-                    $no_menu = '<ul class="cuppa_menu_list"><li class="vertical_divider vertical_last_divider"><div class="menu_divider menu_divider_10"></div></li></ul>';
+                    $no_menu = '<ul class="cuppa_menu_list" id="list_'.$menu_name.'" ><li class="vertical_divider vertical_last_divider"><div class="menu_divider menu_divider_10"></div></li></ul>';
                     if($menu != $no_menu) return $menu;
                     else return null;
 				}
@@ -173,8 +173,9 @@
 			}
             
 			private function createMenu($data, $item_start = 0){
+                $menu_id = $data[0]["menus_id"];
                 $cuppa = Cuppa::getInstance();
-				$field = '<ul class="cuppa_menu_list" >';
+				$field = '<ul class="cuppa_menu_list" id="list_'.$menu_id.'" >';
                 $parent_items = $item_start;
 				for($i = 0; $i < count($data); $i++){
 					if($data[$i]["parent_id"] == $item_start){

@@ -1,7 +1,7 @@
 <?php
     class LanguageManager{
         private static $instance;
-        private function LanguageManager(){ }
+        private function __construct(){ }
         public static function getInstance() {
 			if (self::$instance == NULL) { self::$instance = new LanguageManager(); } 
 			return self::$instance;
@@ -64,7 +64,7 @@
                     $lang = $language;
                 }else if( $this->valid($this->getLanguagePath()) ){
                     $lang = $this->getLanguagePath();
-                }else if($this->valid($utils->getCookie("language")) && !$this->valid($language) ){
+                }else if($this->valid($utils->getCookie("language"))){
                     $lang = $utils->getCookie("language");
                 }else if($this->valid($language)){
                     $lang = @$language;
@@ -189,10 +189,16 @@
                 
                 if($invert){
                     for($i = 0; $i < count($path); $i++){
+                        if($i == count($path)-1 && strpos($path[$i], "=") !== false ){
+                            $path[$i] = @explode("&", $path[$i]); $path[$i] = @$path[$i][0];                     
+                        }
                         $path[$i] = $this->key($path[$i], $language,$frienly_url);
                     }
                 }else{
                     for($i = 0; $i < count($path); $i++){
+                        if($i == 0 && strpos($path[$i], "=") !== false ){
+                            $path[$i] = @explode("&", $path[$i]); $path[$i] = @$path[$i][0];
+                        }
                         $path[$i] = $this->getValue($path[$i], $language, $frienly_url);
                     }
                 }

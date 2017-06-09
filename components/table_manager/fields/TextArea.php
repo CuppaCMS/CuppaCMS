@@ -14,7 +14,7 @@
             $language = $this->cuppa->language->load();
             $this->required = $required;
 			$this->config = json_decode($config);
-            $this->errorMessage = ($errorMessage) ? $errorMessage : $language->this_field_is_required;
+            $this->errorMessage = ($errorMessage) ? $errorMessage : @$language->this_field_is_required;
             if($this->config->editor == "jsoneditor"){
                 $field = "<textarea style='width:".$this->config->width."; height:".$this->config->height."' $eventsString id='".$name."' name='".$name."' >";
                 $field.= $value;

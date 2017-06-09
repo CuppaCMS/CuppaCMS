@@ -7,13 +7,13 @@
 $contentToSave = 
 '<?php 
 	class Configuration{
-	    public $host = "'.trim($cuppa->POST("host")).'";
+        public $host = "'.trim($cuppa->POST("host")).'";
 		public $db = "'.trim($cuppa->POST("db")).'";
 		public $user = "'.trim($cuppa->POST("user")).'";
 		public $password = "'.trim($cuppa->POST("password")).'";
 		public $administrator_template = "default";
 		public $list_limit = "25";
-		public $font_list = "";
+		public $font_list = "Raleway";
 		public $secure_login = "0";
 		public $secure_login_value = "";
 		public $secure_login_redirect = "";
@@ -36,8 +36,6 @@ $contentToSave =
 		public $email_port = "";
 		public $email_password = "";
 		public $smtp_security = "";
-		public $ga_client_id = "";
-		public $ga_view = "";
 		public $tracking_codes = "";
 	} 
 ?>';
@@ -55,13 +53,8 @@ $contentToSave =
             $db = new DataBase($cuppa->POST("db"), $cuppa->POST("host"), $cuppa->POST("user"), $cuppa->POST("password"));
 			$sql = file_get_contents('script.sql');
 			$sql = str_replace("cu_", $cuppa->POST("table_prefix"), $sql);
-			$sql_array = explode(";", $sql);
 			$data_base_state = "<font style='color:#46882B'>Yes</font>";
-			for($i = 0; $i < count($sql_array); $i++){
-				if(trim($sql_array[$i])){
-					$result = $db->sql($sql_array[$i]);
-				}
-			}
+            $result = $db->sqlMultiQuery($sql);
 		// Create Administrator's count
 			$data = array();
 			$data["id"] = "'1'";

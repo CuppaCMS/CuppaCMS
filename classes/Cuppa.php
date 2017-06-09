@@ -34,7 +34,7 @@
         public $paginator;
         public $permissions;
         public $browser;
-        public function Cuppa(){
+        public function __construct(){
             @include_once realpath(__DIR__ . '/..')."/Configuration.php";
             $this->security = Security::getInstance();
             $this->configuration = new Configuration();
@@ -202,12 +202,17 @@
             private $template_added =  array();
             function includeInstance($path, $add_cover_template = true){
                 if(@$this->template_added[$path]) return;
+                if(!file_exists($path)){ echo "instance no reach: ".$path."<br />"; return; }
                 $tag = ($this->browser->name == "Internet Explorer") ? "xmp" : "template";
                 if($add_cover_template){
                     echo '<div id="template_'.$this->utils->getFriendlyUrl($path).'" style="display:none;"><'.$tag.'>';
                     include $path;
                     echo '</'.$tag.'></div>';
-                }else{ include $path; }
+                }else{ 
+                    echo '<div id="template_'.$this->utils->getFriendlyUrl($path).'" style="display:none;">';
+                    include $path;
+                    echo '</div>';
+                }
                 $this->template_added[$path] = "1";
             }
             function instanceInclude($path, $add_cover_template = true){ $this->includeInstance($path, $add_cover_template); }
@@ -215,37 +220,60 @@
             function import($path, $add_cover_template = true){ $this->includeInstance($path, $add_cover_template); }
             
         /* instanceCreate, create automatically the instance and keep the template
-            $data = 'folder/file.php'
+            $opts = 'folder/file.php'
             or 
-            $data = new stdClass();
-                $data->url = 'folder/file.php';
-                $data->data = new stdClass;
-                $data->class = 'string';
-                $data->template = 'The class of the current class of file';
+                $opts = new stdClass();
+                $opts->url = 'folder/file.php';
+                $opts->data = new stdClass;
+                $opts->class = 'string';
+                $opts->template = 'The class of the current class of file';
+                $opts->no_data = false;
         */
-            function instanceCreate($data = null, $keep_template = true){
-                $data = (object) $data;
-                if(is_string($data)) $data = (object) array('url'=>$data);
-                if(!$data) $data =  new stdClass;
-                if(!@$data->unique) $data->unique = $this->utils->getUniqueString("instance");
-                if(@$data->template) $data->instance = $data->template;
-                else $data->instance = $this->file->getDescription($data->url)->name;
-                $file = file_get_contents($data->url);
-                $file = str_replace($data->instance, $data->unique, $file);
-                if(@$data->class){ $file = preg_replace('/'.$data->unique.'/', $data->unique." ".$data->class,$file, 1); }
-                $this->echoString($file);
-                
-                echo "<script class='inst_script_tmp'>  {$data->unique}.instance_unique = '{$data->unique}'; 
-                                {$data->unique}.instance_name = '{$data->instance}';
-                                {$data->unique}.html = $('.{$data->unique}').get(0);    
-                                {$data->unique}.html.script = {$data->unique}; 
-                                {$data->unique}.state = new cuppa.state( {$data->unique}.html ); 
-                                try{ {$data->unique}.constructor(".json_encode(@$data->data)."); }catch(err){}
-                                try{ {$data->unique}.{$data->unique}(".json_encode(@$data->data)."); }catch(err){}
-                                $('.inst_script_tmp').remove(); 
-                     </script>";
-                if($keep_template){ $this->instanceInclude($data->url); }
-                return $data->unique;
+            function instanceCreate($opts = null, $keep_template = true){
+                if(is_string($opts)) $opts = (object) array('url'=>$opts);
+                $opts = (object) $opts;
+                if(!$opts) $opts =  new stdClass;
+                if(!@$opts->unique) $opts->unique = $this->utils->getUniqueString("instance");
+                if(@$opts->template) $opts->instance = $opts->template;
+                else $opts->instance = $this->file->getDescription($opts->url)->name;
+                $file = file_get_contents($opts->url);
+                $file = $this->utils->replace($file, $opts->instance, $opts->unique, true);
+                $file = $this->utils->replace($file, $opts->instance, $opts->unique, true, ["<script>", "</script>"]);
+                $file = $this->utils->replace($file, $opts->instance, $opts->unique, false, ["<style>", "</style>"]);
+                if(@$opts->class){ $file = preg_replace('/'.$opts->unique.'/', $opts->unique." ".$opts->class, $file, 1); }
+                    ob_start();
+                    $_POST = (array) $opts->data;
+                    //$data = $opts->data; extract((array) $opts->data);
+                    eval(" ?>".$file."<?php ");
+                    $file = ob_get_clean();
+                echo $file;
+                echo "<script class='inst_script_tmp'> {$opts->unique}.instance_unique = '{$opts->unique}'; ";
+                    echo "{$opts->unique}.instance_name = '{$opts->instance}'; ";
+                    echo "{$opts->unique}.html = $('.{$opts->unique}').get(0); ";    
+                    echo "{$opts->unique}.html.script = {$opts->unique}; ";
+                    echo "{$opts->unique}.state = new cuppa.state( {$opts->unique}.html ); ";
+                    if(@$opts->no_data){
+                        echo "try{ {$opts->unique}.constructor(); }catch(err){} ";
+                        echo "try{ {$opts->unique}.{$opts->unique}(); }catch(err){} ";
+                    }else{
+                        echo "try{ {$opts->unique}.constructor(".json_encode(@$opts->data)."); }catch(err){} ";
+                        echo "try{ {$opts->unique}.{$opts->unique}(".json_encode(@$opts->data)."); }catch(err){} ";    
+                    }
+                    echo "$('.inst_script_tmp').remove(); ";
+                echo "</script>";
+                if($keep_template){ $this->instanceInclude($opts->url); }
+                return $opts->unique;
+            }
+        /* process php
+            script = url, string with php code;
+            $data = new stdClass();
+        */
+            public function processPHP($script, $data){
+                ob_start();
+                if(!file_exists($script)) eval(" ?>".$file."<?php ");
+                else include $script;
+                $file = ob_get_clean();
+                return $file;
             }
         // includeJS
             public function includeJS($path){ echo "<script>"; include $path; echo "</script>"; }
@@ -332,6 +360,24 @@
             public function langCurrent(){
                 return $this->language->current();
             }
+        /* content
+            key: id or name
+        */
+            public function content($key, $return_column = "content", $return_all = false){
+                $current_language = $this->language->current();
+                $current_country = $this->country->current();
+                $cond = " enabled = 1 ";
+                $cond .= " AND (language = '' OR language = '".@$current_language."') ";
+                $cond .= " AND (countries = '' OR countries LIKE '%\"".$current_country."\"%' ) ";
+                $cond .= " AND countries_not NOT LIKE '%\"".$current_country."\"%' ";
+                $cond .= " AND region = '' ";
+                $cond .= " AND ( show_from <= '". date('Y-m-d') ."' OR show_from = '0000-00-00' ) ";
+                $cond .= " AND ( show_to >= '". date('Y-m-d') ."' OR show_to = '0000-00-00' ) ";
+                $cond .= " AND ( id = '".$key."' OR name = '".$key."' ) ";
+                $data = $this->dataBase->getRow("ex_content", $cond, true);
+                if($return_all) return @$data;
+                else return @$data->{$return_column};
+            }
         // check ssl activate
             public function ssl() {
                 $secure = 1;
@@ -342,51 +388,70 @@
                 return $secure;
             }
             public function isSecure(){ return $this->ssl(); }
-        /* curl */
-            function curl($str){
+        // baseURL
+            public function baseURL($name = "web"){
+                if($this->configuration->base_url) return @$this->configuration->base_url;
+                return $this->getPath($name);
+            }
+        /* curl
+            $data_format = form                 
+            example: 
+                https://url.com/data \
+                       -u user:pass \
+                       -H header_value=value \
+                       -d variable=data \
+                       -d variable2=data \
+        */
+            function curl($str, $data_format = 'form'){
                 $data = explode("\\", $str);
                 $url = trim(substr($data[0], strpos($data[0],"http"))); array_shift($data);
                 $curl = curl_init();
                         curl_setopt($curl, CURLOPT_URL, $url);
-                        curl_setopt($curl, CURLOPT_HEADER, 0);
-                        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, 0);
-                        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); 
-                        curl_setopt($curl, CURLOPT_POST, 1);
+                        curl_setopt($curl, CURLOPT_HEADER, FALSE);
+                        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
+                        curl_setopt($curl, CURLOPT_POST, TRUE);
+                        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); 
                         curl_setopt($curl, CURLOPT_TIMEOUT, 10);
                 $array_header = array();
                 $data_array = array();
                 //++ Analyze
                     for($i = 0; $i < count($data); $i++){
-                        $row = trim($data[$i]);
-                        if(strpos($row,"-u") !== false){                // user:password
-                            $row = trim(str_replace("-u", "",$row));
+                        $row = trim($data[$i]." ");
+                        $hint = trim(strstr($row,' ', true));
+                        $row = trim(strstr($row,' ', false));
+                        if($hint == "-u"){                // user:password
                             $row = str_replace(array("'", '"'), array("", ""), $row);
                             curl_setopt($curl, CURLOPT_USERPWD, $row);
-                        }else if(strpos($row, "-d") !== false ){        // post data
-                            $row = trim(str_replace("-d", "",$row));
+                        }else if($hint == "-d"){        // post data
                             if(strpos($row, "]=") !==  false ){
                                 $row = str_replace(array('"', "'"), array("", ""), $row);
                                 $row = explode("=", $row);
                                 $key = @$row[0]; $value = @$row[1];
                                 $data_array[$key] = $value;
                             }else{
-                                $row = explode("=", $row);
-                                $key = @$row[0]; $value = @$row[1];
-                                $data_array[$key] = $value;
+                                $row2 = explode("=", $row);
+                                if(count($row2) > 1){
+                                    $key = @$row2[0]; $value = @$row2[1];
+                                    $data_array[$key] = $value;
+                                }else{
+                                    array_push($data_array, $row);
+                                }
                             }
-                        }else if(strpos($row, "-H") !== false ){
-                           $row = trim(str_replace("-H", "",$row));
+                        }else if($hint == "-H"){
                            array_push($array_header, $row);
-                        }else if(strpos($row, "-X") !== false ){
-                           $row = trim(str_replace("-X", "",$row));
+                        }else if($hint == "-X"){
                            curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $row);
                         }
                     }
-                    // Add Header
+                    // Add Header                                      
                         curl_setopt($curl, CURLOPT_HTTPHEADER, $array_header);
                     // Add Data
                         if(count($data_array) <= 1) $data_array = @$data_array[0];
-                        curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data_array));
+                        if($data_format == "form"){
+                            curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data_array));
+                        }else{
+                            curl_setopt($curl, CURLOPT_POSTFIELDS, $data_array);
+                        }
                 //--
                 $res = curl_exec($curl); curl_close($curl);
                 return @$res;

@@ -462,7 +462,7 @@
                         <th style="width:100px; text-align:center;"><?php echo @$language->primary_key ?></th>
                         <th>
                             <?php echo @$language->configuration_field ?>
-                            <img class="button_alpha tooltip" class="btn_show_config" title="<?php echo @$language->show_configuration ?>" onclick="edit_table.showConfInput()" src="media/upload_files/icon-eye.svg" style="position: absolute; top: 10px; right: 10px; height: 15px; cursor: default; cursor: pointer;" />
+                            <img class="button_alpha tooltip" class="btn_show_config" title="<?php echo @$language->show_configuration ?>" onclick="edit_table.showConfInput()" src="templates/default/images/template/icon-eye.svg" style="position: absolute; top: 10px; right: 10px; height: 15px; cursor: default; cursor: pointer;" />
                         </th>
                     </tr>
                     <?php for($i = 0; $i < count($infoColumbs); $i++){ ?>

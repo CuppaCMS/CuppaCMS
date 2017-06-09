@@ -17,7 +17,7 @@
             if(!$config) $config = '{"folder":"media/upload_files"}';
 			$configuration = new Configuration();
 			if(!$value) $value = "";
-			$this->errorMessage = ($errorMessage) ? $errorMessage : $language->this_field_is_required;
+			$this->errorMessage = ($errorMessage) ? $errorMessage : @$language->this_field_is_required;
 			$this->config = json_decode($config);
 			$field = "<div class='file_field' style='position:relative;'>";
 			$field .= "<input $eventsString id='".$name."' name='".$name."' value='$value' ";

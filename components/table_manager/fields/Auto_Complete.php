@@ -23,7 +23,7 @@
 			$this->value = $value;
 			$this->config = json_decode($config);
             $this->required = $required;
-            $this->errorMessage = ($errorMessage) ? $errorMessage : $language->this_field_is_required;
+            $this->errorMessage = ($errorMessage) ? $errorMessage : @$language->this_field_is_required;
             $this->extraParams = $extraParams;
             
 			if(is_array($this->config->data)){

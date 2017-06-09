@@ -191,6 +191,12 @@
             for($i = 0; $i < count($include_files); $i++){
                 if( $include_files[$i]->add_to == "form" && $include_files[$i]->position == "top" ){
                     $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                    if(strpos($include_file, "../") !== false){
+                        $f_backs = substr_count($include_file,  "../");
+                        $back_string = str_repeat("/..", $f_backs);
+                        $file = str_replace("../", "", $include_files[$i]->path);
+                        $include_file = realpath($cuppa->getDocumentPath().$back_string)."/".$file;
+                    }
                     @include($include_file);
                 }
             } 
@@ -212,7 +218,7 @@
                         <?php if( $cuppa->permissions->getValue(2,$view, 3) && !@$_POST["id"] ){ ?>
                             <input class="button_blue btn_save_and_edit" type="button" value="<?php echo $language->save_edit ?>" onclick="edit_admin_table.save('save_and_edit')" />
                         <?php }else if($cuppa->permissions->getValue(2,$view, 4) && @$_POST["id"]){ ?>
-                            <input class="button_blue btn_cancel" type="button" value="<?php echo $language->save_edit ?>" onclick="edit_admin_table.save('save_and_edit')" />
+                            <input class="button_blue btn_save_and_edit" type="button" value="<?php echo $language->save_edit ?>" onclick="edit_admin_table.save('save_and_edit')" />
                         <?php } ?>
                     <?php } ?>
                     <?php if( !isset($_REQUEST["cancel"]) || @$_REQUEST["cancel"] == "true"){ ?>
@@ -239,6 +245,12 @@
                     for($i = 0; $i < count($include_files); $i++){
                         if( $include_files[$i]->add_to == "form" && $include_files[$i]->position == "before_to_fields" ){
                             $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                            if(strpos($include_file, "../") !== false){
+                                $f_backs = substr_count($include_file,  "../");
+                                $back_string = str_repeat("/..", $f_backs);
+                                $file = str_replace("../", "", $include_files[$i]->path);
+                                $include_file = realpath($cuppa->getDocumentPath().$back_string)."/".$file;
+                            }
                             @include($include_file);
                         }
                     } 
@@ -423,6 +435,12 @@
                     for($i = 0; $i < count($include_files); $i++){
                         if( $include_files[$i]->add_to == "form" && $include_files[$i]->position == "after_to_fields" ){
                             $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                            if(strpos($include_file, "../") !== false){
+                                $f_backs = substr_count($include_file,  "../");
+                                $back_string = str_repeat("/..", $f_backs);
+                                $file = str_replace("../", "", $include_files[$i]->path);
+                                $include_file = realpath($cuppa->getDocumentPath().$back_string)."/".$file;
+                            }
                             @include($include_file);
                         }
                     } 
@@ -435,6 +453,12 @@
             for($i = 0; $i < count($include_files); $i++){
                 if( $include_files[$i]->add_to == "form" && $include_files[$i]->position == "end" ){
                     $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                    if(strpos($include_file, "../") !== false){
+                        $f_backs = substr_count($include_file,  "../");
+                        $back_string = str_repeat("/..", $f_backs);
+                        $file = str_replace("../", "", $include_files[$i]->path);
+                        $include_file = realpath($cuppa->getDocumentPath().$back_string)."/".$file;
+                    }
                     @include($include_file);
                 }
             } 

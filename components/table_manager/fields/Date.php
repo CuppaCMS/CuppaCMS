@@ -19,7 +19,7 @@
 			$this->value = $value;
 			$this->config = json_decode($config);
 			$this->required = $required;
-			$this->errorMessage = ($errorMessage) ? $errorMessage : $language->this_field_is_required;
+			$this->errorMessage = ($errorMessage) ? $errorMessage : @$language->this_field_is_required;
 			$this->eventsString = $eventsString;
 			if($this->config->type == "datePicker"){
 				return $this->GetDataPiker();
@@ -29,7 +29,7 @@
 		}
 		private function GetDataPiker(){
 			$field = "";
-			$field.= "<input title='$this->errorMessage' $this->eventsString type='text' id='$this->name' name='$this->name' readonly='readonly' class='text_field readonly ";
+			$field.= "<input title='$this->errorMessage' $this->eventsString type='text' id='$this->name' name='$this->name' class='text_field  ";
 			if($this->required) $field.= " required ";
 			$field.= " ' ";
 			if($this->config->config == "auto_today_selected" && !trim($this->value)) $field.= " value='".date("Y-m-d")."'  ";

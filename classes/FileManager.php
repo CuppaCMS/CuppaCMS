@@ -1,7 +1,7 @@
 <?php
     class FileManager{
         private static $instance;
-        public function FileManager(){ }
+        public function __construct(){ }
         public static function getInstance() {
 			if (self::$instance == NULL) { self::$instance = new FileManager(); } 
 			return self::$instance;

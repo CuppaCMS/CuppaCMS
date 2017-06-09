@@ -29,7 +29,7 @@
             menu.showCharger();
             var data = {}
                 data.file = cuppa.urlToObject($(".form_file").serialize());
-                data.file["tracking_codes"] = $.base64Encode(data.file["tracking_codes"]);
+                data.file["code"] = $.base64Encode(data.file["code"]);
                 data.file = cuppa.jsonEncode(data.file);
                 data["function"] = "saveConfigData";
             jQuery.ajax({url:"classes/ajax/Functions.php", type:"POST", data:data, success:Ajax_Result});
@@ -45,6 +45,15 @@
             cuppa.managerURL.setParams({path:""}, true);
         }
     //--
+    //++ c+s save
+        configuration.ctr_s = function(event){
+            if((event.ctrlKey || event.metaKey) && event.which == 83) {
+                event.preventDefault();
+                try{ configuration.save('save_and_edit'); }catch(err){ };
+                return false;
+            };
+        }; $(document).off("keydown").on("keydown", configuration.ctr_s);
+    //--
     //++ init
         configuration.init = function(){
             //++ Auto select items
@@ -57,6 +66,7 @@
                 $(".ssl").val('<?php echo @$cuppa->configuration->ssl ?>');
                 $(".lateral_menu").val('<?php echo @$cuppa->configuration->lateral_menu ?>');
             //--
+            cuppa.aceEditor(".configuration [name=code]", "100%", "600px","php")
             cuppa.tooltip();
             cuppa.selectStyle(".configuration select");
             //++ Auto select tab
@@ -82,7 +92,7 @@
         <div ref="database" class="tab"  ><div class="line"></div><?php echo $language->database ?></div>
         <div ref="files" class="tab" ><div class="line"></div><?php echo $language->files ?></div>
         <div ref="email" class="tab"  ><div class="line"></div><?php echo $language->email ?></div>
-        <div ref="stats" class="tab"  ><div class="line"></div><?php echo $language->stats ?></div>
+        <div ref="code" class="tab"  ><div class="line"></div><?php echo $language->code ?></div>
     </div>
     <div class="contents">
         <form class="form_file">
@@ -98,8 +108,8 @@
             <div class="tab_content email" style="display: none;">
                 <?php include "html/email.php"; ?>
             </div> 
-            <div class="tab_content stats" style="display: none;">
-                <?php include "html/stats.php"; ?>
+            <div class="tab_content code" style="display: none;">
+                <?php include "html/code.php"; ?>
             </div>
         </form>
     </div>

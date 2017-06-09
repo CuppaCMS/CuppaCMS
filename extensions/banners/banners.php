@@ -4,7 +4,7 @@
     $language = $cuppa->language->load("web");
     $current_language = $cuppa->language->current();
     $current_country = $cuppa->country->current();
-    if(!@$path) $path = $cuppa->utils->getUrlVars(@$_POST["path"]);
+    if(!@$path) $path = $cuppa->utils->getUrlVars(@$_POST["path"], false, $language, true);
     //section
         if(@$banners_ids){
             // example: $banners_ids = '13,42,20';
@@ -59,6 +59,8 @@
         $cond = " enabled = 1 ";
         $cond .= " AND (language = '' OR language = '".@$current_language."') AND id IN (".@$banners_ids.") ";
         $cond .= " AND (countries LIKE '' OR countries LIKE '%\"".$current_country."\"%' ) ";
+        $cond .= " AND ( show_from <= '". date('Y-m-d') ."' OR show_from = '0000-00-00' ) ";
+        $cond .= " AND ( show_to >= '". date('Y-m-d') ."' OR show_to = '0000-00-00' ) ";
         $banners = $cuppa->dataBase->getList("ex_banners", $cond, "", "FIELD(id, ".$banners_ids.")", true);
 ?>
 <?php if(@$banners){ ?>

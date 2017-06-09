@@ -7,7 +7,7 @@
 		public $password = "";
 		private $con;
 		
-		public function DataBase($db = "", $host = "", $user = "", $password = ""){
+		public function __construct($db = "", $host = "", $user = "", $password = ""){
 			if($db) $this->db = $db; if($host) $this->host = $host; if($user) $this->user = $user; if($password) $this->password = $password;
             if(!$this->db || !$this->user) return "No database data";
             $this->con = mysqli_connect($this->host, $this->user, $this->password, $this->db);
@@ -168,6 +168,7 @@
                 if(!$condition) return;
                 $data = $this->getRow($table, $condition, true);
                 $key = $this->getKeyFromTable($table);
+                if(@$data->alias) $data->alias = $data->alias.uniqid();
                 unset($data->{$key}); $data = $this->ajust($data, true, false);
                 return $this->insert($table, $data);
             }
@@ -250,7 +251,13 @@
 					return $result;
 				}
 				return null;
-			} 
+			}
+            public function sqlMultiQuery($sql){
+                if (mysqli_multi_query($this->con, $sql)) {
+                    do { }while (mysqli_next_result($this->con));
+                }
+                return 1;
+            }
             public function getColumn($table, $return_column, $condition = "", $limit = "", $order_by = ""){
                 $info = $this->getList($table, $condition, $limit, $order_by, true);
                 return @$info[0]->{$return_column};
@@ -299,6 +306,7 @@
                                     $object[$key] = str_replace("''","'", $object[$key]);
                                 }
                             }else{
+                                $value = str_replace("'", "\'", $value);
                                 $object[$key] = "'".$value."'";
                                 $object[$key] = str_replace("''","'", $object[$key]);   
                             }

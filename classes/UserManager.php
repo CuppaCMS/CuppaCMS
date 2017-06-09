@@ -1,7 +1,7 @@
 <?php
 	class UserManager{
 		private static $instance;
-		public function UserManager(){ }
+		public function __construct(){ }
 		public static function getInstance() {
 			if (self::$instance == NULL) { self::$instance = new UserManager(); } 
 			return self::$instance;
@@ -9,11 +9,10 @@
         /* $access_type: admin_login, site_login 
 		      $user = username, email
         */
-        public function setSession($access_type = "admin_login", $user = "", $password = ""){
+        public function setSession($access_type = "admin_login", $user = "", $password = "", $return_data = false){
             if(trim($user)) $_POST["user"] = trim($user); if(trim($password)) $_POST["password"] = trim($password);
             $_POST["password_no_enconde"] = @$_POST["password"];
 			$configuration = new Configuration();
-			$security = Security::getInstance();
 			$db = DataBase::getInstance();
             $cuppa = Cuppa::getInstance();
             //++ Encode types
@@ -22,7 +21,7 @@
                 else if($configuration->global_encode == "sha1Salt" && @$_POST["password"]) @$_POST["password"] = $cuppa->utils->sha1Salt($db->scape(@$_POST["password"]), $cuppa->configuration->global_encode_salt);
             //--            
 			$sql = "SELECT * FROM ".$configuration->table_prefix."users AS u WHERE enabled = '1' AND (username = '".$db->scape(@$_POST["user"])."' OR email = '".$db->scape(@$_POST["user"])."') AND password = '".@$_POST["password"]."'";
-			$result = $db->sql($sql);
+            $result = $db->sql($sql);
 			if($result == 1 || !$result){
 			    @$_POST["email"] = @$_POST["user"];
 			    return $this->setSessionByEmail($access_type, @$_POST["email"], @$_POST["password_no_enconde"]);
@@ -34,16 +33,19 @@
                     foreach ($result[0] as $key => $value){ if($key != "password") $this->setVar($key, $value); }
                     foreach (@$access as $key => $value){ if($key != "id" || $key != "enabled")  $this->setVar($key, @$value); };
                 //--
-                return true;
+                if($return_data){
+                    return $_SESSION['cuSession']->user;                    
+                }else{ 
+                    return true;
+                }
 			}
             return false;
 		}
-        public function login($access_type = "admin_login", $user = "", $password = ""){
-            return $this->setSession($access_type, $user, $password);  
+        public function login($access_type = "admin_login", $user = "", $password = "", $return_data = false){
+            return $this->setSession($access_type, $user, $password, $return_data);  
         }
         public function setSessionById($access_type = "admin_login", $id){
 			$configuration = new Configuration();
-			$security = Security::getInstance();
 			$db = DataBase::getInstance();
             $cuppa = Cuppa::getInstance();
 			$sql = "SELECT * FROM ".$configuration->table_prefix."users AS u WHERE enabled = '1' AND id = '".$id."'";
@@ -64,7 +66,6 @@
         public function setSessionByEmail($access_type = "admin_login", $email = "", $password = ""){
             if(trim($email)) $_POST["email"] = trim($email); if(trim($password)) $_POST["password"] = trim($password);
 			$configuration = new Configuration();
-			$security = Security::getInstance();
 			$db = DataBase::getInstance();
             $cuppa = Cuppa::getInstance();
             //++ Encode types
@@ -88,15 +89,16 @@
 			}
             return false;
 		}
-        public function getUserInfo(){
+        public function getUserInfo($id){
             @session_start();
             $cuppa = Cuppa::getInstance();
-            $user = $cuppa->db->getRow("cu_users", "id = ".@$cuppa->user->getValue("id"), true);
+            if(!$id) $id = $cuppa->user->getValue("id");
+            $user = $cuppa->db->getRow("cu_users", "id = ".$id, true);
             return $user;
         }
-        public function getInfo(){ return $this->getUserInfo(); }
-        public function getUser(){ return $this->getUserInfo(); }
-        public function info(){ return $this->getUserInfo(); }
+        public function getInfo($id){ return $this->getUserInfo($id); }
+        public function getUser($id){ return $this->getUserInfo($id); }
+        public function info($id){ return $this->getUserInfo($id); }
         public function update($data, $return_data = false){
             $cuppa = Cuppa::getInstance();
             if(!$cuppa->user->getValue("id")) return 0;

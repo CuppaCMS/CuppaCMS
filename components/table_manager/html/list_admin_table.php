@@ -41,10 +41,10 @@
                 //++ Get default value
                     $permission_filter_default = $cuppa->permissions->getDefault("4", $view.",".$filters_params[$i],"10");
                     $permission_filter_default = $cuppa->utils->evalString($permission_filter_default);
-                    if($permission_filter_default == "session" || $permission_filter_default == "user") $permission_filter_default = $cuppa->user->value("id");
-                    if(!isset($_REQUEST["filter_".$filters_params[$i]]) && $permission_filter_default) @$_REQUEST["filter_".$filters_params[$i]] = @$permission_filter_default;
+                    if($permission_filter_default === "session" || $permission_filter_default === "user") $permission_filter_default = $cuppa->user->value("id");
+                    if(!isset($_REQUEST["filter_".$filters_params[$i]]) && $permission_filter_default !== "") @$_REQUEST["filter_".$filters_params[$i]] = @$permission_filter_default;
                 //--
-                if(@$_REQUEST["filter_".$filters_params[$i]] != "" && $field_types->{$filters_params[$i]}->type != "Date"){
+                if( (string) @$_REQUEST["filter_".$filters_params[$i]] != "" && $field_types->{$filters_params[$i]}->type != "Date"){
                     if($field_types->{$filters_params[$i]}->type == "Select_List"){
                         $conditions .= " AND " . $view.".".$filters_params[$i] . " LIKE '%" . $_REQUEST["filter_".$filters_params[$i]] . "%' ";
                     }else{
@@ -358,7 +358,7 @@
                     for($l = 0; $l < count($option_panel); $l++){
                         $tooltip = $cuppa->language->getValue(@$option_panel[$l]->tooltip, $language);
                         $field .= "<a style='margin-left:2px; margin-right:2px' title='".$tooltip."' class='button link tooltip button_".$l."' href='".$option_panel[$l]->url;
-                        $array_var_name = @$cuppa->utils->getUrlVars($option_panel[$l]->var_name);
+                        parse_str($option_panel[$l]->var_name, $array_var_name);
                         if($array_var_name){
                             foreach ($array_var_name as $key=>$value){ 
                                 if(@$fields[$value."_real_data"])
@@ -500,6 +500,12 @@
                 for($i = 0; $i < count($include_files); $i++){
                     if( $include_files[$i]->add_to == "list" && $include_files[$i]->position == "top" ){
                         $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                        if(strpos($include_file, "../") !== false){
+                            $f_backs = substr_count($include_file,  "../");
+                            $back_string = str_repeat("/..", $f_backs);
+                            $file = str_replace("../", "", $include_files[$i]->path);
+                            $include_file = realpath($cuppa->getDocumentPath().$back_string)."/".$file;
+                        }
                         @include($include_file);
                     }
                 } 
@@ -518,11 +524,11 @@
                         <?php
                             $permission_filter_value = $cuppa->permissions->getValue("4", $view.",".$filters_params[$i],"10");
                             if($permission_filter_value != "disable" && @$field_types->{$filters_params[$i]}){
+                                $label = $cuppa->language->getValue($field_types->{$filters_params[$i]}->label, $language);
                         ?>
-                            <div class="filter_content" style="margin-bottom: 5px; float: left; <?php echo ($permission_filter_value == "hidden") ? "display: none;" : "" ; ?>">
+                            <div class="filter_content" title="<?php echo @$label ?>" style="margin-bottom: 5px; float: left; <?php echo ($permission_filter_value == "hidden") ? "display: none;" : "" ; ?>">
                                 <?php
                                     $type = @$field_types->{$filters_params[$i]}->type;
-                                    $label = $cuppa->language->getValue($field_types->{$filters_params[$i]}->label, $language);
                                     if(!@$field_types->language_file_reference) $field_types->language_file_reference = "administrator";
                                     if($type == "Date"){
                                         echo '<span >'.$label.': '.'</span>';
@@ -571,7 +577,7 @@
                                         if($value){
                                             ${"tmp_filter_".$filters_params[$i]} = $value;
                                         }
-                                        if($value == "session" || $value == "user") $value = $cuppa->user->value("id");
+                                        if($value === "session" || $value === "user") $value = $cuppa->user->value("id");
                                         echo $selectItem->GetItem("filter_".$filters_params[$i], $value, $config, false, "",$extraParams, array("", ucfirst($label)), true, $field_types->language_file_reference);
                                     }
                                 ?>
@@ -598,19 +604,19 @@
                 <div class="tools">
                     <a style="margin-right: 5px; background: none; border: 0px; border-radius: 50px;" class="tool_button tooltip" title="<?php echo @$language->reload_list ?>" onclick="list_admin_table.submit('reload')" ><span style="color: #DDD;">f</span></a>
                     <?php if($cuppa->permissions->getValue(2,$view, "3")) {?>
-            	        <a class="tool_button tooltip tool_left" title="<?php echo @$language->tooltip_add_item ?>" onclick="list_admin_table.submit('new')"><span>a</span></a>
+            	        <a class="add tool_button tooltip tool_left" title="<?php echo @$language->tooltip_add_item ?>" onclick="list_admin_table.submit('new')"><span>a</span></a>
             		<?php } ?>
                     <?php if($cuppa->permissions->getValue(2,$view, "4")) {?>
             	        <a class="edit tool_button tooltip" title="<?php echo @$language->tooltip_edit_item ?>" onclick="list_admin_table.submit('edit')"><span>b</span></a>
             		<?php } ?>
                     <?php if($cuppa->permissions->getValue(2,$view, "12")){ ?>
-            	        <a class="tool_button tooltip" title="<?php echo @$language->tooltip_duplicate_item ?>" onclick="list_admin_table.submit('duplicate')"><span>g</span></a>
+            	        <a class="duplicate tool_button tooltip" title="<?php echo @$language->tooltip_duplicate_item ?>" onclick="list_admin_table.submit('duplicate')"><span>g</span></a>
                     <?php } ?>
                     <?php if($cuppa->permissions->getValue(2,$view, "5")){ ?>
-            	        <a class="tool_button tooltip" title="<?php echo @$language->tooltip_delete_item ?>" onclick="list_admin_table.submit('delete')"><span>c</span></a>
+            	        <a class="delete tool_button tooltip" title="<?php echo @$language->tooltip_delete_item ?>" onclick="list_admin_table.submit('delete')"><span>c</span></a>
                     <?php } ?>
                      <?php if($cuppa->permissions->getValue(2, $view, "8")){ ?>
-                        <a class="tool_button tooltip tool_right" href="classes/DownloadBigFile.php" target="_self" title="<?php echo @$language->tooltip_download_item ?>"><span>d</span></a>
+                        <a class="download tool_button tooltip tool_right" href="classes/DownloadBigFile.php" target="_self" title="<?php echo @$language->tooltip_download_item ?>"><span>d</span></a>
                 	<?php } ?>  
                 </div>
             </div>
@@ -622,6 +628,12 @@
                         for($i = 0; $i < count($include_files); $i++){
                             if( $include_files[$i]->add_to == "list" && $include_files[$i]->position == "before_to_table" ){
                                 $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                                if(strpos($include_file, "../") !== false){
+                                    $f_backs = substr_count($include_file,  "../");
+                                    $back_string = str_repeat("/..", $f_backs);
+                                    $file = str_replace("../", "", $include_files[$i]->path);
+                                    $include_file = realpath($cuppa->getDocumentPath().$back_string)."/".$file;
+                                }
                                 @include($include_file);
                             }
                         } 
@@ -755,6 +767,12 @@
                         for($i = 0; $i < count($include_files); $i++){
                             if( $include_files[$i]->add_to == "list" && $include_files[$i]->position == "after_to_table" ){
                                 $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                                if(strpos($include_file, "../") !== false){
+                                    $f_backs = substr_count($include_file,  "../");
+                                    $back_string = str_repeat("/..", $f_backs);
+                                    $file = str_replace("../", "", $include_files[$i]->path);
+                                    $include_file = realpath($cuppa->getDocumentPath().$back_string)."/".$file;
+                                }
                                 @include($include_file);
                             }
                         } 
@@ -782,6 +800,12 @@
                 for($i = 0; $i < count($include_files); $i++){
                     if( $include_files[$i]->add_to == "list" && $include_files[$i]->position == "end" ){
                         $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
+                        if(strpos($include_file, "../") !== false){
+                            $f_backs = substr_count($include_file,  "../");
+                            $back_string = str_repeat("/..", $f_backs);
+                            $file = str_replace("../", "", $include_files[$i]->path);
+                            $include_file = realpath($cuppa->getDocumentPath().$back_string)."/".$file;
+                        }
                         @include($include_file);
                     }
                 } 

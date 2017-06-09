@@ -4,7 +4,7 @@
     $language = $cuppa->language->load("web");
     $current_language = $cuppa->language->current();
     $current_country = $cuppa->country->current();
-    if(!@$path) $path = $cuppa->utils->getUrlVars(@$_POST["path"]);
+    if(!@$path) $path = $cuppa->utils->getUrlVars(@$_POST["path"], false, $language, true);
     // example: $tiles = '13,42,20';
     $cond = "enabled = 1 AND (language = '' OR language = '".@$current_language."') AND id IN (".@$tiles.")";    
     $tiles = $cuppa->dataBase->getList("ex_tiles", $cond, "", "FIELD(id, ".$tiles.")", true);

@@ -1,7 +1,7 @@
 <?php
 	class ImageManager{
 	    private static $instance;
-        public function ImageManager(){ }
+        public function __construct(){ }
         public static function getInstance() {
 			if (self::$instance == NULL) { self::$instance = new ImageManager(); } 
 			return self::$instance;

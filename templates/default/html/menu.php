@@ -181,7 +181,7 @@
 </script>
 <div class="menu">
     <div class="logo_area">
-        <a href="#"><div class="logo" style="background-image: url(templates/default/images/template/logo.png);"></div></a>
+        <a href="#" class="logo" style="background-image: url(templates/default/images/template/logo.png);" ></a>
         <div class="settings_button" onclick="menu.collapseMenu(); menu.toggleMenuMobile();" ></div>
     </div>
     <div class="line" style="display: none;"></div>

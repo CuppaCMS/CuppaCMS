@@ -11,7 +11,7 @@
             $language = $this->cuppa->language->load();
 			$this->required = $required;
 			$this->config = json_decode($config);
-			$this->errorMessage = ($errorMessage) ? $errorMessage : $language->this_field_is_required;
+			$this->errorMessage = ($errorMessage) ? $errorMessage : @$language->this_field_is_required;
 			$field = "<input $eventsString id='".$name."' name='".$name."' ";
             if($value) $field .= "value='$value'"; else  $field .= "value='". @eval('return '.@$this->config->script.';') ."'";
 			$field .= " class='text_field "; 

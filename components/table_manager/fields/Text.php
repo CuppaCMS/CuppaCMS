@@ -14,7 +14,7 @@
             $language = $this->cuppa->language->load();
             $this->required = $required;
 			$this->config = json_decode($config);
-			$this->errorMessage = ($errorMessage) ? $errorMessage : $language->this_field_is_required;
+			$this->errorMessage = ($errorMessage) ? $errorMessage : @$language->this_field_is_required;
             if(@$this->config->type == "password" && @$this->config->new != 1 ){
                 if(@$this->button_lang_reference){
                     $language = LanguageManager::getInstance()->load();

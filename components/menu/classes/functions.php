@@ -13,7 +13,7 @@
                 $data["description"] = "'".$cuppa->dataBase->escape($_POST["description_field"])."'";
     			$data["menu_item_type_id"] = "'".$cuppa->dataBase->escape($_POST["menu_item_type_id"])."'";
     			$data["menu_item_params"] = "'".str_replace("\\", "",$_POST["menu_item_params"])."'";
-    			$data["parent_id"] = "'".$cuppa->dataBase->escape($_POST["parent_field"])."'";
+    			$data["parent_id"] = ($_POST["parent_field"]) ? "'".$cuppa->dataBase->escape($_POST["parent_field"])."'" : '0';
     			$data["menus_id"] = "'".$cuppa->dataBase->escape($_POST["menu_field"])."'";
                 $data["language"] = "'".$cuppa->dataBase->escape($_POST["language_field"])."'";
     			$data["enabled"] = "'".$cuppa->dataBase->escape($_POST["enabled_field"])."'";

@@ -1,7 +1,7 @@
 <?php
     class View{
         private static $instance;
-        public function View(){ }
+        public function __construct(){ }
         public static function getInstance() {
 			if (self::$instance == NULL) { self::$instance = new View(); } 
 			return self::$instance;

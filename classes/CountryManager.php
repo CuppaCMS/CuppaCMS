@@ -1,7 +1,7 @@
 <?php
     class CountryManager{
         private static $instance;
-        private function CountryManager(){ }
+        private function __construct(){ }
         public static function getInstance() {
 			if (self::$instance == NULL) { self::$instance = new CountryManager(); } 
 			return self::$instance;
@@ -88,8 +88,11 @@
                 $utils = Utils::getInstance();
                 if(!@$path) $path = @$utils->getUrlVars(@$_REQUEST["path"]);
                 $country = explode("-", @$path[0]); 
-                if(@$country[1]) $country = @$country[1];
-                else $country = @$country[0];
+                if(@$country[1]){ $country = @$country[1];
+                }else{ 
+                    $country = ""; 
+                    //$country = @$country[0];
+                }
                 return $country;
             }
     }

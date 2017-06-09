@@ -7,7 +7,7 @@
         public $pages_info = true;
         public $add_separator = false;
         
-		public function Paginator($limit = 20, $submit_form = "form", $condition_encode = false, $function_name = "cuppa.changePage"){
+		public function __construct($limit = 20, $submit_form = "form", $condition_encode = false, $function_name = "cuppa.changePage"){
 		  $this->limit = $limit;
           $this->submit_form = $submit_form;
           $this->function_name = $function_name;

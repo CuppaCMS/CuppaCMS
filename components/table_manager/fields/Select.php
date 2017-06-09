@@ -34,7 +34,7 @@
                 $this->config = @$this->config->data;
             }
 			$this->required = $required;
-			$this->errorMessage = ($errorMessage) ? $errorMessage : $language->this_field_is_required;
+			$this->errorMessage = ($errorMessage) ? $errorMessage : @$language->this_field_is_required;
 			$this->eventsString = $eventsString;
 			$this->include_clear_item = $include_clear_item;
 			if(is_array($this->config)){

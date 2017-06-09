@@ -12,8 +12,8 @@
                         data.method = "consult";
                         //data.sql = "SELECT u.*, ug.name as 'group_name' FROM cu_users AS u JOIN cu_user_groups AS ug ON u.user_group_id = ug.id";
                         //data.data = JSON.stringify({content:"dddd", date:"NOW()"});
-                    var headers = {"key": "yX3ReNsPdELUCaeFONbMpa8hyKlXk889"};
-                        $.ajax({url:"http://int-server-tree.com/cuppa_test/administrator/api/", method:"POST", data:data, headers:headers}).done(function(result){
+                    var headers = {"key": "jk1jo9gQstam1xws5eI7DXkLYs5snETm"};
+                        $.ajax({url:"http://localhost/projects/tgolden_group/cuppa/www/administrator/api/", method:"POST", data:data, headers:headers}).done(function(result){
                             result = JSON.parse(result);
                             trace(result);
                         });

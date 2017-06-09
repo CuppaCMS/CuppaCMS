@@ -91,4 +91,10 @@
             </select>
         </td>
     </tr>
+    <tr>
+        <td><?php echo $cuppa->langValue("Base URL", $language) ?></td>
+        <td>
+            <input type="text" name="base_url" value="<?php echo @$cuppa->configuration->base_url; ?>" />
+        </td>
+    </tr>
 </table>

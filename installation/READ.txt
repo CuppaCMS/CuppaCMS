@@ -1,11 +1,11 @@
 . Clear table_log
-. Clear folders inside js\filemanager\thumbs
 . Export all database on script.sql
 . Delete the rows on table cu_users
 . Check the Configuration Script in 'installation\html\steps\installation_finished.php' with 'Configuration.php'
 . Copy 'administrator' to new folder 'administrator'
 . Remove extensions that not necessary extensions/
 . Remove .git files
+. Clear folders inside js\filemanager\thumbs
 . Reset data base info on Configuration.php 
 	$db, 
 	$tracking_codes

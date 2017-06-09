@@ -1,7 +1,7 @@
 <?php
 	class Utils{
 	    private static $instance;
-		public function Utils(){ }
+		public function __construct(){ }
         public static function getInstance() {
 			if (self::$instance == NULL) { self::$instance = new Utils(); } 
 			return self::$instance;
@@ -219,15 +219,28 @@
             }
         // Get a array with all values in the url, example: ?/news/18-title-article 
         // $language_reference = the file json loaded if you want try convert translate or convert the path
-            function getUrlVars($path = null, $number_return = false, $language_reference_file = null, $convert_to_friendy_url = false){
+        // case = upper, lower, none
+            function getUrlVars($path = null, $number_return = false, $language_reference_file = null, $convert_to_friendy_url = false, $case = "none"){
                 if(is_array($path)) $path = join("/", $path);
                 if($path === null) $path = trim(@$_SERVER["QUERY_STRING"]);
                 if($path === null) $path = trim(@$_SERVER["PATH_INFO"]);
                 $path = str_replace("path=", "", $path);
                 $path = htmlspecialchars($path);
                 $tmp_array = explode('/', $path);
+                
+                $last_element = array_pop($tmp_array);
+                $get = "";
+                if(strpos($last_element, "&") !== false){
+                    $last_element = explode("&", $last_element);
+                    $first_part = @array_shift($last_element);
+                    if($first_part) array_push($tmp_array, $first_part);
+                    $get = join("&", $last_element);
+                }else{
+                    array_push($tmp_array, $last_element);
+                }
                 $array = array();
-                foreach($tmp_array as $row){  
+                foreach($tmp_array as $index=>$row){
+                    if($index == count($tmp_array)-1 && strpos($row, "=") !== false ){ $row = @explode("&", $row); $row = @$row[0]; }
                     if($row){
                         $number_value = $row;
                         if($number_return){
@@ -242,37 +255,28 @@
                                     $row = (@$row_translated) ? @$row_translated : $row;
                                     if($convert_to_friendy_url) $row = $this->getFriendlyUrl($row);
                                 }
-                                array_push($array, @$row);
+                                if($case == "upper") @$row = @strtoupper($row);
+                                if($case == "lower") @$row = @strtolower($row);
                             }
                         }else{
                             $row = explode(".",$row);
                             $row = @$row[0];
                             if(@$language_reference_file){
-                                    $row_translated = @$this->getKeyFromValue($row, $language_reference_file);
-                                    $row = (@$row_translated) ? @$row_translated : $row;
-                                    if($convert_to_friendy_url) $row = $this->getFriendlyUrl($row);
-                                }
+                                $row_translated = @$this->getKeyFromValue($row, $language_reference_file);
+                                $row = (@$row_translated) ? @$row_translated : $row;
+                                if($convert_to_friendy_url) $row = $this->getFriendlyUrl($row);
+                            }
+                            if($case == "upper") @$row = @strtoupper($row);
+                            if($case == "lower") @$row = @strtolower($row);
                             array_push($array, @$row);
                         }
                     } 
                 }
                 //++ substract GET values
-                    if(count($array)){
-                        $last_item = "&".@$array[count($array)-1];
-                        $last_item = str_replace("amp;", "", $last_item);
-                        $last_item = preg_replace('/&+/', '&', $last_item);
-                        $get_data = explode("&", $last_item);
-                        array_shift($get_data);
-                        if(@strpos($get_data[0], "=") !== false){
-                            
-                        }else{
-                            @$array[count($array)-1] = $get_data[0];
-                        }
-                        for($i = 0; $i < count($get_data); $i++){
-                            $item = explode("=", $get_data[$i]);
-                            $item = str_replace("?", "", $item);
-                            if(@$item[1] != '') $array[$item[0]] = $item[1];
-                        }
+                    if($get){
+                        $get = "&".$get; $get = str_replace("amp;", "", $get); $get = preg_replace('/&+/', '&', $get);
+                        parse_str($get, $get);
+                        $array = array_merge($array, $get);
                     }
                 //--
                 if(count($array)) return $array;
@@ -494,7 +498,7 @@
                 if (!preg_match_all($pattern, $u_agent, $matches)) { }
                 $i = count($matches['browser']);
                 if ($i != 1) {
-                    if (strripos($u_agent,"Version") < strripos($u_agent,$ub)){
+                    if (strripos($u_agent,"Version") < strripos($u_agent,@$ub)){
                         $version= $matches['version'][0];
                     }
                     else {

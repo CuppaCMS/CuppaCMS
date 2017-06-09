@@ -15,7 +15,7 @@
             $this->language = $this->cuppa->language->load();
             $this->required = $required;
 			$this->config = json_decode($config);            
-			$this->errorMessage = ($errorMessage) ? $errorMessage : $this->language->this_field_is_required;
+			$this->errorMessage = ($errorMessage) ? $errorMessage : @$this->language->this_field_is_required;
 			// Create Field
                 $field = "";      
     			for($i = 0; $i < count($this->config->data); $i ++){
