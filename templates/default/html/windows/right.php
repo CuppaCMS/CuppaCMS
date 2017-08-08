@@ -14,7 +14,7 @@
         bottom: 0px;
         right: 0px;
         width: 93%;
-        z-index: auto;
+        z-index: auto ;
         right: -100%;
         overflow: auto;
         overflow-x: hidden;

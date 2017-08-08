@@ -67,7 +67,7 @@ stage.currentLanguage;
         try{ menu.showCharger(true) }catch(err){};
         cuppa.moveContent("body", false, true,0,0,0.3, Cubic.easeInOut);
         var blockade = cuppa.blockade({duration:0.2, name:"blockade_w_right", target:".wrapper", opacity:0.2});
-        var content = cuppa.setContent({url:"templates/default/html/windows/right.php", insideOf:".wrapper", name:name, preload:false, data:data});
+        var content = cuppa.setContent({url:"templates/default/html/windows/right.php", insideOf:".wrapper", zIndex:"auto", name:name, preload:false, data:data});
         jQuery(content).bind("complete", function(){
             try{ menu.showCharger(false) }catch(err){};
         });

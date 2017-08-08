@@ -32,7 +32,7 @@
                 tiles.init = function(){
                     cuppa.addEventListener("resize", tiles.resize, window, "tiles"); tiles.resize(); $(".tiles img").load(tiles.resize); TweenMax.delayedCall(0.1, tiles.resize);
                     cuppa.addEventListener("removed", tiles.removed, ".tiles", "tiles");
-                }; cuppa.addEventListener("ready",  tiles.init, document, "tiles");
+                }; document.addEventListener('DOMContentLoaded', tiles.init, true);
             //--
         </script>
         <?php forEach($tiles as $item){ ?>

@@ -409,7 +409,8 @@
                 $string = str_replace("#country#", $current_country,$string);
                 $string = str_replace(array("#web_path#","#administrator_path#"), array($cuppa->getDocumentPath("web"), $cuppa->getDocumentPath()),$string);
                 $string = str_replace(array("#path_web#","#path_administrator#"), array($cuppa->getDocumentPath("web"), $cuppa->getDocumentPath()),$string);
-                $string = str_replace(array("#textarea#", "#textarea_end#"), array("<textarea", "></textarea>"), $string);
+                $string = str_replace(array("#web_url#","#url_web#"), array($cuppa->getPath("web"), $cuppa->getPath("web")),$string);
+                $string = str_replace(array("#textarea#", "#textarea_end#", "#/textarea#"), array("<textarea", "></textarea>", "></textarea>"), $string);
                 $data = explode("{?", $string);
                 forEach($data as $i => $item){
                     if($i%2){

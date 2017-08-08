@@ -91,6 +91,28 @@
                 }
                 echo $cuppa->jsonEncode($data);
             }
+            function loadSelectInfo2(){
+                $cuppa = Cuppa::getInstance();
+                $language = $cuppa->language->load();
+                if( !@$_POST["compare_column_value"] || !@$_POST["compare_column"] ){
+                    exit("");
+                }
+                //++ Create condition
+                    $condition = (@$_POST["condition"]) ? $_POST["condition"]." AND " : "";
+                    $condition .= "`".@$_POST["compare_column"]."` = '".@$_POST["compare_column_value"]."'";
+                //--
+                $data = $cuppa->dataBase->getList(@$_POST["table"], $condition, "", "", true);
+                if(is_array($data)){
+                    if($cuppa->POST("nested_column")){
+                        $data = $cuppa->utils->tree($data, $cuppa->POST("nested_column"), $cuppa->POST("parent_column"), "alias", true, 0, false, "|&mdash;&nbsp;&nbsp;", true);
+                    }
+                    for($i = 0; $i < count($data); $i++){
+                        $label = $_POST["label"];
+                        $data[$i]->{$label} = @$data[$i]->deep_string." ".$cuppa->language->getValue($data[$i]->{$label}, $language);
+                    }
+                }
+                echo $cuppa->jsonEncode($data);
+            }
         function setSessionValue(){
             @session_start();
             $cuppa = Cuppa::getInstance();

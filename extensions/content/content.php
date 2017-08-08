@@ -11,7 +11,7 @@
             $cond = " id IN (".@$content_ids.")";
         }else if(!$path || ( ( $cuppa->language->valid(@$path[0]) || $cuppa->country->valid(@$path[0]) ) && count($path) <= 1 )  ){
             $default = $cuppa->dataBase->getRow("cu_menu_items", "default_page = 1", true);
-            $section_content = $cuppa->dataBase->getRow("ex_content_by_sections", "section = ".$default->id, true);
+            $section_content = $cuppa->dataBase->getRow("ex_content_by_sections", "section = ".@$default->id, true);
             $content_ids = @$section_content->contents;
             $content_ids = @join(",",json_decode($content_ids));
             $cond = " id IN (".@$content_ids.")";
@@ -94,7 +94,7 @@
                 cuppa.addEventListener("removed", contents.removed, ".contents", "contents");
                 cuppa.responsiveImagesWidth(".contents img");
                 cuppa.svgSwitch(".contents .svg");
-            }; cuppa.addEventListener("ready",  contents.init, document, "contents");
+            }; document.addEventListener('DOMContentLoaded', contents.init, true);
         //--
     </script>
     <div class="contents content_extension">

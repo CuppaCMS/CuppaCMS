@@ -69,7 +69,12 @@
                 }else if($this->valid($language)){
                     $lang = @$language;
                 }else if($config){
-                    $lang = $config->language_default;
+                    $browserLang = strtolower(trim(substr(@$_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2)));
+                    if($this->valid($browserLang)){
+                        $lang = $browserLang;
+                    }else{
+                        $lang = $config->language_default;
+                    }
                 }
                 $utils->setCookie("language", $lang);
                 return $lang;

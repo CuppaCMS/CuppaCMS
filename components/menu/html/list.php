@@ -14,18 +14,20 @@
 		$filters = " AND mi.menus_id = '$menu_filter' ";
 	//--
     //++ Get menu list
-    	$sql = "SELECT mi.id, mi.title, mi.alias, mi.language, mi.enabled, mi.default_page, mi.parent_id, '' as parent_title, mit.id as menu_item_type_id, mit.name as menu_item_type_name, m.name as menu_name, mi.order
+    	$sql = "SELECT mi.id, mi.title, mi.alias, mi.language, mi.enabled, mi.default_page, mi.parent_id, '' as parent_title, mit.id as menu_item_type_id, mit.name as menu_item_type_name, m.name as menu_name, mi.order, v.name as view
     			FROM ".$cuppa->configuration->table_prefix."menu_items as mi
     			JOIN ".$cuppa->configuration->table_prefix."menu_item_type as mit
     			JOIN ".$cuppa->configuration->table_prefix."menus as m
-    			WHERE mit.id = mi.menu_item_type_id AND m.id = mi.menus_id AND mi.parent_id = '' $filters
+                JOIN ".$cuppa->configuration->table_prefix."views as v
+    			WHERE mit.id = mi.menu_item_type_id AND m.id = mi.menus_id AND mi.parent_id = '' $filters AND mi.view = v.id
     			UNION
-    			SELECT mi.id, mi.title, mi.alias, mi.language, mi.enabled, mi.default_page, mi.parent_id, mi2.title as parent_title, mit.id as menu_item_type_id, mit.name as menu_item_type_name, m.name as menu_name, mi.order
+    			SELECT mi.id, mi.title, mi.alias, mi.language, mi.enabled, mi.default_page, mi.parent_id, mi2.title as parent_title, mit.id as menu_item_type_id, mit.name as menu_item_type_name, m.name as menu_name, mi.order, v.name as view
     			FROM ".$cuppa->configuration->table_prefix."menu_items as mi
     			JOIN ".$cuppa->configuration->table_prefix."menu_item_type as mit
     			JOIN ".$cuppa->configuration->table_prefix."menus as m
     			JOIN ".$cuppa->configuration->table_prefix."menu_items as mi2
-    			WHERE mit.id = mi.menu_item_type_id AND m.id = mi.menus_id AND mi.parent_id = mi2.id $filters
+                JOIN ".$cuppa->configuration->table_prefix."views as v
+    			WHERE mit.id = mi.menu_item_type_id AND m.id = mi.menus_id AND mi.parent_id = mi2.id $filters AND mi.view = v.id
     			ORDER BY parent_id ASC, `order` ASC";
         $info = $cuppa->dataBase->sql($sql);
         $info = $cuppa->utils->createTree($info,"id", "parent_id");
@@ -137,6 +139,7 @@
                     <th ><?php echo @$language->order ?></th>
                     <th ><?php echo @$language->enabled ?></th>
                     <th ><?php echo @$language->default ?></th>
+                    <th ><?php echo @$language->view ?></th>
                     <th ><?php echo @$language->options ?></th>
                 </tr>
                 <?php for($i = 0; $i < count($info); $i++){ ?>
@@ -154,6 +157,7 @@
                         <td style="text-align:center; width:30px;"><?php echo $info[$i]["order"] ?></td>
                         <td style="text-align:center; width:30px;"><?php echo ($info[$i]["enabled"] == 1) ? $language->true : $language->false ?></td>
                         <td style="text-align:center; width:30px;"><?php echo ($info[$i]["default_page"] == 1) ? $language->true : $language->false ?></td>
+                        <td><?php print_r($info[$i]["view"]) ?></td>
                         <td style="text-align: right; white-space: nowrap;">
                         	<?php if($info[$i]["order"] > 1){ ?>
                             	<a onclick="menu_list.submit('moveTop','<?php echo $info[$i]["id"] ?>')"  class="tooltip" title="<?php echo @$language->tooltip_move_field ?>">
