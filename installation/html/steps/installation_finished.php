@@ -23,12 +23,13 @@ $contentToSave =
 		public $global_encode_salt = "'.$global_encode_salt.'";
 		public $ssl = "0";
 		public $lateral_menu = "expanded";
+		public $base_url = "";
 		public $table_prefix = "'.trim($cuppa->POST("table_prefix")).'";
 		public $allowed_extensions = "*.gif; *.jpg; *.jpeg; *.pdf; *.ico; *.png; *.svg";
 		public $upload_default_path = "upload_files";
 		public $maximum_file_size = "5242880";
 		public $csv_column_separator = ",";
-		public $tinify_key = "";
+		public $tinify_key = "mK74DCKkTCi2aNInIsdTifFby2LAiDqX";
 		public $email_outgoing = "";
 		public $forward = "";
 		public $smtp = "0";
@@ -36,7 +37,7 @@ $contentToSave =
 		public $email_port = "";
 		public $email_password = "";
 		public $smtp_security = "";
-		public $tracking_codes = "";
+		public $code = "";
 	} 
 ?>';
 //--
