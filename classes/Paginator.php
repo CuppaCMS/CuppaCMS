@@ -47,7 +47,7 @@
     					$field .= "<ul>";
     						if($current_page > 0) $field .= "<li><a onclick='".$this->function_name."(0, \"".$this->submit_form."\",\"".$this->limit."\")'><div title='First page' class='paging_far_left'></div></a></li>";
     						if($current_page > 0) $field .= "<li><a onclick='".$this->function_name."(".($current_page-1).", \"".$this->submit_form."\",\"".$this->limit."\")'><div title='Prev page' class='paging_left'></div></a></li>";
-    						if($this->pages_info) $field .= "<li><div title=''  class='current_page'>".$cuppa->language->getValue("Page",$language)." <b>".($current_page+1)."</b> / $total_pages</div></li>";
+    						if($this->pages_info) $field .= "<li><div title=''  class='current_page'>".$cuppa->language->getValue("Page",$language)." <b>".(@$current_page+1)."</b> / $total_pages</div></li>";
     						if($current_page < $total_pages-1) $field .= "<li><a onclick='".$this->function_name."(".($current_page+1).",\"".$this->submit_form."\",\"".$this->limit."\")'><div title='Next page' class='paging_right'></div></a></li>";
     						if($current_page < $total_pages-1) $field .= "<li><a onclick='".$this->function_name."(".($total_pages-1).",\"".$this->submit_form."\",\"".$this->limit."\")'><div title='Last page' class='paging_far_right'></div></a></li>";
     						$field .= "<li><div class='select_page_div'>".$this->getPagesList($current_page, $total_pages)."</div></li>";

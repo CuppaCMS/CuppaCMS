@@ -401,7 +401,7 @@
 						if($i == count($registeredTables) -1 ) $registeredTablesSQL .= "'".$registeredTables[$i]["table_name"]."'";
 						else $registeredTablesSQL .= "'".$registeredTables[$i]["table_name"]."',";
 					}
-					$sql = "SHOW TABLES WHERE Tables_in_".$this->db." NOT IN ($registeredTablesSQL)";
+					$sql = "SHOW TABLES WHERE `Tables_in_".$this->db."` NOT IN ($registeredTablesSQL)";
 					$query = @mysqli_query($this->con, $sql);
 					if($query){
 						$tables = array();

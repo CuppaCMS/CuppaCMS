@@ -66,7 +66,7 @@
 <style>
     .edit_admin_table{ position: relative; padding: 5px 15px 15px; }
     .edit_admin_table h1{ float: left; }
-    .edit_admin_table .tools{ position: relative; float: right; top: 8px; }
+    .edit_admin_table .tools{ position: relative; float: right; top: 4px; }
     .edit_admin_table .td_label{ white-space: nowrap !important; padding-right: 20px !important; }
     .edit_admin_table .ace_editor_text_area{ display: none !important; }
 /* Responsive */

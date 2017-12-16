@@ -89,21 +89,37 @@
 			}
             return false;
 		}
-        public function getUserInfo($id){
+        public function getUserInfo($id = ""){
             @session_start();
             $cuppa = Cuppa::getInstance();
             if(!$id) $id = $cuppa->user->getValue("id");
             $user = $cuppa->db->getRow("cu_users", "id = ".$id, true);
             return $user;
         }
-        public function getInfo($id){ return $this->getUserInfo($id); }
-        public function getUser($id){ return $this->getUserInfo($id); }
-        public function info($id){ return $this->getUserInfo($id); }
+        public function getInfo($id = ""){ return $this->getUserInfo($id); }
+        public function getUser($id = ""){ return $this->getUserInfo($id); }
+        public function info($id = ""){ return $this->getUserInfo($id); }
         public function update($data, $return_data = false){
             $cuppa = Cuppa::getInstance();
             if(!$cuppa->user->getValue("id")) return 0;
             $result = $cuppa->dataBase->update("cu_users", $data, "id = ".@$cuppa->user->getValue("id"), $return_data, true);
+            if($result) $this->updateSession();
             return $result;
+        }
+        public function updateSession(){
+            $configuration = new Configuration();
+            $db = DataBase::getInstance();
+            $cuppa = Cuppa::getInstance();
+            $id = $cuppa->user->getValue("id");
+            $sql = "SELECT * FROM ".$configuration->table_prefix."users AS u WHERE enabled = '1' AND id = '".$id."'";
+            $result = $db->sql($sql);
+            if($result == 1 || !$result) return false;
+            @session_start();
+            //++ Register vars in $_SESSION['cuSession']->user
+                foreach ($result[0] as $key => $value){ if($key != "password") $this->setVar($key, $value); }
+                $this->setVar("user_group_name", @$access->name);
+            //--
+            return true;
         }
         public function setVar($name, $value){
             @session_start();
@@ -159,6 +175,30 @@
         public function valid($type = "admin_login"){
             @session_start();
             if(!$this->value($type)){ echo "<script> window.location.href = ''; </script>"; exit(); }
+        }
+
+        public function autoLogout($redirect = true) {
+            @session_start();
+            if(!@$_SESSION["cuSession"]->auto_logout_time){
+                @$_SESSION["cuSession"]->auto_logout_time = time();
+                return false;
+            }
+            $curTime = time();
+            $oldTime = @$_SESSION["cuSession"]->auto_logout_time;
+            $diff = ($curTime - $oldTime)/100;
+            $configuration = new Configuration();
+            if($diff > @$configuration->auto_logout_time){
+                @session_unset();
+                @session_destroy();
+                if($redirect){
+                    echo "<script> window.location.href = ''; </script>";
+                    exit();
+                }
+                return true;
+            }else{
+                @$_SESSION["cuSession"]->auto_logout_time = time();
+                return false;
+            }
         }
 	}
 ?>

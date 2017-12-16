@@ -80,20 +80,10 @@
     </style>
     <script>
         contents = {}
-        //++ resize
-            contents.resize = function(){ 
-                cuppa.grid(".contents .content_item, .contents .content_item *");
-            }; 
-        //--
-        //++ end
-            contents.removed = function(e){ cuppa.removeEventGroup("content"); }
-        //--
         //++ init
             contents.init = function(){
-                cuppa.addEventListener("resize", contents.resize, window, "contents"); contents.resize();
-                cuppa.addEventListener("removed", contents.removed, ".contents", "contents");
-                cuppa.responsiveImagesWidth(".contents img");
-                cuppa.svgSwitch(".contents .svg");
+                cuppa.responsiveImage(".contents img");
+                cuppa.imgToSVG(".contents .svg");
             }; document.addEventListener('DOMContentLoaded', contents.init, true);
         //--
     </script>

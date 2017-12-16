@@ -26,8 +26,8 @@
     // Paginator 
 		$currentPage = @$_REQUEST["page"];
         $list_limit = (@$field_types->list_limit) ? @$field_types->list_limit : $configuration->list_limit;
-		$limit = ($currentPage*$list_limit) . "," . ($list_limit);
-    // Get Columns 
+		$limit = @($currentPage*$list_limit) . "," . ($list_limit);
+    // Get Columns
         $columns = $db->getColums($view);
     // Get Filters
         $conditions = " 1 ";
@@ -390,7 +390,7 @@
 <style>
     .list_admin_table{ position: relative; }
     .list_admin_table h1{ float: left; }
-    .list_admin_table .tools{ position: relative; float: right; top: 8px; }
+    .list_admin_table .tools{ position: relative; float: right; top: 4px; }
     .list_admin_table .filter_content{ padding: 0px 0px 0px 5px; }
     .list_admin_table .filter_content .input{ max-width: 90px; margin: 0px 2px; }
     .list_admin_table .filter_content .select_cuppa{ max-width: 100px;}

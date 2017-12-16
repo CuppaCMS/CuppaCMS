@@ -19,6 +19,7 @@
     @include_once("Permissions.php");
     class Cuppa{
         private static $instance;
+        public $global;
         public $configuration;
         public $dataBase; public $db;
         public $security;
@@ -36,6 +37,7 @@
         public $browser;
         public function __construct(){
             @include_once realpath(__DIR__ . '/..')."/Configuration.php";
+            $this->global = new stdClass();
             $this->security = Security::getInstance();
             $this->configuration = new Configuration();
             $this->dataBase = $this->db = DataBase::getInstance($this->configuration->db, $this->configuration->host, $this->configuration->user, $this->configuration->password);
@@ -53,6 +55,12 @@
             $this->permissions = Permissions::getInstance();
             $this->country->set("", false, $this->configuration, true);
             $this->browser = $this->utils->getBrowser();
+            //++ redirect not-www to www
+                if (substr($_SERVER['HTTP_HOST'], 0, 4) !== 'www.') {
+                    $protocol = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
+                    header('Location: '.$protocol.'www.'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']); exit;
+                }
+            //--
             //++ validate SSL active
                 if(@$this->configuration->ssl){
                     if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == ""){
@@ -61,6 +69,8 @@
                     }
                 }
             //--
+            // autoLogout (if inactivity > $configuration->auto_logout_time)
+                $this->user->autoLogout();
         }
         public static function getInstance(){
 			if (self::$instance == NULL) { self::$instance = new Cuppa(); }
@@ -200,24 +210,23 @@
                 $tag = template // template, xmp (old browsers compatibility)
         */
             private $template_added =  array();
-            function includeInstance($path, $add_cover_template = true){
+            function includeInstance($path, $documentPath = "", $add_cover_template = true){
                 if(@$this->template_added[$path]) return;
-                if(!file_exists($path)){ echo "instance no reach: ".$path."<br />"; return; }
+                if(!file_exists($documentPath.$path)){ echo "instance no reach: ".$documentPath.$path."<br />"; return; }
                 $tag = ($this->browser->name == "Internet Explorer") ? "xmp" : "template";
                 if($add_cover_template){
-                    echo '<div id="template_'.$this->utils->getFriendlyUrl($path).'" style="display:none;"><'.$tag.'>';
-                    include $path;
+                    echo '<div id="template_'.strtolower($this->utils->getFriendlyUrl($path)).'" style="display:none;"><'.$tag.'>';
+                    include $documentPath.$path;
                     echo '</'.$tag.'></div>';
                 }else{ 
                     echo '<div id="template_'.$this->utils->getFriendlyUrl($path).'" style="display:none;">';
-                    include $path;
+                    include $documentPath.$path;
                     echo '</div>';
                 }
                 $this->template_added[$path] = "1";
             }
-            function instanceInclude($path, $add_cover_template = true){ $this->includeInstance($path, $add_cover_template); }
-            function instance($path, $add_cover_template = true){ $this->includeInstance($path, $add_cover_template); }
-            function import($path, $add_cover_template = true){ $this->includeInstance($path, $add_cover_template); }
+            function instanceInclude($path, $documentPath = "", $add_cover_template = true){ $this->includeInstance($path, $documentPath, $add_cover_template); }
+            function import($path, $documentPath = "", $add_cover_template = true){ $this->includeInstance($path, $documentPath, $add_cover_template); }
             
         /* instanceCreate, create automatically the instance and keep the template
             $opts = 'folder/file.php'
@@ -229,7 +238,7 @@
                 $opts->template = 'The class of the current class of file';
                 $opts->no_data = false;
         */
-            function instanceCreate($opts = null, $keep_template = true){
+            function instance($opts = null, $documentPath = "", $keep_template = true){
                 if(is_string($opts)) $opts = (object) array('url'=>$opts);
                 $opts = (object) $opts;
                 if(!$opts) $opts =  new stdClass;
@@ -242,7 +251,7 @@
                 $file = $this->utils->replace($file, $opts->instance, $opts->unique, false, ["<style>", "</style>"]);
                 if(@$opts->class){ $file = preg_replace('/'.$opts->unique.'/', $opts->unique." ".$opts->class, $file, 1); }
                     ob_start();
-                    $_POST = (array) $opts->data;
+                    $_POST = (array) @$opts->data;
                     //$data = $opts->data; extract((array) $opts->data);
                     eval(" ?>".$file."<?php ");
                     $file = ob_get_clean();
@@ -252,6 +261,9 @@
                     echo "{$opts->unique}.html = $('.{$opts->unique}').get(0); ";    
                     echo "{$opts->unique}.html.script = {$opts->unique}; ";
                     echo "{$opts->unique}.state = new cuppa.state( {$opts->unique}.html ); ";
+                    echo "{$opts->unique}.nodes = {$opts->unique}.node  = new cuppa.nodes( {$opts->unique}.html ); ";
+                    echo "{$opts->unique}.global = cuppa.global; ";
+
                     if(@$opts->no_data){
                         echo "try{ {$opts->unique}.constructor(); }catch(err){} ";
                         echo "try{ {$opts->unique}.{$opts->unique}(); }catch(err){} ";
@@ -261,7 +273,7 @@
                     }
                     echo "$('.inst_script_tmp').remove(); ";
                 echo "</script>";
-                if($keep_template){ $this->instanceInclude($opts->url); }
+                if($keep_template){ $this->instanceInclude($opts->url, $documentPath); }
                 return $opts->unique;
             }
         /* process php
@@ -392,6 +404,22 @@
             public function baseURL($name = "web"){
                 if($this->configuration->base_url) return @$this->configuration->base_url;
                 return $this->getPath($name);
+            }
+        // log
+            public function log(...$args){
+                foreach ($args as $data) {
+                    echo "<script>
+                                try{
+                                    console.log(JSON.parse('{$this->jsonEncode($data, false)}'));
+                                }catch(err){ }
+                         </script>";
+                }
+            }
+        // pre
+            public function pre(...$args){
+                foreach ($args as $data) {
+                    echo "<pre>"; print_r($data); echo "</pre>";
+                }
             }
         /* curl
             $data_format = form                 

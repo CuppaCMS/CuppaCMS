@@ -14,19 +14,37 @@
                 $data = @http_build_query(@$data);
                 $curl = curl_init();
                 if($method == "GET") $url.="?".$data;
-                curl_setopt ($curl, CURLOPT_URL, $url);
+                curl_setopt($curl, CURLOPT_URL, $url);
                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);  
                 curl_setopt($curl, CURLOPT_POST, 1);
                 curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
                 curl_setopt($curl, CURLOPT_COOKIESESSION, $data);
                 
-                $strCookie = 'PHPSESSID=' . $_COOKIE['PHPSESSID'] . '; path=/';
+                $strCookie = 'PHPSESSID=' . @$_COOKIE['PHPSESSID'] . '; path=/';
                 @session_write_close();
                 curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1); 
                 curl_setopt( $curl, CURLOPT_COOKIE, $strCookie ); 
                 
                 $result = curl_exec($curl);
                 curl_close($curl);
+                return $result;
+            }
+        /* ajax 
+        */
+            public function ajax($url, $data = null, $header = null){
+                $postdata = http_build_query((array) $data);
+                $opts = array('http' =>
+                    array(
+                        'method'  => 'POST',
+                        'header'  => 'Content-type: application/x-www-form-urlencoded',
+                        'content' => $postdata
+                    )
+                );
+                $context  = stream_context_create($opts);
+                $response = file_get_contents($url, false, $context);
+                $result = new stdClass();
+                $result->body = $response;
+                $result->header = $http_response_header;
                 return $result;
             }
         // Get inputs with the Request vars
@@ -50,6 +68,17 @@
                     foreach ($array as $subarray) $results = array_merge($results, $this->searchInArray($subarray, $key, $value));
                 }
                 return $results;
+            }
+        // filter
+            function filter($array, $search){
+                $result = null;
+                foreach($array as $key=>$value){
+                    if(strpos($value, $search) !== false){ 
+                        $result = $value;
+                        break; 
+                    }
+                }
+                return $result;
             }
         // Cut string text
             function cutText($delimiter = " ", $text = "", $lenght = 200, $string_to_end = "", $delimiter_forced = false, $remove_tags = false){
@@ -443,6 +472,31 @@
                 $value = json_decode($value);
                 return $value;
             }
+        /* replace
+                range = ['<style>','</style>']
+        */
+        function replace($string, $search, $replace, $first = false, $range = null, $first_range = false){
+            if(!$string) return;
+            if(@$range){
+                $c_temp1 = explode($range[0], $string);
+                if(count($c_temp1) <= 1 ) return $string;
+                for($i = 0; $i < count($c_temp1); $i++){
+                    $c_temp2 = explode($range[1], $c_temp1[$i]);
+                    if(count($c_temp2) > 1){
+                        if(@$first){ $pos = strpos($c_temp2[0], $search); if($pos) $c_temp2[0] = substr_replace($c_temp2[0], $replace, $pos, strlen($search));
+                        }else{ $c_temp2[0] =  str_replace($search, $replace, $c_temp2[0]); }
+                        $c_temp1[$i] = join($range[1], $c_temp2);
+                        if($first_range) break;
+                    }
+                }
+                $string = join($range[0], $c_temp1);
+                //echo '<textarea style="width:100%; height:400px; background:#FFF !important;">'.$string.'</textarea>';
+            }else{
+                if(@$first){ $pos = strpos($string, $search); if($pos) $string = substr_replace($string, $replace, $pos, strlen($search));
+                }else{ $string =  str_replace($search, $replace, $string); }
+            }
+            return $string;
+        }
         // Get Browser inf
             function getBrowser(){ 
                 $u_agent = @$_SERVER['HTTP_USER_AGENT']; 

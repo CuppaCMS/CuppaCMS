@@ -5,6 +5,7 @@
     if(@$api_check->error){ echo json_encode($api_check, JSON_PRETTY_PRINT); exit(); }
     // Handler 
 		$nameFunction = htmlspecialchars(@$_POST["function"]); unset($_POST["function"]);
+        if(!$nameFunction) $nameFunction = htmlspecialchars(@$_POST["action"]); unset($_POST["action"]);
         $nameFunction = explode("/",$nameFunction);
         if(count($nameFunction) > 1){
             $rest = $nameFunction; $nameFunction = array_pop($rest);
@@ -22,7 +23,7 @@
         if($nameFunction){
             $params = array();
             forEach($_POST as $key => $item){ array_push($params, $item); unset($_POST[$key]); }
-            $base64 = true; if(isset($_SERVER["HTTP_BASE64"])){ $base64 = $_SERVER["HTTP_BASE64"] === 'true' ? true: false; }
+            $base64 = false; if(isset($_SERVER["HTTP_BASE64"])){ $base64 = $_SERVER["HTTP_BASE64"] === 'true' ? true : false; }
             $params = join("','", $params); $eval = $nameFunction."('".$params."')"; $return = eval('return '.$eval.";"); echo $cuppa->jsonEncode($return, $base64);
         } 
 ?>

@@ -97,4 +97,10 @@
             <input type="text" name="base_url" value="<?php echo @$cuppa->configuration->base_url; ?>" />
         </td>
     </tr>
+    <tr>
+        <td><?php echo $cuppa->langValue("Auto logout time", $language) ?></td>
+        <td>
+            <input type="text" name="auto_logout_time" value="<?php echo @$cuppa->configuration->auto_logout_time; ?>" />
+        </td>
+    </tr>
 </table>

@@ -43,7 +43,7 @@
 <style>
     .edit_table{ padding: 5px 15px 15px; }
     .edit_table h1{ float: left; }
-    .edit_table .tools{ position: relative; float: right; top: 8px; }
+    .edit_table .tools{ position: relative; float: right; top: 4px; }
     .edit_table .button_gray{ margin-bottom: 3px;}
     /* Option panel */
         .option_panel ul{ margin: 0px; padding: 0px; list-style: none; list-style-type: none; }
