@@ -130,7 +130,8 @@
                             }
                             //++ add more labels info
                                 for($k = 0; $k < count($labels); $k++){
-                                    if($config[$i][trim($labels[$k])]) $field.= ", " . $config[$i][trim($labels[$k])];
+                                    if(@$config[$i][trim($labels[$k])]) $field.= $config[$i][trim($labels[$k])];
+                                    else $field.= $labels[$k];
                                 }
                             //--
                         $field .= "</option>";                                                                                                    

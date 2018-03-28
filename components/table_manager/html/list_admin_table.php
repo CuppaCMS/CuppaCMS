@@ -91,6 +91,7 @@
         $joins_data = array(); $consults = array();
         for($i = 0; $i <count($array_keys); $i++){
             @$config = json_decode(base64_decode($field_types->{$array_keys[$i]}->config));
+            /*
             if(@$field_types->{$array_keys[$i]}->type == "Select" && !is_array(@$config->data) ){
                 $data = new stdClass();
                 $data->query = str_replace(".","_",$config->data->table_name).$i.".".$config->data->label_column . " AS `" .$array_keys[$i] . "`";
@@ -101,6 +102,7 @@
                 $joins_data[$array_keys[$i]] = $data;
                 array_push($consults, $array_keys[$i]);
             }
+            */
         }
     // Permision verify - Only List Own Info
         if($cuppa->permissions->getValue(2,$view, 2) == "only own info"){
@@ -259,13 +261,19 @@
                                             $query = $db->getList($config->data->table_name,'', '', '', true);
                                             for($k = 0; $k < count(@$field_info); $k++){
                                                 $result_search = $cuppa->utils->searchInArray($query, $config->data->data_column, $field_info[$k]);
-                                                if(isset($result_search[0][$config->data->label_column])){
-                                                    $string_total_result .= (@$config->extraParams->no_translate) ? @$result_search[0][$config->data->label_column].", " : $cuppa->language->getValue(@$result_search[0][$config->data->label_column], @$language) . ", ";
-                                                }else{
-                                                    if($config->extraParams->custom_data == $field_info[$k]){
-                                                        $string_total_result .= (@$config->extraParams->no_translate) ? @$config->extraParams->custom_label.", " : $cuppa->language->getValue(@$config->extraParams->custom_label, @$language) . ", ";
+                                                $labels_tmp = explode(",", $config->data->label_column);
+                                                forEach($labels_tmp as $label_tmp){
+                                                    if(isset($result_search[0][$label_tmp])){
+                                                        $string_total_result .= (@$config->extraParams->no_translate) ? @$result_search[0][$label_tmp] : $cuppa->language->getValue(@$result_search[0][$label_tmp], @$language);
+                                                    }else{
+                                                        if($config->extraParams->custom_data == $field_info[$k]){
+                                                            $string_total_result .= (@$config->extraParams->no_translate) ? @$config->extraParams->custom_label.", " : $cuppa->language->getValue(@$config->extraParams->custom_label, @$language) . ", ";
+                                                        }else{
+                                                            $string_total_result .= $label_tmp;
+                                                        }
                                                     }
                                                 }
+                                                $string_total_result .= ", ";
                                             }
                                         }
                                         $field .= $cuppa->utils->cutText(",",$string_total_result, 9999, "", true);
@@ -274,7 +282,7 @@
                                             if(@$infoColumns[$j] == @$field_types->link_indicator) $field .= '<a onclick="list_admin_table.submit(\'edit\',\''.$info[$i][$field_types->primary_key].'\' )">';
                                         
                                         if(is_array(@$config->data)){
-                                            $value = $utils->searchInArray($config->data, "0", $info[$i][$infoColumns[$j]] );
+                                            $value = $utils->searchInArray($config->data, "0", $info[$i][$infoColumns[$j]]);
                                             if(@$config->extraParams->add_custom_item &&  $info[$i][$infoColumns[$j]] == @$config->extraParams->custom_data ){
                                                 $field .= (@$config->extraParams->no_translate) ? @$config->extraParams->custom_label : $cuppa->language->getValue(@$config->extraParams->custom_label, @$language);
                                             }else if(count($value)){
@@ -284,7 +292,19 @@
                                             if(@$config->extraParams->add_custom_item &&  $info[$i][$infoColumns[$j]] == null){
                                                 $field .= (@$config->extraParams->no_translate) ? @$config->extraParams->custom_label : $cuppa->language->getValue(@$config->extraParams->custom_label, @$language) ;  
                                             }else{
-                                                $field .= (@$config->extraParams->no_translate) ? @$info[$i][$infoColumns[$j]] : $cuppa->language->getValue(@$info[$i][$infoColumns[$j]], @$language);
+                                                $query = $db->getRow($config->data->table_name, $config->data->data_column.' = '.$info[$i][$infoColumns[$j]]);
+                                                $labels_tmp = explode(",", $config->data->label_column);
+                                                forEach($labels_tmp as $label_tmp){
+                                                    $value_tmp = trim($label_tmp);
+                                                    if(@$config->extraParams->no_translate){
+                                                        if(@$query[trim($label_tmp)]) $field .= $query[trim($label_tmp)];
+                                                         else $field .= $label_tmp;
+                                                    }else{
+                                                        $value_tmp = $cuppa->language->getValue(@$query[$label_tmp], @$language);
+                                                        if($value_tmp) $field .= $value_tmp;
+                                                        else $field .= $label_tmp;   
+                                                    }
+                                                }
                                             }
                                         }
                                         // link indicator

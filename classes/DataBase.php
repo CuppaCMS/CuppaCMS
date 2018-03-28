@@ -295,7 +295,7 @@
                     foreach ($object as $key => $value) {
                         if($value == "NOW()"){
                             $object[$key] = $value;
-                        }else if($value){
+                        }else if($value || is_numeric($value)){
                             if($escape){
                                 if(@strpos($no_scape, $key) === false){
                                     $object[$key] = "'".mysqli_real_escape_string($this->con, $value)."'";

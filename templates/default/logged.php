@@ -57,11 +57,7 @@
             </script>
     </head>
     <body>
-        <?php if(!@$cuppa->user->getVar("admin_login") == "1"){ ?>
-            <?php include "html/login.php" ?>
-        <?php }else{ ?>
-            <?php include "html/menu.php" ?>
-            <div class="wrapper"></div>
-        <?php } ?>
+        <?php include "html/menu.php" ?>
+        <div class="wrapper"></div>
     </body>
 </html>

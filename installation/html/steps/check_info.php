@@ -24,7 +24,7 @@
     table td{ padding: 5px !important; font-size: 12px; border: 0px !important; }
 </style>
 <form method="post" class="form" id="form" name="form" >
-    <div class="buttons" style="position:absolute; top:20px; right: 20px;" >
+    <div class="buttons" style="position:absolute; top:20px; right: 20px; z-index: 2;" >
         <input class="button_form" type="button" value="Next" onclick="SubmitForm('data_base_configuration')" />
     </div>
     <div class="section" style="margin: 10px 0px;"><div></div><span>Check important info</span></div>

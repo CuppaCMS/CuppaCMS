@@ -155,7 +155,8 @@
                             //++ add more labels info
                                 for($k = 0; $k < count($labels); $k++){
                                     $label = $db->getConstraintValue($table_name, $labels[$k], @$config[$i][trim($labels[$k])] );
-                                    if($label) $field.= ", " . $label;
+                                    if($label) $field.= $label;
+                                    else $field.= $labels[$k];
                                 }
                             //--
                         $field.= "</option>";

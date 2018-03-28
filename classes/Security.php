@@ -24,7 +24,7 @@
                     return $data; 
                 }
             // check api key exist
-                $api = $cuppa->db->getRow("cu_api_keys", "enabled = 1 AND `key` = '".$cuppa->sanitizeString($key)."'", true);
+                $api = $cuppa->db->getRow("{$cuppa->configuration->table_prefix}api_keys", "enabled = 1 AND `key` = '".$cuppa->sanitizeString($key)."'", true);
                 if(!$api){
                     $data = new stdClass(); $data->error = "-2"; $data->error_message = "API Key not valid";
                     return $data; 

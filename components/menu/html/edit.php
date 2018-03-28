@@ -389,7 +389,7 @@
                                 <?php 
                                     $className = "Select";
                     				$field = new $className();
-                                    $config = ' {"data":{"table_name":"cu_menus","data_column":"id","label_column":"name", "where_column":"1"}}';
+                                    $config = ' {"data":{"table_name":"'.$cuppa->configuration->table_prefix.'menus","data_column":"id","label_column":"name", "where_column":"1"}}';
                     				echo $field->GetItem("other_menu", @$menu_item_params->other_menu, $config, false, "");
                     			?>
                             </td>
@@ -404,7 +404,7 @@
                                     var opts = {}
                                         opts.nested_column = "id";
                                         opts.parent_column = "parent_id";
-                                    cuppa.autoLoadSelect("<?php echo @$menu_item_params->other_menu_item ?>", "[name=other_menu]", "[name=other_menu_item]" ,"cu_menu_items", "id", "title", "", "menus_id", true, "classes/ajax/Functions.php", opts);
+                                    cuppa.autoLoadSelect("<?php echo @$menu_item_params->other_menu_item ?>", "[name=other_menu]", "[name=other_menu_item]" ,"<?php echo @$cuppa->configuration->table_prefix ?>menu_items", "id", "title", "", "menus_id", true, "classes/ajax/Functions.php", opts);
                                 </script>
                             </td>
                         </tr>

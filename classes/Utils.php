@@ -41,10 +41,10 @@
                     )
                 );
                 $context  = stream_context_create($opts);
-                $response = file_get_contents($url, false, $context);
+                @$response = file_get_contents($url, false, $context);
                 $result = new stdClass();
                 $result->body = $response;
-                $result->header = $http_response_header;
+                @$result->header = $http_response_header;
                 return $result;
             }
         // Get inputs with the Request vars
@@ -386,7 +386,7 @@
             }
         // Eval data
             function evalString($string){
-                $string = eval("return $string;");
+                @$string = eval("return $string;");
                 return $string;
             }
         // Get a array with all var names inside of Object 

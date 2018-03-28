@@ -24,6 +24,8 @@ $contentToSave =
 		public $ssl = "0";
 		public $lateral_menu = "expanded";
 		public $base_url = "";
+		public $auto_logout_time = "30";
+		public $redirect_to = "false";
 		public $table_prefix = "'.trim($cuppa->POST("table_prefix")).'";
 		public $allowed_extensions = "*.gif; *.jpg; *.jpeg; *.pdf; *.ico; *.png; *.svg";
 		public $upload_default_path = "upload_files";
@@ -76,7 +78,7 @@ $contentToSave =
 			}
 ?>
 <form method="post" class="form" id="form" name="form" >
-    <div class="buttons" style="position:absolute; top:20px; right: 20px;" >
+    <div class="buttons" style="position:absolute; top:20px; right: 20px; z-index: 2;" >
         <input class="button_form" type="button" value="Back" onclick="SubmitForm('data_base_configuration')"/>
         <?php if(!$installation_error){ ?>
 	        <input class="button_form" type="button" value="delete installation folder and go to administrator" onclick="SubmitForm('delete_installation_folder')" />

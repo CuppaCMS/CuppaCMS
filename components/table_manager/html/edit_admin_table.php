@@ -40,16 +40,6 @@
 				if(count($file) > 1) @require_once( realpath(__DIR__."/..")."/fields/". $file[0].".php");
 			}
 		}
-	// Permissions verify
-        // Consult
-        /*
-        if(@$_POST["id"]){
-            if(!@$cuppa->permissions->getValue(2,$view, 2)){
-    			echo '<meta http-equiv="Refresh" content="0;url=./">';
-    			exit();
-    		}
-        }
-        */
     // Create inputs with the POST data;
         $inputs_request = $utils->getInputsWithRequestVars();
     // Updating user row reference on log_table
@@ -259,7 +249,7 @@
             <!-- Principal -->
                 <table class="form">
                 	<?php for($i = 0; $i < count($infoColumns); $i++){ ?>
-                        <?php if(@$cuppa->permissions->getValue("5", $view.",".$infoColumns[$i], "7") == "hidden"){ ?>
+                        <?php if(@$cuppa->permissions->getValue("5", $view.",".$infoColumns[$i], "7") === "hidden"){ ?>
                             <?php 
                                 $value = ""; 
                                 $value = @$info[$infoColumns[$i]];
@@ -312,10 +302,8 @@
                                                     if($value == "session" || $value == "user") $value = $cuppa->user->value("id");
                                                 }
                                             //--
-                                            
                                             echo $field->GetItem($infoColumns[$i]."_field", $value,json_encode($config), $field_types->{$infoColumns[$i]}->required,"", $extraParams);
                                         }else if(@$field_types->{$infoColumns[$i]}->type == "Text" && @$config->type == "password"){
-                                           
                                             $className = $field_types->{$infoColumns[$i]}->type;
                                             $field = new $className();
                                             $value = @$info[$infoColumns[$i]];

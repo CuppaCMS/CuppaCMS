@@ -34,7 +34,7 @@
             $data_to_save["option_panel"] = $_POST["option_panel"];
             $data_to_save["include_file"] = $_POST["include_file"];
             $data_to_save["tabs"] = $_POST["tabs"];
-            $json = base64_encode(json_encode($data_to_save));
+            $json = $cuppa->jsonEncode($data_to_save);
             if(isset($_POST["id"])) $data["id"] = "'".$_POST["id"]."'"; else $data["id"] = "'0'";
             $data["table_name"] = "'".$_POST["table_name"]."'";
             $data["params"] = "'".$json."'";
@@ -85,7 +85,7 @@
                     $_REQUEST[$infoColumns[$i]."_field"] = trim(@$_REQUEST[$infoColumns[$i]."_field"]);
                     $data_to_save[$infoColumns[$i]] = "'".$_REQUEST[$infoColumns[$i]."_field"] ."'";
                 }
-			}
+            }
             $result = $db->add($view, $data_to_save, true, true);
             //++ insert on log_table
                 $primary_key = $field_types->primary_key;

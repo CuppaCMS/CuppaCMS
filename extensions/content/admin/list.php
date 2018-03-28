@@ -8,11 +8,11 @@
             SELECT 1 as id, 'home' as title, 0 as parent_id, s.contents, 0 as `order` FROM ex_content_by_sections as s
             WHERE section = 0
             UNION
-            SELECT m.id, m.title, m.parent_id, s.contents, m.`order` FROM cu_menu_items as m
+            SELECT m.id, m.title, m.parent_id, s.contents, m.`order` FROM {$cuppa->configuration->table_prefix}menu_items as m
             JOIN ex_content_by_sections as s ON s.section = m.id
             WHERE m.menus_id NOT IN (1,2)    
             UNION
-            SELECT m.id, m.title, m.parent_id, '' as contents, m.`order` FROM cu_menu_items as m
+            SELECT m.id, m.title, m.parent_id, '' as contents, m.`order` FROM {$cuppa->configuration->table_prefix}menu_items as m
             WHERE m.menus_id NOT IN (1,2)    
         ) as data GROUP BY id  ORDER BY parent_id, `order` ASC";
     $sections = $cuppa->dataBase->sql($sql, true);

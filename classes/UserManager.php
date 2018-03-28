@@ -93,7 +93,7 @@
             @session_start();
             $cuppa = Cuppa::getInstance();
             if(!$id) $id = $cuppa->user->getValue("id");
-            $user = $cuppa->db->getRow("cu_users", "id = ".$id, true);
+            $user = $cuppa->db->getRow("{$cuppa->configuration->table_prefix}users", "id = ".$id, true);
             return $user;
         }
         public function getInfo($id = ""){ return $this->getUserInfo($id); }
@@ -102,7 +102,7 @@
         public function update($data, $return_data = false){
             $cuppa = Cuppa::getInstance();
             if(!$cuppa->user->getValue("id")) return 0;
-            $result = $cuppa->dataBase->update("cu_users", $data, "id = ".@$cuppa->user->getValue("id"), $return_data, true);
+            $result = $cuppa->dataBase->update("{$cuppa->configuration->table_prefix}users", $data, "id = ".@$cuppa->user->getValue("id"), $return_data, true);
             if($result) $this->updateSession();
             return $result;
         }
@@ -199,6 +199,15 @@
                 @$_SESSION["cuSession"]->auto_logout_time = time();
                 return false;
             }
+        }
+
+        public function encryptPassword($string){
+            if(!$string) return "";
+            $cuppa = Cuppa::getInstance();
+            if($cuppa->configuration->global_encode == "md5") $string = md5($cuppa->db->scape($string));
+            else if($cuppa->configuration->global_encode == "sha1") $string = sha1($cuppa->db->scape($string));
+            else if($cuppa->configuration->global_encode == "sha1Salt") $string = $cuppa->utils->sha1Salt($cuppa->db->scape($string), $cuppa->configuration->global_encode_salt);
+            return $string;
         }
 	}
 ?>

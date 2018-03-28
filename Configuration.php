@@ -18,6 +18,7 @@
 		public $lateral_menu = "expanded";
 		public $base_url = "";
 		public $auto_logout_time = "30";
+		public $redirect_to = "false";
 		public $table_prefix = "cu_";
 		public $allowed_extensions = "*.gif; *.jpg; *.jpeg; *.pdf; *.ico; *.png; *.svg";
 		public $upload_default_path = "upload_files";

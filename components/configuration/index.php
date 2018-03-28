@@ -65,6 +65,7 @@
                 $(".smtp_security").val('<?php echo @$cuppa->configuration->smtp_security ?>');
                 $(".ssl").val('<?php echo @$cuppa->configuration->ssl ?>');
                 $(".lateral_menu").val('<?php echo @$cuppa->configuration->lateral_menu ?>');
+                $(".redirect_to").val('<?php echo @$cuppa->configuration->redirect_to ?>');
             //--
             cuppa.aceEditor(".configuration [name=code]", "100%", "600px","php")
             cuppa.tooltip();
@@ -95,7 +96,7 @@
         <div ref="code" class="tab"  ><div class="line"></div><?php echo $language->code ?></div>
     </div>
     <div class="contents">
-        <form class="form_file">
+        <form class="form_file" autocomplete="off">
             <div class="tab_content general">
                 <?php include "html/general.php"; ?>
             </div> 

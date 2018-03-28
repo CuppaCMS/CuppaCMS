@@ -7,10 +7,10 @@
     // restore
         $restore = $cuppa->decrypt($path["restore"]);
         if(@$restore){
-            $user_restore = $cuppa->db->getRow("cu_users", "id = '".$restore."' AND enabled = 1 AND restore_password = 1", true);
+            $user_restore = $cuppa->db->getRow("{$cuppa->configuration->table_prefix}users", "id = '".$restore."' AND enabled = 1 AND restore_password = 1", true);
             if($user_restore){
                 $update = array("restore_password"=>0);
-                $cuppa->db->update("cu_users", $update, "email = '".$user_restore->email."'");
+                $cuppa->db->update("{$cuppa->configuration->table_prefix}users", $update, "email = '".$user_restore->email."'");
             }
         }
 ?>

@@ -1,4 +1,4 @@
-<div class="cu_api_keys_edit">
+<div class="api_keys_edit">
     <?php
         include_once "../classes/Cuppa.php";
         $cuppa = Cuppa::getInstance();
@@ -6,12 +6,12 @@
         $current_country = $cuppa->country->current();
     ?>
     <style>
-        .cu_api_keys_edit{ }
+        .api_keys_edit{ }
         .window_right .btn_generate{ display: inline-block !important; float:none; width:29px; height:29px;  background: none; border: 0px; border-radius: 50px; margin-left: 5px;}
         .window_right .tr_Key .td_field *{ vertical-align:  middle; }
     </style>
     <script>
-        cu_api_keys_edit = new function(){
+        api_keys_edit = new function(){
             // generate
                 this.generate = function(){
                     var key = cuppa.randomString(32);
@@ -24,5 +24,5 @@
                 }.bind(this); $(this.constructor);
         };
     </script>
-    <a class="tool_button tooltip btn_generate" title="<?php echo $language->update_key ?>" onclick="cu_api_keys_edit.generate()" ><span style="color: #DDD;">f</span></a>
+    <a class="tool_button tooltip btn_generate" title="<?php echo $language->update_key ?>" onclick="api_keys_edit.generate()" ><span style="color: #DDD;">f</span></a>
 </div>

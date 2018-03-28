@@ -1,5 +1,5 @@
 <form method="post" class="form" id="form" name="form" >
-    <div class="buttons" style="position:absolute; top:20px; right: 20px;" >
+    <div class="buttons" style="position:absolute; top:20px; right: 20px; z-index: 2;" >
         <input class="button_form" type="button" value="Back" onclick="SubmitForm('check_info')" />
         <input class="button_form" type="button" value="Next" onclick="SubmitForm('installation_finished')" />
     </div>
@@ -16,7 +16,7 @@
                 &nbsp;<img title="Default: localhost" class="tooltip" src="../templates/default/images/template/icon_help_12.png" />
             </td>
             <td>
-                <input class="text_field required" title=" " id="host" name="host" value="localhost" /> 
+                <input class="text_field required" id="host" name="host" value="localhost" /> 
             </td>
         </tr>
         <tr>
@@ -25,12 +25,12 @@
                 &nbsp;<img title="The name of databas you want to run Cuppa CMS in" class="tooltip" src="../templates/default/images/template/icon_help_12.png" />
             </td>
             <td>
-                <input class="text_field required" title=" " id="db" name="db" value="" />
+                <input class="text_field required" id="db" name="db" value="" />
             </td>
         </tr>
         <tr>
             <td >User</td>
-            <td><input class="text_field required" title=" " id="user" name="user" value="root" /></td>
+            <td><input class="text_field required" id="user" name="user" value="root" /></td>
         </tr>
         <tr>
             <td >Password</td>
@@ -52,11 +52,11 @@
     <table style="margin-top: 10px;">
         <tr>
             <td style="width:200px;">Name</td>
-            <td><input class="text_field required" title=" " id="name" name="name" value="Administrator" /></td>
+            <td><input class="text_field required" id="name" name="name" value="Administrator" /></td>
         </tr>
         <tr>
             <td>Email</td>
-            <td><input class="text_field required email" title=" " id="email" name="email" value="" /></td>
+            <td><input class="text_field required email" id="email" name="email" value="" /></td>
         </tr>
         <tr>
             <td>

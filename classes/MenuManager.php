@@ -104,15 +104,15 @@
                 $cuppa = Cuppa::getInstance();
                 if(is_string($language_file_reference) ){ $language_file_reference = $cuppa->language->load($language_file_reference); }
                 
-                if(is_numeric($menu)) $menu_data = $cuppa->dataBase->getRow("cu_menus", "id = '".$menu."'", true);
-                else $menu_data = $cuppa->dataBase->getRow("cu_menus", "name = '".$menu."'", true);
+                if(is_numeric($menu)) $menu_data = $cuppa->dataBase->getRow("{$cuppa->configuration->table_prefix}menus", "id = '".$menu."'", true);
+                else $menu_data = $cuppa->dataBase->getRow("{$cuppa->configuration->table_prefix}menus", "name = '".$menu."'", true);
                 
                 if(is_numeric($reference)){ 
                     $condition = "menus_id = '".@$menu_data->id."' AND id = '".$reference."' AND (language = '' OR language = '".$cuppa->language->current()."')";
-                    $info = $cuppa->dataBase->getRow("cu_menu_items", $condition, false);
+                    $info = $cuppa->dataBase->getRow("{$cuppa->configuration->table_prefix}menu_items", $condition, false);
                 }else{
                     $condition = "menus_id = '".@$menu_data->id."' AND alias = '".$reference."' AND (language = '' OR language = '".$cuppa->language->current()."')";
-                    $info = $cuppa->dataBase->getRow("cu_menu_items", $condition, false);
+                    $info = $cuppa->dataBase->getRow("{$cuppa->configuration->table_prefix}menu_items", $condition, false);
                 }
                 if($info){
                     $info["real_alias"] = $info["alias"];
@@ -130,7 +130,7 @@
                 if(is_string($language_file_reference) ){ $language_file_reference = $cuppa->language->load($language_file_reference); }
                 $parent_info = $this->getInfo($menu, $reference, true);
                 $condition = "parent_id = '".$parent_info->id."' AND enabled = 1 AND (language = '' OR language = '".$cuppa->language->current()."')";
-                $info = $cuppa->dataBase->getList("cu_menu_items", $condition, "", "`order` ASC", false);
+                $info = $cuppa->dataBase->getList("{$cuppa->configuration->table_prefix}menu_items", $condition, "", "`order` ASC", false);
                 if($info){
                     for($i = 0; $i < count($info); $i++){
                         $info[$i]["real_alias"] = $info[$i]["alias"];

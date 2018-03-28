@@ -14,8 +14,9 @@
             }
         // available countries
             public function getCountriesAvailable(){
+                $configuration = new Configuration();
                 $dataBase = DataBase::getInstance();
-                $data = $dataBase->getList("cu_countries", "enabled = 1", "", "name ASC", true);
+                $data = $dataBase->getList("{$configuration->table_prefix}countries", "enabled = 1", "", "name ASC", true);
                 return $data;
             }
             public function getAvailableCountries(){ return $this->getCountriesAvailable(); }
@@ -78,8 +79,9 @@
         // get country data
             public function getInfo($country = ""){
                 if(!$country) $country = $this->current();
+                $configuration = new Configuration();
                 $dataBase = DataBase::getInstance();
-                $data = $dataBase->getRow("cu_countries", "code = '".$country."'",  true);
+                $data = $dataBase->getRow("{$configuration->table_prefix}countries", "code = '".$country."'",  true);
                 return $data;
             }
             public function info($country = ""){ return $this->getInfo($country); }

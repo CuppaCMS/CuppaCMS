@@ -10,20 +10,20 @@
             // example: $conten_ids = '13,42,20';
             $cond = " id IN (".@$content_ids.")";
         }else if(!$path || ( ( $cuppa->language->valid(@$path[0]) || $cuppa->country->valid(@$path[0]) ) && count($path) <= 1 )  ){
-            $default = $cuppa->dataBase->getRow("cu_menu_items", "default_page = 1", true);
+            $default = $cuppa->dataBase->getRow("{$cuppa->configuration->table_prefix}menu_items", "default_page = 1", true);
             $section_content = $cuppa->dataBase->getRow("ex_content_by_sections", "section = ".@$default->id, true);
             $content_ids = @$section_content->contents;
             $content_ids = @join(",",json_decode($content_ids));
             $cond = " id IN (".@$content_ids.")";
         }else{
             $condition = "menus_id NOT IN (1,2) AND alias = '".@$path[count($path)-1]."' AND (language = '' OR language = '".$cuppa->language->current()."')";
-            $section = $cuppa->dataBase->getRow("cu_menu_items", $condition, true);
+            $section = $cuppa->dataBase->getRow("{$cuppa->configuration->table_prefix}menu_items", $condition, true);
             //++ show_in_subsection
                 if(!$section){
                     $rev = array_reverse($path); array_shift($rev);
                     for($i = 0; $i < count($rev); $i++){
                         $condition = "menus_id NOT IN (1,2) AND alias = '".$rev[$i]."' AND (language = '' OR language = '".$cuppa->language->current()."')";
-                        $section_tmp = $cuppa->dataBase->getRow("cu_menu_items", $condition, true);
+                        $section_tmp = $cuppa->dataBase->getRow("{$cuppa->configuration->table_prefix}menu_items", $condition, true);
                         $show_in_subsection = $cuppa->dataBase->getColumn("ex_content_by_sections","show_in_subsection","section = ".@$section_tmp->id);
                         if($show_in_subsection){ $section = $section_tmp; break; }
                     }
@@ -36,7 +36,7 @@
                     $rev = array_reverse($path); array_shift($rev);
                     for($i = 0; $i < count($rev); $i++){
                         $condition = "menus_id NOT IN (1,2) AND alias = '".$rev[$i]."' AND (language = '' OR language = '".$cuppa->language->current()."')";
-                        $section_tmp = $cuppa->dataBase->getRow("cu_menu_items", $condition, true);
+                        $section_tmp = $cuppa->dataBase->getRow("{$cuppa->configuration->table_prefix}menu_items", $condition, true);
                         $section_content = $cuppa->dataBase->getRow("ex_content_by_sections", "section = ".@$section_tmp->id, true);
                         if(@$section_content->show_in_subsection){ $section = $section_tmp; break; }
                     }
@@ -45,14 +45,14 @@
             //--
             //++ search home section
                 if(!$content_ids){
-                    $default = $cuppa->dataBase->getRow("cu_menu_items", "default_page = 1", true);
+                    $default = $cuppa->dataBase->getRow("{$cuppa->configuration->table_prefix}menu_items", "default_page = 1", true);
                     $section_content = $cuppa->dataBase->getRow("ex_content_by_sections", "section = ".@$default->id." AND show_in_subsection = 1", true);
                     $content_ids = @$section_content->contents;
                 }
             //--
             //++ search error section
                 if(!$content_ids){
-                    $error = $cuppa->dataBase->getRow("cu_menu_items", "error_page = 1", true);
+                    $error = $cuppa->dataBase->getRow("{$cuppa->configuration->table_prefix}menu_items", "error_page = 1", true);
                     $section_content = $cuppa->dataBase->getRow("ex_content_by_sections", "section = ".@$error->id, true);
                     $content_ids = @$section_content->contents;
                 }

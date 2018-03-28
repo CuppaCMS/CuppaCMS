@@ -59,7 +59,7 @@
                 $permission_data = $cuppa->dataBase->getRow($cuppa->configuration->table_prefix."permissions_data", "`group` = '".$group."' AND reference = '".$reference."'", true);
                 if($permission_data){
                     $permission_data = $cuppa->utils->jsonDecode($permission_data->data);
-                    $user_group_id = $cuppa->db->getColumn("cu_api_keys", "id", "`key` = '".@$_SERVER["HTTP_KEY"]."'");
+                    $user_group_id = $cuppa->db->getColumn("{$cuppa->configuration->table_prefix}api_keys", "id", "`key` = '".@$_SERVER["HTTP_KEY"]."'");
                     $key = "value_".$user_group_id."_".$permission;
                     $value = @$permission_data->{$key};
                     if($value){

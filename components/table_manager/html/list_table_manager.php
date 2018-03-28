@@ -70,7 +70,7 @@
     //--
 </script>
 <div class="content list_table_manager">
-    <div style="overflow: hidden; margin-bottom: 4px;">
+    <div style="overflow: hidden; padding-bottom: 4px;">
         <h1>
             <span class="h1_title">
                 <?php echo $language->table_manager ?> 

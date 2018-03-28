@@ -14,7 +14,7 @@
                 $info = (array) $cuppa->jsonDecode($info);
                 $body = "";
                 foreach ($info as $key => $value) {
-                    if($key == "country") $value = $cuppa->dataBase->getColumn("cu_countries", "name", "id = ".$value);
+                    if($key == "country") $value = $cuppa->dataBase->getColumn($cuppa->configuration->table_prefix."countries", "name", "id = ".$value);
                     $body .= "<b>".ucfirst($key).":</b> ".$value."<br />";
                 }
                 $cuppa->mail->send($language->title, $cuppa->configuration->email_outgoing, "Form: ".$cuppa->POST("table"), $cuppa->configuration->forward,  $body);

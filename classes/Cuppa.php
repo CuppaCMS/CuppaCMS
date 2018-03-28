@@ -55,10 +55,20 @@
             $this->permissions = Permissions::getInstance();
             $this->country->set("", false, $this->configuration, true);
             $this->browser = $this->utils->getBrowser();
-            //++ redirect not-www to www
-                if (substr($_SERVER['HTTP_HOST'], 0, 4) !== 'www.') {
-                    $protocol = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
-                    header('Location: '.$protocol.'www.'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI']); exit;
+            //++ redirect not-www/www
+                if(@$this->configuration->redirect_to == "www"){
+                    if (substr($_SERVER['HTTP_HOST'], 0, 4) !== 'www.') {
+                        $protocol = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
+                        $url = $protocol.'www.'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+                        header('Location: '.$url); exit;
+                    }
+                }
+                if(@$this->configuration->redirect_to == "not_www"){
+                    if (substr($_SERVER['HTTP_HOST'], 0, 4) === 'www.') {
+                        $protocol = (@$_SERVER["HTTPS"] == "on") ? "https://" : "http://";
+                        $url = $protocol.str_replace('www.',"", $_SERVER['HTTP_HOST']).$_SERVER['REQUEST_URI'];
+                        header('Location: '.$url); exit;
+                    }
                 }
             //--
             //++ validate SSL active
@@ -171,7 +181,7 @@
             }
         // JSON Endoce
             function jsonEncode($value, $base64_encode = true){
-                $value = json_encode($value);
+                $value = json_encode($value, JSON_PRETTY_PRINT);
                 if($base64_encode) $value = base64_encode($value);
                 return $value;
             }
@@ -192,19 +202,18 @@
             function encrypt($string, $key = ""){
                 if(!$string) return false;
                 if(!$key) $key = $this->configuration->global_encode_salt;
-                $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-                $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-                $crypttext = mcrypt_encrypt(MCRYPT_RIJNDAEL_256, $key, $string, MCRYPT_MODE_ECB, $iv);
-                return trim(base64_encode($crypttext));
+                $encrypt_method = "AES-256-CBC";
+                $iv = substr(hash('sha256', $key), 0, 16);
+                $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
+                return trim($output);
             }
             function decrypt($string, $key = ""){
                 if(!$string) return false;
                 if(!$key) $key = $this->configuration->global_encode_salt;
-                $iv_size = mcrypt_get_iv_size(MCRYPT_RIJNDAEL_256, MCRYPT_MODE_ECB);
-                $iv = mcrypt_create_iv($iv_size, MCRYPT_RAND);
-                $crypttext = base64_decode($string);
-                $decrypttext = mcrypt_decrypt(MCRYPT_RIJNDAEL_256, $key, $crypttext, MCRYPT_MODE_ECB, $iv);
-                return trim($decrypttext);
+                $encrypt_method = "AES-256-CBC";
+                $iv = substr(hash('sha256', $key), 0, 16);
+                $output = openssl_decrypt($string, $encrypt_method, $key, 0, $iv);
+                return trim($output);
             }
         /* includeInstance
                 $tag = template // template, xmp (old browsers compatibility)
@@ -245,7 +254,7 @@
                 if(!@$opts->unique) $opts->unique = $this->utils->getUniqueString("instance");
                 if(@$opts->template) $opts->instance = $opts->template;
                 else $opts->instance = $this->file->getDescription($opts->url)->name;
-                $file = file_get_contents($opts->url);
+                $file = file_get_contents($documentPath.$opts->url);
                 $file = $this->utils->replace($file, $opts->instance, $opts->unique, true);
                 $file = $this->utils->replace($file, $opts->instance, $opts->unique, true, ["<script>", "</script>"]);
                 $file = $this->utils->replace($file, $opts->instance, $opts->unique, false, ["<style>", "</style>"]);
@@ -394,7 +403,7 @@
             public function ssl() {
                 $secure = 1;
                 // if origen has http check a valid https
-                    if(substr($_SERVER["HTTP_REFERER"], 0, 4) == "http") $secure = (substr($_SERVER["HTTP_REFERER"], 0, 5) == "https");
+                    if(@substr($_SERVER["HTTP_REFERER"], 0, 4) == "http") $secure = (substr($_SERVER["HTTP_REFERER"], 0, 5) == "https");
                 // check server if origen is right
                     if($secure) $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443;
                 return $secure;
