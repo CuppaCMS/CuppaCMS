@@ -2,8 +2,7 @@
     // test
     function test($data){
         $cuppa = Cuppa::getInstance();
-        return $cuppa->dataBase->getList("cu_menus");
-        
+        return $cuppa->dataBase->getList("cu_menus");     
     }
     // save form
     // info: Base64Encode(JSONEncode)
