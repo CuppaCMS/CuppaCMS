@@ -179,6 +179,8 @@
 
         public function autoLogout($redirect = true) {
             @session_start();
+            $configuration = new Configuration();
+            if(!@$this->value("id") || !@$configuration->auto_logout_time) return;
             if(!@$_SESSION["cuSession"]->auto_logout_time){
                 @$_SESSION["cuSession"]->auto_logout_time = time();
                 return false;
@@ -186,7 +188,6 @@
             $curTime = time();
             $oldTime = @$_SESSION["cuSession"]->auto_logout_time;
             $diff = ($curTime - $oldTime)/100;
-            $configuration = new Configuration();
             if($diff > @$configuration->auto_logout_time){
                 @session_unset();
                 @session_destroy();

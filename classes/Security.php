@@ -37,7 +37,7 @@
                 if($api->limit_access){
                     $access = false;
                     $list = explode(",",$api->limit_access);
-                    $referer = $_SERVER["HTTP_REFERER"];
+                    $referer = @$_SERVER["HTTP_REFERER"];
                     // domain
                         for($i = 0; $i < count($list); $i++){
                             $pos = strpos($referer, $list[$i]);
@@ -54,7 +54,7 @@
                         return $data;
                     }
                 }
-            return 1;
+            return $api;
         }
 	}
 ?>

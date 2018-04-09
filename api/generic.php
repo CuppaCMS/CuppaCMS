@@ -8,7 +8,7 @@
         $method = $cuppa->POST("method");
         $sql = strtolower($cuppa->POST("sql"));
         if($sql){
-            if(!$api->sql_queries){
+            if(!$api_check->sql_queries){
                 $data = new stdClass(); $data->error = "-10"; $data->error_message = "This API Key don't accept SQL Queries";
                 echo json_encode($data, JSON_PRETTY_PRINT); 
                 exit();

@@ -17,7 +17,7 @@
 		public $ssl = "0";
 		public $lateral_menu = "expanded";
 		public $base_url = "";
-		public $auto_logout_time = "30";
+		public $auto_logout_time = "";
 		public $redirect_to = "false";
 		public $table_prefix = "cu_";
 		public $allowed_extensions = "*.gif; *.jpg; *.jpeg; *.pdf; *.ico; *.png; *.svg";
