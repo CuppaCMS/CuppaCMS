@@ -87,7 +87,7 @@
 			return self::$instance;
 		}
         // Define access paths
-            public function setPath($path = null, $name = "administrator"){
+            public function setPath($path = null, $name = "administrator", $removeParams = true){
                 if(!$path){
                     if(@$_SERVER["SCRIPT_NAME"]) $path = "http://".@$_SERVER["HTTP_HOST"].@$_SERVER["SCRIPT_NAME"];
                     else if(@$_SERVER["REQUEST_URI"]) $path = "http://".@$_SERVER["HTTP_HOST"].@$_SERVER["REQUEST_URI"];
@@ -95,6 +95,7 @@
                     if($this->configuration->ssl){$path =  str_replace("http", "https", $path); }
                     $path = $this->utils->cutText("?", $path, 9999,"", true);
                     $path = $this->utils->cutText("/", $path, 9999, "/", true);
+                    if(!$removeParams){ $path .= "?".$_SERVER['QUERY_STRING']; }
                 }
                 if($name == "administrator") $path = str_replace("administrator/administrator","administrator",$path);
                 $this->setCookie($name."_path", $path);

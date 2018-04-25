@@ -118,7 +118,7 @@
                     <?php
                     	$className = "Select";
                     	$field = new $className();
-                    	$params = '{"table_name":"'.$cuppa->configuration->table_prefix.'menus","data_column":"id","label_column":"name, language"}';
+                    	$params = '{"table_name":"'.$cuppa->configuration->table_prefix.'menus","data_column":"id","label_column":"name"}';
                     	echo $field->GetItem("menu_filter", @$_REQUEST["menu_filter"], $params, false, "", "onChange='menu_list.changeMenu()'");
                     ?>
                 </div>

@@ -91,18 +91,6 @@
         $joins_data = array(); $consults = array();
         for($i = 0; $i <count($array_keys); $i++){
             @$config = json_decode(base64_decode($field_types->{$array_keys[$i]}->config));
-            /*
-            if(@$field_types->{$array_keys[$i]}->type == "Select" && !is_array(@$config->data) ){
-                $data = new stdClass();
-                $data->query = str_replace(".","_",$config->data->table_name).$i.".".$config->data->label_column . " AS `" .$array_keys[$i] . "`";
-                $data->field = $array_keys[$i];
-                $data->join_typle = "LEFT OUTER JOIN";
-                $data->join = $config->data->table_name . " AS " . str_replace(".","_",$config->data->table_name) . $i;
-                $data->where = str_replace(".","_",$config->data->table_name).$i.".".$config->data->data_column."=". $view.".".$array_keys[$i];
-                $joins_data[$array_keys[$i]] = $data;
-                array_push($consults, $array_keys[$i]);
-            }
-            */
         }
     // Permision verify - Only List Own Info
         if($cuppa->permissions->getValue(2,$view, 2) == "only own info"){
