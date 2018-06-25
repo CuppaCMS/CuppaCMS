@@ -18,6 +18,17 @@
             $cuppa = Cuppa::getInstance();
             require($cuppa->getDocumentPath()."components/permissions/list_permissions_api_key.php");
         }
+        public function getPermissions($group = "ungroup"){
+            $cuppa = Cuppa::getInstance();
+            if(!is_numeric($group)) $group = $cuppa->dataBase->getColumn($cuppa->configuration->table_prefix."permissions_group","id", "name = '{$group}'");
+            $result = $cuppa->dataBase->getList($cuppa->configuration->table_prefix."permissions", "`group` = $group", "", "name ASC", true);
+            return @$result;
+        }
+        public  function setValue($group = "ungroup", $reference, $data){
+            if(!is_numeric($group)) $group = $cuppa->dataBase->getColumn($cuppa->configuration->table_prefix."permissions_group","id", "name = '{$group}'");
+            //TODO implement this method
+            return 1;
+        }
         /* $group: id or string, permission: id or string
                     
         */

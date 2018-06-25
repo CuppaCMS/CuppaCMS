@@ -312,6 +312,11 @@
                 if(count($array)) return $array;
                 else return null;
             }
+        // pathData
+            function pathData($url = ''){
+                if(!$url) $url = "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+                //TODO Implement that method similar to JS
+            }
         // Get data form url string ?value1=value&value2=value&value3=value
             function getVarsFromURLString($string, $return_object = false, $base64_decode = false){
                 $data = "";
@@ -633,6 +638,19 @@
         }
         public function  dateDiff($date1, $date2){
             
+        }
+        public function getIndependentDates($startDate, $endDate, $format = "Y-m-d")
+        {
+            $begin = new DateTime($startDate);
+            $end = new DateTime($endDate);
+            $interval = new DateInterval('P1D'); // 1 Day
+            $dateRange = new DatePeriod($begin, $interval, $end);
+            $range = [];
+            foreach ($dateRange as $date) {
+                $range[] = $date->format($format);
+            }
+            array_push($range,$endDate);
+            return $range;
         }
 	}
 ?>

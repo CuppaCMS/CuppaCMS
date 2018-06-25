@@ -200,21 +200,27 @@
             }
         // Encript / Decript
         // keys = 'C7FFgigeyQSmvWcSMiLAnce4Tl4KGX6j' (256)
-            function encrypt($string, $key = ""){
+            function encrypt($string, $key = "", $base64Encode = false, $jsonEncode = false){
                 if(!$string) return false;
                 if(!$key) $key = $this->configuration->global_encode_salt;
+                if($jsonEncode) $string = json_encode($string);
                 $encrypt_method = "AES-256-CBC";
                 $iv = substr(hash('sha256', $key), 0, 16);
                 $output = openssl_encrypt($string, $encrypt_method, $key, 0, $iv);
-                return trim($output);
+                $output = trim($output);
+                if($base64Encode) $output = base64_encode($output);
+                return $output;
             }
-            function decrypt($string, $key = ""){
+            function decrypt($string, $key = "", $base64Decode = false, $jsonDecode = false){
                 if(!$string) return false;
                 if(!$key) $key = $this->configuration->global_encode_salt;
+                if($base64Decode) $string = base64_decode($string);
                 $encrypt_method = "AES-256-CBC";
                 $iv = substr(hash('sha256', $key), 0, 16);
                 $output = openssl_decrypt($string, $encrypt_method, $key, 0, $iv);
-                return trim($output);
+                $output = trim($output);
+                if($jsonDecode) $output = json_decode($output);
+                return $output;
             }
         /* includeInstance
                 $tag = template // template, xmp (old browsers compatibility)
@@ -416,8 +422,8 @@
                 return $this->getPath($name);
             }
         // log
-            public function log(...$args){
-                foreach ($args as $data) {
+            public function log(){
+                foreach (func_get_args() as $data) {
                     echo "<script>
                                 try{
                                     console.log(JSON.parse('{$this->jsonEncode($data, false)}'));
@@ -426,8 +432,8 @@
                 }
             }
         // pre
-            public function pre(...$args){
-                foreach ($args as $data) {
+            public function pre(){
+                foreach (func_get_args() as $data) {
                     echo "<pre>"; print_r($data); echo "</pre>";
                 }
             }
