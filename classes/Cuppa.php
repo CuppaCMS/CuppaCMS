@@ -37,6 +37,7 @@
         public $browser;
         public function __construct(){
             @include_once realpath(__DIR__ . '/..')."/Configuration.php";
+            @date_default_timezone_set(date_default_timezone_get());
             $this->global = new stdClass();
             $this->security = Security::getInstance();
             $this->configuration = new Configuration();
@@ -73,8 +74,8 @@
             //--
             //++ validate SSL active
                 if(@$this->configuration->ssl){
-                    if(!isset($_SERVER['HTTPS']) || $_SERVER['HTTPS'] == ""){
-                        $redirect = "https://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+                    if(!isset($_SERVER['HTTPS']) && @$_SERVER['HTTPS'] == "" && @$_SERVER['SERVER_PORT'] != 443) {
+                        $redirect = "https://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
                         header("Location: $redirect");
                     }
                 }
@@ -135,6 +136,13 @@
                 if($include_root) $path = $this->documentRoot().$path;
                 return $path;
             }
+        // public function basePath
+            public function base($name = "app"){
+                $base = realpath(__DIR__ . '/../..')."/";
+                if($name == "administrator") $base = realpath(__DIR__ . '/..')."/";
+                $base = str_replace("\\", "/", $base);
+                return $base;
+            }
         // Set session var
             public function setSessionVar($name, $value){
                 @session_start();
@@ -188,7 +196,7 @@
             }
         // JSON Decode
             function jsonDecode($value, $base64_decode = true){
-                if($base64_decode) $value = base64_decode($value);
+                if($base64_decode) $value = @base64_decode($value);
                 $value = json_decode(htmlspecialchars_decode($value));
                 return $value;
             }
@@ -431,10 +439,25 @@
                          </script>";
                 }
             }
+        // selected
+            public function selected($value1 = null, $value2 = null, $default = null, $selectedStr="selected", $unselectedStr=""){
+                if(is_array($value2) && count($value2)){
+                    for($i = 0 ; $i < count($value2); $i++){
+                        if($value1 == $value2[$i]) return $selectedStr;
+                    }
+                }else if($value1 == $value2){
+                    return $selectedStr;
+                }
+                if(!$value1 && $default){
+                    if($value2 == $default) return $selectedStr;
+                }
+
+                return $unselectedStr;
+            }
         // pre
             public function pre(){
                 foreach (func_get_args() as $data) {
-                    echo "<pre>"; print_r($data); echo "</pre>";
+                    echo "<pre style='z-index: 9999; background: #000; color:#FFF; padding: 10px; font-size: 12px;'>"; print_r($data); echo "</pre>";
                 }
             }
         /* curl

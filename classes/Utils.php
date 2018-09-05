@@ -636,8 +636,43 @@
             $months = $diff->y * 12 + $diff->m + $diff->d / 30;
             return $months;
         }
-        public function  dateDiff($date1, $date2){
-            
+        /* return different between 2 date
+            $returnType = seconds, minutes, all
+        */
+        public function  dateDiff($date1, $date2, $returnType = ''){
+            $result = 0;
+            $start_date = new DateTime($date1);
+            $interval = $start_date->diff(new DateTime($date2));
+            if($returnType == "minutes"){
+                $result = $interval->days * 24 * 60;
+                $result += $interval->h * 60;
+                $result += $interval->i;
+                $result += ".".$interval->s;
+            }else if($returnType == "seconds"){
+                $result = $interval->days * 24 * 60 * 60;
+                $result += $interval->h * 60 * 60;
+                $result += $interval->i * 60;
+                $result += $interval->s;
+            }else if($returnType == 'object'){
+                return $interval;
+            }else{
+                $result = $interval->format('%H:%I:%S');
+            }
+            return $result;
+        }
+        // return
+        public function dateByNumber($years = 0, $months = 0,$days = 0, $hours = 0, $minutes = 0, $seconds = 0, $returnString = false, $stringFormat = "%Y-%M-%D %H:%I:%S"){
+            $date1 = new DateTime('2000-01-01');
+            $date2 = new DateTime('2000-01-01');
+            $date2->modify($years." years");
+            $date2->modify($months." months");
+            $date2->modify($days." days");
+            $date2->modify($hours." hours");
+            $date2->modify($minutes." minutes");
+            $date2->modify($seconds." seconds");
+            $diff = $date1->diff($date2);
+            if($returnString) return $diff->format($stringFormat);
+            return $diff;
         }
         public function getIndependentDates($startDate, $endDate, $format = "Y-m-d")
         {
@@ -651,6 +686,30 @@
             }
             array_push($range,$endDate);
             return $range;
+        }
+
+        public function percent($n, $min, $max, $invert = false){
+            $percent = ($n-$min)/($max-$min);
+            if($percent < 0) $percent = 0;
+            else if($percent > 1) $percent = 1;
+            if($invert) $percent = 1-$percent;
+            return $percent;
+        }
+        /*
+         * $from: ''Pacific/Nauru'
+         * $to: ''America/Toronto'
+         * */
+        function convertTimeZone($time = '', $from = '', $to = '', $format= 'Y-m-d H:i:s'){
+            if($from == $to) return $time;
+            $date = null;
+            try {
+                $date = new DateTime($time, new DateTimeZone($from));
+            } catch (Exception $e) {
+                print_r($e->getMessage());
+            }
+            $date->setTimezone(new DateTimeZone($to));
+            $time = $date->format($format);
+            return $time;
         }
 	}
 ?>

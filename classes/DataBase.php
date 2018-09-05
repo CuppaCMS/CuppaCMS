@@ -211,6 +211,19 @@
 				}
 				return 0;
 			}
+            public function getTableDesc($table, $column = ""){
+                if(!$column){
+                    $sql = "DESC {$table}";
+                    return $this->sql($sql, true);
+                }else{
+                    $sql = "DESC {$table} {$column}";
+                    $result = @$this->sql($sql, true)[0];
+                    return $result;
+                }
+            }
+            public function getColumnDesc($table, $column = ""){
+                return $this->getTableDesc($table, $column);
+            }
 			public function getTables(){
 				$sql = "SHOW TABLES";
 				$query = @mysqli_query($this->con, $sql);
@@ -288,7 +301,7 @@
                     }
                     return null;
                 }
-            //++ Ajust data to save, add to the string '' in all data to the object - example: name => 'name'
+            //++ Adjust data to save, add to the string '' in all data to the object - example: name => 'name'
             // $no_scape = 'field1, field2' (string separated by , )
                 function ajust($object, $object_return = false, $escape = true, $no_scape = ""){
                     $object = (array) $object;
@@ -316,6 +329,9 @@
                     }
                     if($object_return) $object = (object) $object;
                     return $object;
+                }
+                function adjust($object, $object_return = false, $escape = true, $no_scape = ""){
+		            return $this->ajust($object, $object_return, $escape, $no_scape);
                 }
             // Get last id
                 function lastId($table, $id_column = "id"){
@@ -392,7 +408,7 @@
                     }
                     return $value;
                 }
-			//++ Personal functions
+			// Personal functions
 				public function getTablesNoRegistered(){
 					$configuration = new Configuration();
 					$registeredTables = $this->getList("".$configuration->table_prefix."tables");
@@ -410,5 +426,53 @@
 					}
 					return 0;
 				}
+            // currentTimeZone
+                public function getTimeZoneDB(){
+                    $defaultTimezone = "select timediff(now(),convert_tz(now(),@@session.time_zone,'+00:00')) as `timezone`";
+                    $defaultTimezone = @$this->sql($defaultTimezone, true)[0]->timezone;
+                    $defaultTimezone = explode(":",$defaultTimezone);
+                    $defaultTimezone = $defaultTimezone[0].":".$defaultTimezone[1];
+                    if(strpos($defaultTimezone,"-") === false ) $defaultTimezone = "+".$defaultTimezone;
+                    return $defaultTimezone;
+                }
+            /* get TimeZone List
+                    require import tiemzones.sql
+            */
+                public function getTimeZoneList(){
+                    $list = $this->getList("timezones","","","name ASC", true);
+                    for($i = 0; $i < count($list); $i++){
+                        //$tz = timezone_open($list[$i]->name);
+                        //$dateTimeOslo = date_create("now",timezone_open("Europe/Oslo"));
+                        $list[$i]->offset = $this->getTimeZoneOffset($list[$i]->name);
+                        $list[$i]->name = str_replace("_"," ", $list[$i]->name);
+                    }
+                    return $list;
+                }
+            /* get TimeZone offset
+                $timeZone: id, name
+            */
+                public function getTimeZoneOffset($timeZone){
+                    if(is_numeric($timeZone)){
+                        $timeZone = $this->getColumn("timezones","name","id = ".$timeZone);
+                    }
+                    $tz = timezone_open($timeZone);
+                    $dateTimeOslo = date_create("now",timezone_open("Europe/Oslo"));
+                    $offset = timezone_offset_get($tz,$dateTimeOslo);
+                    $sign = ($offset < 0) ? "-" : "+";
+                    $offset = $sign.date("H:i", mktime(0, 0, abs($offset)));
+                    return $offset;
+                }
+            /* Set timezone
+                $value =  '+02:00', id
+            */
+               public function setTimeZone($value){
+                   if(!$value) return;
+                   if(is_numeric($value)){
+                       $value = $this->getTimeZoneOffset($value);
+                   }
+                   $sql = "SET @@session.time_zone = '{$value}'";
+                   $this->sql($sql);
+                   return 1;
+               }
 	}
 ?>
