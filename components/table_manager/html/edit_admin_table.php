@@ -1,6 +1,6 @@
 <?php
     include_once(realpath(__DIR__ . '/../../..')."/classes/Cuppa.php");
-    $cuppa = Cuppa::getInstance(); $cuppa->user->valid();
+    $cuppa = Cuppa::getInstance(); $cuppa->user->valid("admin_login");
     if(!@$path) $path = $cuppa->utils->getUrlVars(@$_POST["path"]);
     $language = $cuppa->language->load();
     $configuration = $cuppa->configuration;

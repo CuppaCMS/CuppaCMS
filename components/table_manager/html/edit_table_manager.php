@@ -1,6 +1,6 @@
 <?php
     include_once(realpath(__DIR__ . '/../../..')."/classes/Cuppa.php");
-    $cuppa = Cuppa::getInstance(); $cuppa->user->valid();
+    $cuppa = Cuppa::getInstance(); $cuppa->user->valid("admin_login");
     $language = $cuppa->language->load();
     // Task conditions
         if(@$_POST["task"] == "edit"){ 
