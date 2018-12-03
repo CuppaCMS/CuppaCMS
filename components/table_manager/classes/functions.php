@@ -2,7 +2,7 @@
 	//++ Functions
 		function saveTableManager(){
             include_once(realpath(__DIR__ . '/../../..')."/classes/Cuppa.php");
-            $cuppa = Cuppa::getInstance(); $cuppa->user->valid("admin_login");
+            $cuppa = Cuppa::getInstance(); $cuppa->user->valid();
             $infoColumbs = $cuppa->dataBase->getColums($_POST["table_name"]);
             $data_to_save = array();
             for($i = 0; $i < count($infoColumbs); $i++){
@@ -44,7 +44,7 @@
         // Receive array of ids
         function deleteTableManager(){
             include_once(realpath(__DIR__ . '/../../..')."/classes/Cuppa.php");
-            $cuppa = Cuppa::getInstance(); $cuppa->user->valid("admin_login");
+            $cuppa = Cuppa::getInstance(); $cuppa->user->valid();
             $_POST["ids"] = $cuppa->utils->jsonDecode($_POST["ids"]);
             for($i = 0; $i < count($_POST["ids"]); $i++){ 
                 $info = $cuppa->dataBase->getRow($cuppa->configuration->table_prefix."tables", "id='".$_POST["ids"][$i]."'", true);
@@ -55,7 +55,7 @@
         }
         function saveAdminTable(){
             include_once(realpath(__DIR__ . '/../../..')."/classes/Cuppa.php");
-            $cuppa = Cuppa::getInstance(); $cuppa->user->valid("admin_login");
+            $cuppa = Cuppa::getInstance(); $cuppa->user->valid();
             $db = $cuppa->dataBase;
             $configuration = $cuppa->configuration;
             $view = $cuppa->POST("view");

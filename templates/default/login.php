@@ -3,11 +3,9 @@
     $language = $cuppa->language->load();
     $language_availables = $cuppa->language->getLanguageFiles();
     $path = $cuppa->utils->getUrlVars();
-
     if(isset($path["secure"])) header( 'Location: '.$cuppa->getPath() );
     // restore
-        $restore = $cuppa->decrypt($path["restore"], "", true);
-
+        $restore = $cuppa->decrypt($path["restore"]);
         if(@$restore){
             $user_restore = $cuppa->db->getRow("{$cuppa->configuration->table_prefix}users", "id = '".$restore."' AND enabled = 1 AND restore_password = 1", true);
             if($user_restore){

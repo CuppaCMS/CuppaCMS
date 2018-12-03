@@ -1,6 +1,6 @@
 <?php
     include_once(realpath(__DIR__ . '/../../..')."/classes/Cuppa.php");
-    $cuppa = Cuppa::getInstance(); $cuppa->user->valid("admin_login");
+    $cuppa = Cuppa::getInstance(); $cuppa->user->valid();
     $language = $cuppa->language->load();
     $current_language = $cuppa->language->current();
     if(!@$path) $path = $cuppa->utils->getUrlVars(@$_POST["path"]);
@@ -96,7 +96,7 @@
                 <?php if(!$info){ ?>
                     <tr>
                         <td colspan="3" style="text-align: center; padding-top: 5px;"><span class="title_info"><?php echo $language->no_items_created ?></span></td>
-                    </tr>
+                    </td>
                 <?php } ?>
             </table>
             <input onclick="rich.newRow()" class="button_blue" type="button" value="<?php echo $language->new_item ?>" style="margin-top: 20px; width: 100%;"  />

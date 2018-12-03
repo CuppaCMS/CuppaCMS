@@ -1,6 +1,6 @@
 <?php 
     include_once $_SERVER['DOCUMENT_ROOT'].$_COOKIE["administrator_document_path"]."classes/Cuppa.php";
-    $cuppa = Cuppa::getInstance(); $cuppa->user->valid("admin_login");
+    $cuppa = Cuppa::getInstance(); $cuppa->user->valid();
     $language = $cuppa->language->load();
     if(is_numeric($group)){
         $group_data = $cuppa->dataBase->getRow($cuppa->configuration->table_prefix."permissions_group", "id = '$group'", true);
