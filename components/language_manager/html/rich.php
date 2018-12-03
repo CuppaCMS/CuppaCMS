@@ -79,7 +79,7 @@
                     <th><img src="templates/default/images/template/language.png" /></th>
                     <th style="width: 20px;"></th>
                 </tr>
-                <?php for($i = 0; $i < count($info); $i++){ ?>
+                <?php for($i = 0; $i < @count($info); $i++){ ?>
                     <tr>
                         <td>
                             <img src="templates/default/images/template/file_10.png" />

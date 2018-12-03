@@ -178,7 +178,7 @@
 <div class="edit_admin_table">
     <!-- Include file (top) -->
         <?php
-            for($i = 0; $i < count($include_files); $i++){
+            for($i = 0; $i < @count($include_files); $i++){
                 if( $include_files[$i]->add_to == "form" && $include_files[$i]->position == "top" ){
                     $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
                     if(strpos($include_file, "../") !== false){
@@ -232,7 +232,7 @@
         <div class="form_admin_table_1" style="padding-left: 30px;">
             <!-- Include file (before table) -->
                 <?php
-                    for($i = 0; $i < count($include_files); $i++){
+                    for($i = 0; $i < @count($include_files); $i++){
                         if( $include_files[$i]->add_to == "form" && $include_files[$i]->position == "before_to_fields" ){
                             $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
                             if(strpos($include_file, "../") !== false){
@@ -420,7 +420,7 @@
             <!-- -->
             <!-- Include file (after table) -->
                 <?php
-                    for($i = 0; $i < count($include_files); $i++){
+                    for($i = 0; $i < @count($include_files); $i++){
                         if( $include_files[$i]->add_to == "form" && $include_files[$i]->position == "after_to_fields" ){
                             $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
                             if(strpos($include_file, "../") !== false){
@@ -438,7 +438,7 @@
     </form>
     <!-- Include file (end) -->
         <?php
-            for($i = 0; $i < count($include_files); $i++){
+            for($i = 0; $i < @count($include_files); $i++){
                 if( $include_files[$i]->add_to == "form" && $include_files[$i]->position == "end" ){
                     $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
                     if(strpos($include_file, "../") !== false){

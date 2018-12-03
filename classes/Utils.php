@@ -256,11 +256,10 @@
                 $path = str_replace("path=", "", $path);
                 $path = htmlspecialchars($path);
                 $tmp_array = explode('/', $path);
-                
-                $last_element = "?".array_pop($tmp_array);
-                if(strpos($last_element,"?") !== false){
-                    $last_element = str_replace("?", "","&".$last_element);
-                }
+
+                $last_element = array_pop($tmp_array);
+                if(strpos($last_element,"?") !== false) $last_element = str_replace("?", "","&".$last_element);
+
                 $get = "";
                 if(strpos($last_element, "&") !== false){
                     $last_element = explode("&", $last_element);

@@ -189,7 +189,7 @@
     // Create Info Array
         $info_array = array();
         $info_array["data"] = array();
-        for($i = 0; $i < count($info); $i++){
+        for($i = 0; $i < @count($info); $i++){
             $fields = array();
             // Time field calculator
                 $fields["last_updating_time"] = strtotime(@date("Y-m-d H:i:s")) - strtotime(@date($info[$i]["date_updating"]));
@@ -505,7 +505,7 @@
     <div class="list_admin_table">
         <!-- Include file (top) -->
             <?php
-                for($i = 0; $i < count($include_files); $i++){
+                for($i = 0; $i < @count($include_files); $i++){
                     if( $include_files[$i]->add_to == "list" && $include_files[$i]->position == "top" ){
                         $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
                         if(strpos($include_file, "../") !== false){
@@ -633,7 +633,7 @@
             <div class="frame">
                 <!-- Include file (before_to_table) -->
                     <?php
-                        for($i = 0; $i < count($include_files); $i++){
+                        for($i = 0; $i < @count($include_files); $i++){
                             if( $include_files[$i]->add_to == "list" && $include_files[$i]->position == "before_to_table" ){
                                 $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
                                 if(strpos($include_file, "../") !== false){
@@ -772,7 +772,7 @@
                 <!-- -->
                 <!-- Include file (after_to_table) -->
                     <?php
-                        for($i = 0; $i < count($include_files); $i++){
+                        for($i = 0; $i < @count($include_files); $i++){
                             if( $include_files[$i]->add_to == "list" && $include_files[$i]->position == "after_to_table" ){
                                 $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
                                 if(strpos($include_file, "../") !== false){
@@ -805,7 +805,7 @@
         <!-- -->
         <!-- Include file (end) -->
             <?php
-                for($i = 0; $i < count($include_files); $i++){
+                for($i = 0; $i < @count($include_files); $i++){
                     if( $include_files[$i]->add_to == "list" && $include_files[$i]->position == "end" ){
                         $include_file = $cuppa->getDocumentPath().$include_files[$i]->path;
                         if(strpos($include_file, "../") !== false){
