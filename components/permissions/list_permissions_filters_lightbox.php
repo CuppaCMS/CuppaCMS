@@ -1,6 +1,6 @@
 <?php
     include_once $_SERVER['DOCUMENT_ROOT'].$_COOKIE["administrator_document_path"]."classes/Cuppa.php";
-    $cuppa = Cuppa::getInstance(); $cuppa->user->valid();
+    $cuppa = Cuppa::getInstance(); $cuppa->user->valid("admin_login");
     $language = $cuppa->language->load();
     $table = $cuppa->dataBase->getRow($cuppa->configuration->table_prefix."tables", "table_name='".$_POST["params"]["table_name"]."'", true);
     $field_types = json_decode(base64_decode(@$table->params));

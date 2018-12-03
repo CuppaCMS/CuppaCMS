@@ -2,7 +2,7 @@
 	//++ Functions
 		function save(){
             include_once(realpath(__DIR__ . '/../../..')."/classes/Cuppa.php");
-            $cuppa = Cuppa::getInstance(); $cuppa->user->valid();
+            $cuppa = Cuppa::getInstance(); $cuppa->user->valid("admin_login");
             // Get data
                 $data["id"] = "'".$cuppa->dataBase->escape($_POST["id"])."'";
     			$data["title"] = "'".$cuppa->dataBase->escape($_POST["title_field"])."'";
