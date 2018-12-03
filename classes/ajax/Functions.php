@@ -34,11 +34,10 @@
                 if(!@$_POST["reference_id"]) echo "1";
                 $cuppa = Cuppa::getInstance();
                 $data = new stdClass();
-                    $data->user_id_updating = $cuppa->user->getVar("id");
-                    $data->date_updating = date('Y-m-d H:i:s');
-                    $data->table_name = $_POST["table_name"];
-                    $data->reference_id = $_POST["reference_id"];
-                    $data = $cuppa->dataBase->ajust($data, true);
+                $data->user_id_updating = "'".$cuppa->user->getVar("id")."'";
+                $data->date_updating = "'".date('Y-m-d H:i:s')."'";
+                $data->table_name = "'".$_POST["table_name"]."'";
+                $data->reference_id = "'".$_POST["reference_id"]."'";
                 $result = $cuppa->dataBase->add($cuppa->configuration->table_prefix."tables_log", $data);
                 echo $result;
             }
