@@ -1,0 +1,53 @@
+<template id="com.cuppa.fileManager.List" >
+    <div class="p-t-40">
+        <div class="border-bottom1 flex p-x-10 p-y-10  uppercase t-12 color5 font-bold">
+            <div class="flex-grow ">Name</div>
+            <div style="width: 100px" class="d-none-s750">Size</div>
+            <div style="width: 140px" class="d-none-s750">Dimensions</div>
+            <div style="width: 120px" class="d-none-s750">Date</div>
+            <div style="width: 200px" class="t-right-s750 max-width-100-s750">Options</div>
+        </div>
+        <div id="list"></div>
+    </div>
+</template>
+<script>
+    cuppa.requiereComponent(["components/list/ListItemFolder.html"], {plainComponent:true});
+    cuppa.requiereComponent(["components/list/ListItemFile.html"], {plainComponent:true});
+
+    (function() {
+        class List extends HTMLElement {
+
+            constructor() {
+                super(); cuppa.componentAdjust(this,'com.cuppa.fileManager.List');
+                cuppa.setData(PATH_CU_FM, {data:{path:"/"}});
+                cuppa.getData(PATH_CU_FM, {callback:this.getList});
+            }
+            async getList(data){
+                this.list.innerHTML = "";
+                let list = await fileManager.fetch("getList", {path:data.path});
+                this.render(list);
+            }
+
+            render(data){
+                // folders
+                let i;
+                for(i = 0; i < data.length; i++){
+                    let item  = data[i];
+                    if(item.type != "folder") continue;
+                    let element = cuppa.newElement('<list-item-folder></list-item-folder>');
+                        element.setData(item);
+                    cuppa.append(element, this.list);
+                }
+                // files
+                for(i = 0; i < data.length; i++){
+                    let item  = data[i];
+                    if(item.type != "file") continue;
+                    let element = cuppa.newElement('<list-item-file></list-item-file>');
+                        element.setData(item);
+                    cuppa.append(element, this.list);
+                }
+            }
+        }
+        customElements.define('list-comp', List);
+    })();
+</script>

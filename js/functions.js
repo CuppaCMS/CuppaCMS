@@ -131,7 +131,7 @@ stage.currentLanguage;
         cuppa.setContent({'url':'alerts/alertIFrame.php', 'data':data, 'preload':false});
     };
     stage.loadFileManager = function(){
-        stage.loadIFrame("File manager", "js/filemanager/dialog.php?type=2&popup=1", "&width=90%&height=90%");
+        stage.loadIFrame("File manager", "js/filemanager/index.php", "&width=90%&height=90%");
     };    
 //--
 //++ Toast, type = success, info, error, warning

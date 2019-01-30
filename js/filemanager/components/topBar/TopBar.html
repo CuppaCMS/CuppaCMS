@@ -1,0 +1,41 @@
+<template id="com.cuppa.fileManager.TopBar" class="bg4 bg0 flex flex-align-center flex-justify-between fixed m-w-9999 z-index-1 " style="height:40px;" >
+        <div class="flex flex-grow flex-justify-start p-l-10 ">
+            <nav-bar></nav-bar>
+        </div>
+        <div class="flex p-r-5">
+            <div id="btnReload" class="buttonIcon m-l-5" title="Reload" onclick="fileManager.reload()">
+                <i class="fas fa-sync-alt"></i>
+            </div>
+            <div id="btnUpload" class="buttonIcon m-l-5" title="Upload File">
+                <i class="fas fa-file-upload"></i>
+            </div>
+            <div id="btnNewFolder" class="buttonIcon m-l-5" title="Create folder">
+                <i class="fas fa-folder-plus"></i>
+            </div>
+        </div>
+</template>
+<script>
+    cuppa.requiereComponent(["components/topBar/NavBar.html"], {plainComponent:true});
+    cuppa.requiereComponent(["components/modals/NewFolder.html"], {plainComponent:true});
+    cuppa.requiereComponent(["components/modals/Upload.php"], {plainComponent:true});
+    (function() {
+
+        class TopBar extends HTMLElement {
+
+            constructor() {
+                super(); cuppa.componentAdjust(this, 'com.cuppa.fileManager.TopBar');
+                cuppa.on(this.btnNewFolder, "click", this.newFolder);
+                cuppa.on(this.btnUpload, "click", this.upload);
+            }
+
+            newFolder(){
+                cuppa.append(cuppa.newElement("<newfolder-modal></newfolder-modal>"), document.body)
+            }
+
+            upload(){
+                cuppa.append(cuppa.newElement("<upload-modal></upload-modal>"), document.body)
+            }
+        }
+        customElements.define('top-bar', TopBar);
+    })();
+</script>

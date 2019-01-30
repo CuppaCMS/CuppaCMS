@@ -1,0 +1,66 @@
+<template id="com.cuppa.fileManager.NavBar" class="flex flex-justify-start flex-align-center" >
+    <div class="flex flex-align-center d-none-s750">
+        <i id="btnHome" class="fas fa-home cursor"></i>
+        <div id="list" class="flex flex-justify-start flex-align-center"></div>
+    </div>
+    <div class="flex flex-align-center d-none d-flex-s750">
+        <div id="btnHome2" class="buttonIcon m-l-5-" title="Home">
+            <i class="fas fa-home"></i>
+        </div>
+        <div id="btnBack" class="buttonIcon m-l-5" title="Back">
+            <i class="fas fa-chevron-left"></i>
+        </div>
+    </div>
+
+</template>
+<script>
+    (function() {
+        class NavBar extends HTMLElement {
+
+            constructor() {
+                super(); cuppa.componentAdjust(this,'com.cuppa.fileManager.NavBar');
+                cuppa.on([this.btnHome, this.btnHome2], "click", (e)=>{ cuppa.setData(PATH_CU_FM, {data:{path:"/"} }) });
+                cuppa.on(this.btnBack, "click", this.back);
+                cuppa.getData(PATH_CU_FM, {callback:this.update});
+            }
+
+            update(data){
+                if(data.path === "" || data.path === "/")
+                    cuppa.css(this.btnBack, {display:"none"});
+                else
+                    cuppa.css(this.btnBack, {display:"flex"});
+
+                this.list.innerHTML = "";
+                let path = data.path.split("/");
+                    path.shift();
+                let i;
+                for(i = 0; i < path.length; i++){
+                    let p = path[i];
+                    let clickPath = path.slice(0, i+1);
+                        clickPath = "/"+clickPath.join("/");
+                    if(!p) continue;
+                    let item = cuppa.newElement(`<span class="p-x-5 t-8"> <i class="fas fa-chevron-right ani-fade"></i> </span>`);
+                        cuppa.append(item,this.list);
+                    item = cuppa.newElement(`<div class="button ani-fade" path="${clickPath}" >${p}</div>`);
+                    cuppa.on(item,"click", this.click);
+                    cuppa.append(item,this.list);
+                }
+            }
+
+            click(e){
+                let path = cuppa.attr(e.currentTarget, "path");
+                cuppa.setData(PATH_CU_FM,{data:{path:path}});
+            }
+
+            back(){
+                let path = cuppa.getData(PATH_CU_FM).path
+                if(path === "" || path === "/") return;
+                    path = path.split("/");
+                    path.pop();
+                    path = path.join("/");
+                cuppa.setData(PATH_CU_FM,{data:{path:path || "/"}});
+            }
+        }
+        customElements.define('nav-bar', NavBar);
+    })();
+</script>

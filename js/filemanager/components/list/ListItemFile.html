@@ -1,0 +1,109 @@
+<template id="com.cuppa.fileManager.ListItemFile" >
+    <div class="flex flex-justify-between flex-align-center p-x-10 p-y-10 border-bottom1 " >
+        <div class="flex flex-align-center flex-grow flex-justify-start">
+            <div id="image" class="bg-containt m-r-10" style="width: 30px; height: 30px;"></div>
+            <span id="name">Name</span>
+        </div>
+        <div id="size" class="color6 d-none-s750" style="width: 100px">--</div>
+        <div id="dimensions" class="color6 d-none-s750" style="width: 140px">--</div>
+        <div id="date" class="color6 d-none-s750" style="width: 120px">--</div>
+        <div class="flex flex-justify-end max-width-9999-s750" style="width: 200px">
+            <div id="btnShowURL" class="buttonIcon type2 m-l-5" title="Show URL">
+                <i class="fas fa-link"></i>
+            </div>
+            <div id="btnCopy" class="buttonIcon type2 m-l-5" title="Duplicate">
+                <i class="far fa-copy"></i>
+            </div>
+            <a id="btnDownload" class="buttonIcon type2 m-l-5" title="Download">
+                <i class="far fa-arrow-alt-circle-down"></i>
+            </a>
+            <div id="btnPreview" class="buttonIcon type2 m-l-5" title="Preview">
+                <i class="far fa-eye"></i>
+            </div>
+            <div id="btnRename" class="buttonIcon type2 m-l-5" title="Rename">
+                <i class="fas fa-pen"></i>
+            </div>
+            <div id="btnDelete" class="buttonIcon type2 m-l-5" title="Delete">
+                <i class="far fa-trash-alt"></i>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    (function() {
+        class ListItemFile extends HTMLElement {
+
+            constructor() {
+                super(); cuppa.componentAdjust(this,'com.cuppa.fileManager.ListItemFile');
+                cuppa.on(this.btnDelete, "click", this.delete);
+                cuppa.on(this.btnRename, "click", this.rename);
+                cuppa.on(this.btnCopy, "click", this.copy);
+                cuppa.on(this.btnShowURL, "click", this.showURL);
+                cuppa.on(this.btnDownload, "click", this.download);
+                cuppa.on(this.btnPreview, "click", this.preview);
+                cuppa.on(this, "click", this.preview);
+            }
+
+            setData(data){
+                this.data = data;
+                this.name.innerHTML = this.data.file;
+                this.size.innerHTML = cuppa.sizeFormat(this.data.size);
+                this.date.innerHTML = cuppa.dateFormat(new Date(data.date*1000),"yyyy-mm-dd");
+                if(this.data.type2 === "image"){
+                    cuppa.css(this.image, { "background-image":`url(${this.data.url})` });
+                    this.dimensions.innerHTML = this.data.dimensions.width+"x"+this.data.dimensions.height;
+                }else{
+                    cuppa.css(this.image, { "background-image":"url(media/images/file.svg)" });
+                }
+            }
+
+            async delete(e){
+                e.stopPropagation();
+                let item = cuppa.newElement("<alert-modal data-title='Confirm' data-message='Are you sure you want to delete this item.'></alert-modal>");
+                    cuppa.append(item, document.body);
+                if(!await item.result) return;
+
+                let data = {path:cuppa.getDataSync(PATH_CU_FM).path+"/"+this.data.file};
+                let result = await fileManager.fetch("deleteFile", data);
+                fileManager.reload();
+            }
+
+            async rename(e){
+                e.stopPropagation();
+                let item = cuppa.newElement("<rename-modal></rename-modal>");
+                    item.setData(this.data);
+                cuppa.append(item, document.body);
+            }
+
+            async copy(e){
+                e.stopPropagation();
+                let from = cuppa.getData(PATH_CU_FM).path + "/" + this.data.file;
+                let to = cuppa.getData(PATH_CU_FM).path + "/" + this.data.name+cuppa.unique("_copy_")+"."+this.data.ext;
+                let data = {from:from, to:to};
+                await fileManager.fetch("copyFile", data);
+                fileManager.reload();
+            }
+
+            showURL(e){
+                e.stopPropagation();
+                let item = cuppa.newElement("<show-url-modal></show-url-modal>");
+                item.setData(this.data);
+                cuppa.append(item, document.body);
+            }
+
+            download(e){
+                e.stopPropagation();
+                cuppa.attr(this.btnDownload, "download", this.data.file);
+                cuppa.attr(this.btnDownload, "href", this.data.url);
+            }
+
+            preview(e){
+                e.stopPropagation();
+                let item = cuppa.newElement("<preview-modal></preview-modal>");
+                    item.setData(this.data);
+                cuppa.append(item, document.body);
+            }
+        }
+        customElements.define('list-item-file', ListItemFile);
+    })();
+</script>

@@ -1,0 +1,88 @@
+<template id="com.cuppa.fileManager.ListItemFolder" >
+    <div class="flex flex-justify-between flex-align-center p-x-10 p-y-10 border-bottom1">
+        <div class="flex flex-align-center flex-grow flex-justify-start">
+            <div class="bg-containt m-r-10" style="width: 30px; height: 30px; background-image: url('media/images/folder.svg');"></div>
+            <span id="name">Name</span>
+        </div>
+        <div id="size" class="color6 d-none-s750" style="width: 100px">--</div>
+        <div id="dimensions" class="color6 d-none-s750" style="width: 140px">--</div>
+        <div id="date" class="color6 d-none-s750" style="width: 120px">--</div>
+        <div class="flex flex-justify-end max-width-9999-s750" style="width: 200px">
+            <div id="btnShowURL" class="buttonIcon type2 m-l-5" title="Show URL">
+                <i class="fas fa-link"></i>
+            </div>
+            <div id="btnCopy" class="buttonIcon type2 m-l-5" title="Duplicate">
+                <i class="far fa-copy"></i>
+            </div>
+            <div id="btnRename" class="buttonIcon type2 m-l-5" title="Rename">
+                <i class="fas fa-pen"></i>
+            </div>
+            <div id="btnDelete" class="buttonIcon type2 m-l-5" title="Delete">
+                <i class="far fa-trash-alt"></i>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+(function() {
+    class ListItemFolder extends HTMLElement {
+
+        constructor() {
+            super(); cuppa.componentAdjust(this,'com.cuppa.fileManager.ListItemFolder');
+            cuppa.on(this, "click", this.click);
+            cuppa.on(this.btnDelete, "click", this.delete);
+            cuppa.on(this.btnRename, "click", this.rename);
+            cuppa.on(this.btnCopy, "click", this.copy);
+            cuppa.on(this.btnShowURL, "click", this.showURL);
+        }
+
+        setData(data){
+            this.data = data;
+            this.name.innerHTML = data.name;
+            this.date.innerHTML = cuppa.dateFormat(new Date(data.date*1000),"yyyy-mm-dd");
+        }
+
+        click(){
+            let currentPath = cuppa.getData(PATH_CU_FM).path;
+            let newPath = cuppa.replace(currentPath+"/"+this.data.file, "//", "/");
+            cuppa.setData(PATH_CU_FM, {data:{path:newPath}})
+        }
+
+        async delete(e){
+            e.stopPropagation();
+
+            let item = cuppa.newElement("<alert-modal data-title='Comfirm' data-message='Are you sure you want to delete this item.'></alert-modal>");
+            cuppa.append(item, document.body);
+            if(!await item.result) return;
+
+            let data = {path:cuppa.getDataSync(PATH_CU_FM).path+"/"+this.data.file};
+            let result = await fileManager.fetch("deleteFolder", data);
+            fileManager.reload();
+        }
+
+        async rename(e){
+            e.stopPropagation();
+            let item = cuppa.newElement("<rename-modal></rename-modal>");
+            item.setData(this.data);
+            cuppa.append(item, document.body);
+        }
+
+        async copy(e){
+            e.stopPropagation();
+            let from = cuppa.getData(PATH_CU_FM).path + "/" + this.data.file;
+            let to = cuppa.getData(PATH_CU_FM).path + "/" + this.data.name+cuppa.unique("_copy_");
+            let data = {from:from, to:to};
+            await fileManager.fetch("copyFolder", data);
+            fileManager.reload();
+        }
+
+        showURL(e){
+            e.stopPropagation();
+            let item = cuppa.newElement("<show-url-modal></show-url-modal>");
+            item.setData(this.data);
+            cuppa.append(item, document.body);
+        }
+    }
+    customElements.define('list-item-folder', ListItemFolder);
+})();
+</script>

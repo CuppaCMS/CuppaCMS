@@ -20,7 +20,7 @@
 		public $auto_logout_time = "";
 		public $redirect_to = "false";
 		public $table_prefix = "cu_";
-		public $allowed_extensions = "*.gif; *.jpg; *.jpeg; *.pdf; *.ico; *.png; *.svg";
+		public $allowed_extensions = "*.gif; *.jpg; *.jpeg; *.pdf; *.ico; *.png; *.svg;";
 		public $upload_default_path = "upload_files";
 		public $maximum_file_size = "5242880";
 		public $csv_column_separator = ",";

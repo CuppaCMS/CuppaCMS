@@ -1,0 +1,52 @@
+<template id="com.cuppa.fileManager.ShowURLModal" >
+    <div class="blockade cover-fixed p-x-20 p-y-20 o-auto ani-fade" style="z-index: 2">
+        <div class="c-a-1">
+            <div class="c-a-2">
+                <div class="modal m-w-1000" >
+                    <!-- Header -->
+                    <div class="header flex flex-justify-between flex-align-center z-index-1" >
+                        <h1 class="t-22 p-l-20">Show URL</h1>
+                        <div id="btnClose" class="buttonIcon min-height-50 min-width-50" style="border-radius: 0;">
+                            <i class="fas fa-times"></i>
+                        </div>
+                    </div>
+                    <!-- -->
+                    <!-- content -->
+                    <div class="flex-grow bg2 p-x-20 p-y-20" >
+                        <input id="txtURL" class="input1" >
+                        <div class="t-right m-t-10">
+                            <button id="btnCopy" class="button1">Copy</button>
+                        </div>
+                    </div>
+                    <!-- -->
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
+<script>
+    (function() {
+        class ShowURL extends HTMLElement {
+
+            constructor() {
+                super(); cuppa.componentAdjust(this,'com.cuppa.fileManager.ShowURLModal');
+                cuppa.on(this.btnClose, "click", this.close);
+                cuppa.on(this.btnCopy, "click", this.copy)
+            }
+
+            setData(data){
+                this.data = data;
+                this.txtURL.value = this.data.url;
+            }
+
+            copy(){
+                cuppa.copy(this.txtURL, {success:()=>{ this.btnCopy.innerHTML = "Copied"  } });
+            }
+
+            close(){
+                cuppa.remove(this);
+            }
+        }
+        customElements.define('show-url-modal', ShowURL);
+    })();
+</script>
