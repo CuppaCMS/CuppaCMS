@@ -63,6 +63,8 @@
             }
 
             uComplete(data){
+                if(data.data.error){ this.txtURL.value = data.data.error; return; }
+                
                 fileManager.reload();
                 let url = "media/" + cuppa.getData(PATH_CU_FM).path + "/" +data.data.name;
                     url = cuppa.replace(url,"///","/");

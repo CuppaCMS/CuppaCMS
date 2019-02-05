@@ -46,8 +46,8 @@
                 this.data = data;
                 if(this.data.type2 === "image"){
                     cuppa.css(this.imgPreview,{display:"block"});
-                    this.image.style.backgroundImage = `url(${this.data.url})`;
-                    setTimeout(this.resize, 0.2)
+                    this.image.style.backgroundImage = `url('${this.data.url}')`;
+                    setTimeout(this.resize, 0.2);
                     this.resize();
                 }else if(this.data.ext.toString().toLowerCase() == "pdf"){
                     cuppa.css(this.pdfPreview,{display:"block"});

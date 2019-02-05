@@ -8,15 +8,14 @@
             <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
             <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <!-- -->
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
     </head>
     <body>
-        <div>
-            <top-bar></top-bar>
-            <list-comp></list-comp>
-        </div>
+        <top-bar></top-bar>
+        <list-comp></list-comp>
         <link href="css/styles.css" rel="stylesheet" type="text/css" />
         <script src="js/scripts.js" type="text/javascript"></script>
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+        <script src="https://unpkg.com/@webcomponents/webcomponentsjs@2.2.6/webcomponents-loader.js"></script>
         <script>
             cuppa.requiereComponent(["components/topBar/TopBar.html"], {plainComponent:true});
             cuppa.requiereComponent(["components/list/List.html"], {plainComponent:true});

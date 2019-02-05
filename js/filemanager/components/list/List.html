@@ -29,21 +29,22 @@
             }
 
             render(data){
+                this.list.innerHTML = "";
                 // folders
                 let i;
                 for(i = 0; i < data.length; i++){
                     let item  = data[i];
                     if(item.type != "folder") continue;
-                    let element = cuppa.newElement('<list-item-folder></list-item-folder>');
-                        element.setData(item);
+                    let element = cuppa.newElement(`<list-item-folder></list-item-folder>`);
+                        element.data = item;
                     cuppa.append(element, this.list);
                 }
                 // files
                 for(i = 0; i < data.length; i++){
                     let item  = data[i];
                     if(item.type != "file") continue;
-                    let element = cuppa.newElement('<list-item-file></list-item-file>');
-                        element.setData(item);
+                    let element = cuppa.newElement(`<list-item-file></list-item-file>`);
+                        element.data = item;
                     cuppa.append(element, this.list);
                 }
             }

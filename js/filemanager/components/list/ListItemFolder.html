@@ -36,10 +36,9 @@
             cuppa.on(this.btnShowURL, "click", this.showURL);
         }
 
-        setData(data){
-            this.data = data;
-            this.name.innerHTML = data.name;
-            this.date.innerHTML = cuppa.dateFormat(new Date(data.date*1000),"yyyy-mm-dd");
+        connectedCallback(){
+            this.name.innerHTML = this.data.name;
+            this.date.innerHTML = cuppa.dateFormat(new Date(this.data.date*1000),"yyyy-mm-dd");
         }
 
         click(){
