@@ -66,11 +66,11 @@
     .flex_box_middle, .flex_box_bottom, .flex_box_top{ display:-webkit-flex; display: flex; }
     .flex_box_middle > *{ align-self: center; width: 100%; -webkit-align-self: center; }
     .flex_box_bottom > *{ align-self: flex-end; width: 100%;  -webkit-align-self: flex-end; }
-    .flex_box_top > *{ align-self: flex_top; width: 100%; -webkit-align-self: flex_top; }
+    .flex_box_top > *{ align-self: flex-start; width: 100%; -webkit-align-self: flex-start; }
     .flex_box_auto_height{ align-self: flex-start; -webkit-align-self: flex-start ; }
     .first_letter_upper{ text-transform: lowercase; }
     .first_letter_upper::first-letter{ text-transform: uppercase; }
-    input.error, textarea.error{ background: #FFE5E5 url(cuppa_images/asterisk.png) no-repeat; background-position: right 10px top 16px; }
+    input.error, textarea.error{ background: #FFE5E5; background-position: right 10px top 16px; }
     label.error{ pointer-events: none; position: absolute; display: inline-block; top: calc(100% - 2px); left: 10px; background: #ea973d; color: #FFF; padding: 7px 10px 5px; z-index: 1; border-radius: 3px; box-shadow: 0px 2px 3px rgba(0,0,0,0.1); font-size: 12px; white-space: nowrap !important; }
     label.error:before{ content: ''; position: absolute; bottom: 100%; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid #ea973d; left: 8px; }
     .c_1{ width: 100%; } .c_2{ width: 50%; } .c_3{ width: 33.3333%; } .c_4{ width: 25%; }
@@ -242,7 +242,7 @@
             border: 1px solid #196AEB !important;
             border-left: 0px !important;
             box-shadow: 0px 1px 2px rgba(0,0,0,0.20) !important;
-            background: #4a8dfc; ! /* Old browsers */
+            background: #4a8dfc; /* Old browsers */
             background: -moz-linear-gradient(top,  #4a8dfc 0%, #337bed 100%) !important; /* FF3.6+ */
             background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#4a8dfc), color-stop(100%,#337bed)) !important; /* Chrome,Safari4+ */
             background: -webkit-linear-gradient(top,  #4a8dfc 0%,#337bed 100%) !important; /* Chrome10+,Safari5.1+ */

@@ -7,7 +7,7 @@
     if(!@$path) $path = $cuppa->utils->getUrlVars(@$_POST["path"], false, $language, true);
     //section  
         if(@$content_ids){
-            // example: $conten_ids = '13,42,20';
+            // example: $content_ids = '13,42,20';
             $cond = " id IN (".@$content_ids.")";
         }else if(!$path || ( ( $cuppa->language->valid(@$path[0]) || $cuppa->country->valid(@$path[0]) ) && count($path) <= 1 )  ){
             $default = $cuppa->dataBase->getRow("{$cuppa->configuration->table_prefix}menu_items", "default_page = 1", true);
