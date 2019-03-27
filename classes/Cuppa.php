@@ -88,7 +88,7 @@
 			return self::$instance;
 		}
         // Define access paths
-            public function setPath($path = null, $name = "administrator", $removeParams = true){
+            public function setPath($name = "administrator", $path = null, $removeParams = true){
                 if(!$path){
                     if(@$_SERVER["SCRIPT_NAME"]) $path = "http://".@$_SERVER["HTTP_HOST"].@$_SERVER["SCRIPT_NAME"];
                     else if(@$_SERVER["REQUEST_URI"]) $path = "http://".@$_SERVER["HTTP_HOST"].@$_SERVER["REQUEST_URI"];
@@ -103,7 +103,7 @@
                 return $path;              
             }
         // Get Document path by name
-            public function setDocumentPath($document_path = "", $name = "administrator", $include_root = false){
+            public function setDocumentPath($name = "administrator", $document_path = "", $include_root = false){
                 if(!$document_path){
                     if(@$_SERVER["SCRIPT_NAME"]){
                         if($include_root) $document_path = $this->documentRoot() . @$_SERVER["SCRIPT_NAME"];

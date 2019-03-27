@@ -24,9 +24,7 @@
     .table_info th{ border: 1px solid #e9e9e9; }
 </style>
 <script>
-    stats = new function(){
-        
-    };
+    stats = new function(){ };
 </script>
 <div class="stats" id="stats">
     <div class="last_activiy">

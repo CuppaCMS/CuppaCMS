@@ -5,11 +5,11 @@
     $current_language = $cuppa->language->current();
     if(!@$path) $path = $cuppa->utils->getUrlVars(@$_POST["path"]);
     $sql = "SELECT * FROM (
-            SELECT 1 as id, 'home' as title, 0 as parent_id, s.contents, 0 as `order` FROM ex_content_by_sections as s
+            SELECT 1 as id, 'home' as title, 0 as parent_id, s.banners, 0 as `order` FROM {$cuppa->configuration->table_prefix}banners_by_sections as s
             WHERE section = 0
             UNION
-            SELECT m.id, m.title, m.parent_id, s.contents, m.`order` FROM {$cuppa->configuration->table_prefix}menu_items as m
-            JOIN ex_content_by_sections as s ON s.section = m.id
+            SELECT m.id, m.title, m.parent_id, s.banners, m.`order` FROM {$cuppa->configuration->table_prefix}menu_items as m
+            JOIN {$cuppa->configuration->table_prefix}banners_by_sections as s ON s.section = m.id
             WHERE m.menus_id NOT IN (1,2)    
             UNION
             SELECT m.id, m.title, m.parent_id, '' as contents, m.`order` FROM {$cuppa->configuration->table_prefix}menu_items as m
@@ -18,14 +18,14 @@
     $sections = $cuppa->dataBase->sql($sql, true);
     $sections = $cuppa->utils->tree($sections, "id", "parent_id", "title");
 ?>
-<div class="content_list">
+<div class="banners_list">
     <style>
-        .content_list{ }
+        .banners_list{ }
     </style>
     <script>
-        content_list = {}
+        banners_list = {}
         //++ submit
-            content_list.submit = function(){
+            banners_list.submit = function(){
                 if($(".filter_section select").val() != ""){
                     var cond = "<?php echo @$view ?>.id IN ("+$(".filter_section select option:selected").attr("data")+")";
                     $(".filter_section input[name=custom_condition]").val(cond);
@@ -36,29 +36,29 @@
             }
         //--
         //++ resize
-            content_list.resize = function(){ }; 
+            banners_list.resize = function(){ }; 
         //--
         //++ end
-            content_list.removed = function(e){ cuppa.removeEventGroup("content_list"); }
+            banners_list.removed = function(e){ cuppa.removeEventGroup("banners_list"); }
         //--
         //++ init
-            content_list.init = function(){
-                cuppa.addEventListener("resize", content_list.resize, window, "content_list"); content_list.resize(); $(".content_list img").load(content_list.resize); TweenMax.delayedCall(0.1, content_list.resize);
-                cuppa.addEventListener("removed", content_list.removed, ".content_list", "content_list");
+            banners_list.init = function(){
+                cuppa.addEventListener("resize", banners_list.resize, window, "banners_list"); banners_list.resize(); $(".banners_list img").load(banners_list.resize); TweenMax.delayedCall(0.1, banners_list.resize);
+                cuppa.addEventListener("removed", banners_list.removed, ".banners_list", "banners_list");
                 $(".filter_section input").val( "<?php echo $cuppa->POST("custom_condition"); ?>" );
                 $(".filter_section select").val("<?php echo $cuppa->POST("section"); ?>");
                 cuppa.selectStyle(".filter_section select", true);
                 $(".form_list .right").prepend(  $(".filter_section") );
-            }; cuppa.addEventListener("ready",  content_list.init, document, "content_list");
+            }; cuppa.addEventListener("ready",  banners_list.init, document, "banners_list");
         //--
     </script>
     <div class="filter_section filter_content" style="margin-bottom: 5px; float: left;">
-        <select name="section" onchange='content_list.submit()' width="200px" >
+        <select name="section" onchange='banners_list.submit()' width="200px" >
             <option value=""><?php echo $language->section ?></option>
             <?php forEach($sections as $index => $item){ ?>
                 <?php
-                    $item = (object) $item;
-                    $ids = join(",", json_decode($item->contents));
+                    $item = (object) $item; 
+                    $ids = join(",", json_decode($item->banners));
                 ?>
                 <option value="<?php echo $index ?>" data="<?php echo $ids ?>"><?php echo $item->deep_string.$item->title ?></option>
             <?php } ?>
