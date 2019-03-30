@@ -11,8 +11,9 @@
     }
     $view = @$path[3];
     // Field Types
-        $field_types = $db->getList($configuration->table_prefix."tables", "table_name='".$view."'");
-	    $field_types = json_decode(base64_decode($field_types[0]["params"]));
+        $table_data = $db->getList($configuration->table_prefix."tables", "table_name='".$view."'");
+        $field_types = @json_decode(base64_decode($table_data[0]["params"]));
+        if(!$field_types) $field_types = @json_decode($table_data[0]["params"]);
     // Filters
         @$filters_params = $db->getList($configuration->table_prefix."permissions_data", "`group` = 4 AND reference LIKE '".$view.",%'","","`order` ASC, id ASC", true);
         $filter_array = Array();
@@ -185,7 +186,8 @@
 			echo '<meta http-equiv="Refresh" content="0;url=./">'; exit();
         }
     // Option Panel
-        $option_panel = json_decode(base64_decode(@$field_types->option_panel));
+        $option_panel = @json_decode(base64_decode($field_types->option_panel));
+        if(!$option_panel) $option_panel = @$field_types->option_panel;
     // Create Info Array
         $info_array = array();
         $info_array["data"] = array();
@@ -230,7 +232,9 @@
                         //--
                             if(@$show_list){
                                 $field = "";
-                                    @$config = json_decode(base64_decode($field_types->{$infoColumns[$j]}->config));
+                                    @$config = @json_decode(base64_decode($field_types->{$infoColumns[$j]}->config));
+                                        if(!$config) $config = @$field_types->{$infoColumns[$j]}->config;
+
                                     if($field_types->{$infoColumns[$j]}->type == "Select_List"){
                                         $field_info = json_decode(@$info[$i][$infoColumns[$j]]);
                                         $string_total_result = "";
@@ -566,9 +570,10 @@
                                             }
                                             $config = json_encode($config);
                                         }else{
-                                            $config = base64_decode($field_types->{$filters_params[$i]}->config);
+                                            $config = @base64_decode($field_types->{$filters_params[$i]}->config);
+                                            if(!$config) $config = json_encode($field_types->{$filters_params[$i]}->config);
                                         }
-                                        $config = json_decode($config); 
+                                        $config = json_decode($config);
                                             @$config->extraParams->width = "";
                                             if(@$config->data->dinamic_update_field){
                                                 if(@$config->data->where_column)@$config->data->where_column .= " AND ".$config->data->dinamic_update_column." = " .${"tmp_filter_".$config->data->dinamic_update_field};

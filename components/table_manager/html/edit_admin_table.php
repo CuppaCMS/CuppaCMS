@@ -14,8 +14,10 @@
     $view = @$path[3];
     if($cuppa->POST("table")) $view = $cuppa->POST("table");
     // Info
-        $field_types = $db->getList($configuration->table_prefix."tables", "table_name = '".$view."'");
-    	$field_types = json_decode(base64_decode($field_types[0]["params"]));
+        $table_data = $db->getList($configuration->table_prefix."tables", "table_name = '".$view."'");
+        $field_types = json_decode(base64_decode($table_data[0]["params"]));
+        if(!$field_types) $field_types = @json_decode($table_data[0]["params"]);
+
     	$table_name = $view;
     	if(@$_REQUEST["id"]){ 
     		if(is_array($_REQUEST["id"])) $_REQUEST["id"] = $_REQUEST["id"][0];
@@ -261,7 +263,8 @@
                                     }
                                 //--
                                 if($value === false || $value == "") $value = @$_REQUEST[$infoColumns[$i]];
-                                $config = json_decode(base64_decode(@$field_types->{$infoColumns[$i]}->config));
+                                $config = @json_decode(base64_decode($field_types->{$infoColumns[$i]}->config));
+                                    if(!$config) $config = @$field_types->{$infoColumns[$i]}->config;
                             ?>
                             <?php if(  @$field_types->{$infoColumns[$i]}->type ==  "Personal_Script" ){ ?>
                                 <input type="hidden" name="<?php echo @$infoColumns[$i]."_field" ?>"  value="<?php echo eval('return '.$config->script.';'); ?>" />
@@ -269,7 +272,10 @@
                                 <input type="hidden" name="<?php echo @$infoColumns[$i]."_field" ?>"  value="<?php echo @$value; ?>" />
                             <?php } ?>
                         <?php }else if(@$cuppa->permissions->getValue("5", $view.",".$infoColumns[$i], "7")){ ?>
-                            <?php $config = json_decode(base64_decode(@$field_types->{$infoColumns[$i]}->config)); ?>
+                            <?php
+                                $config = @json_decode(base64_decode($field_types->{$infoColumns[$i]}->config));
+                                    if(!$config) $config = @$field_types->{$infoColumns[$i]}->config;
+                            ?>
                             <tr tab="<?php echo @$tabs->fields_tab->{$infoColumns[$i]} ?>" class="tr_<?php echo @$cuppa->utils->getFriendlyUrl(@$field_types->{$infoColumns[$i]}->label) ?>" >
                                 <td class="td_label" style="width:150px; white-space: nowrap; padding-right: 10px; <?php if($field_types->{$infoColumns[$i]}->type == "TextArea" || $field_types->{$infoColumns[$i]}->type == "Select_List" ) echo "vertical-align:top; padding-top:5px" ?>">
                                     <?php
@@ -319,7 +325,8 @@
                                                     echo '<input type="hidden" name="'.@$infoColumns[$i].'_field" value="'.@$value.'" />';
                                                 }
                                             //--
-                                            $config = json_decode(base64_decode(@$field_types->{$infoColumns[$i]}->config));
+                                            $config = @json_decode(base64_decode($field_types->{$infoColumns[$i]}->config));
+                                                if(!$config) $config = @$field_types->{$infoColumns[$i]}->config;
                                             $config->table = $view;
                                             $config->field = $infoColumns[$i];
                                             $config->primary_key_field = $field_types->primary_key;
@@ -342,7 +349,8 @@
                                                     echo '<input type="hidden" name="'.@$infoColumns[$i].'_field" value="'.@$value.'" />';
                                                 }
                                             //--
-                                            $config = json_decode(base64_decode(@$field_types->{$infoColumns[$i]}->config));
+                                            $config = @json_decode(base64_decode($field_types->{$infoColumns[$i]}->config));
+                                                if(!$config) $config = @$field_types->{$infoColumns[$i]}->config;
                                             $config->table = $view;
                                             $config->field = $infoColumns[$i];
                                             $config = json_encode($config);
@@ -367,7 +375,9 @@
                                                     echo '<input type="hidden" name="'.@$infoColumns[$i].'_field" value="'.@$value.'" />';
                                                 }
                                             //--
-                                            echo $field->GetItem($infoColumns[$i]."_field", $value, base64_decode(@$field_types->{$infoColumns[$i]}->config), $field_types->{$infoColumns[$i]}->required, "", $extraParams, "", true, $field_types->language_file_reference);
+                                            $config = @base64_decode(@$field_types->{$infoColumns[$i]}->config);
+                                                if(!$config) $config = json_encode(@$field_types->{$infoColumns[$i]}->config);
+                                            echo $field->GetItem($infoColumns[$i]."_field", $value, $config, $field_types->{$infoColumns[$i]}->required, "", $extraParams, "", true, $field_types->language_file_reference);
                                         }else if(@$field_types->{$infoColumns[$i]}->type == "TextArea" ){
                                             $className = $field_types->{$infoColumns[$i]}->type;
                                             $field = new $className();
@@ -385,7 +395,9 @@
                                                     echo '<input type="hidden" name="'.@$infoColumns[$i].'_field" value="'.@$value.'" />';
                                                 }
                                             //--
-                                            echo $field->GetItem($infoColumns[$i]."_field", $value, base64_decode(@$field_types->{$infoColumns[$i]}->config), $field_types->{$infoColumns[$i]}->required, "", $extraParams, @$cuppa->configuration->font_list);
+                                            $config = @base64_decode(@$field_types->{$infoColumns[$i]}->config);
+                                                if(!$config) $config = json_encode(@$field_types->{$infoColumns[$i]}->config);
+                                            echo $field->GetItem($infoColumns[$i]."_field", $value, $config, $field_types->{$infoColumns[$i]}->required, "", $extraParams, @$cuppa->configuration->font_list);
                                         }else{
                                             $className = $field_types->{$infoColumns[$i]}->type;
                                             $field = new $className();
@@ -403,7 +415,9 @@
                                                     echo '<input type="hidden" name="'.@$infoColumns[$i].'_field" value="'.@$value.'" />';
                                                 }
                                             //--
-                                            echo $field->GetItem($infoColumns[$i]."_field", $value, base64_decode(@$field_types->{$infoColumns[$i]}->config), @$field_types->{$infoColumns[$i]}->required, "", @$extraParams);
+                                            $config = @base64_decode(@$field_types->{$infoColumns[$i]}->config);
+                                                if(!$config) $config = json_encode(@$field_types->{$infoColumns[$i]}->config);
+                                            echo $field->GetItem($infoColumns[$i]."_field", $value, $config, @$field_types->{$infoColumns[$i]}->required, "", @$extraParams);
                                         }
                                     ?>
                                     <!-- language button -->

@@ -13,9 +13,8 @@
                     if(isset($_POST[$infoColumbs[$i]."_includeDownload"])) $array["includeDownload"] = 1; else $array["includeDownload"] = 0;
             		if(isset($_POST[$infoColumbs[$i]."_required"])) $array["required"] = 1; else $array["required"] = 0;
             		if(isset($_POST[$infoColumbs[$i]."_language_button"])) $array["language_button"] = 1; else $array["language_button"] = 0;
-            		
-                    if(isset($_POST[$infoColumbs[$i]."_field_config"])) $array["config"] = $_POST[$infoColumbs[$i]."_field_config"];
-            	$data_to_save[$infoColumbs[$i]] = $array;
+                    if(isset($_POST[$infoColumbs[$i]."_field_config"])) $array["config"] = $cuppa->jsonDecode($_POST[$infoColumbs[$i]."_field_config"]);
+            	    $data_to_save[$infoColumbs[$i]] = $array;
             }
             // More info
                 $data_to_save["show_list_like_tree"] = (@$_POST["show_list_like_tree"]) ? 1 : 0;
@@ -31,10 +30,10 @@
                 $data_to_save["list_limit"] = @$_POST["list_limit"];
                 
             $data_to_save["primary_key"] = $_POST["primary_key"];
-            $data_to_save["option_panel"] = $_POST["option_panel"];
+            $data_to_save["option_panel"] = $cuppa->jsonDecode($_POST["option_panel"]);
             $data_to_save["include_file"] = $_POST["include_file"];
             $data_to_save["tabs"] = $_POST["tabs"];
-            $json = $cuppa->jsonEncode($data_to_save);
+            $json = $cuppa->jsonEncode($data_to_save, false);
             if(isset($_POST["id"])) $data["id"] = "'".$_POST["id"]."'"; else $data["id"] = "'0'";
             $data["table_name"] = "'".$_POST["table_name"]."'";
             $data["params"] = "'".$json."'";

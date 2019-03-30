@@ -22,8 +22,10 @@
 		}
 		$field_types = json_encode($field_types);
 	//--
-    // Create array with URL for config 
-        @$default_info = json_decode(base64_decode($info["params"]));
+    // Create array with URL for config
+        $default_info = @json_decode(base64_decode($info["params"]));
+        if(!$default_info) $default_info = @json_decode($info["params"]);
+
         $fields_array = json_decode($field_types);
         $urlConfig = array();
         for($i = 0; $i < count($fields_array); $i++){
@@ -34,7 +36,8 @@
             $urlConfig[$className] = @$item->urlConfig;
         }
     // Option panel
-        $option_panel = json_decode(base64_decode(@$default_info->option_panel));
+        $option_panel = @json_decode(base64_decode(@$default_info->option_panel));
+        if(!$option_panel) $option_panel = $default_info->option_panel;
     // Fields                        
         $file = new File();
     // Language files
@@ -117,7 +120,7 @@
             if( !$('.option_panel ul li').length ) $('.option_panel').css("display","none");
         }
         edit_table.setInfoOptionPanel = function(){
-            var data = "<?php echo @$default_info->option_panel ?>";
+            var data = "<?php echo $cuppa->jsonEncode($option_panel); ?>";
                 data = cuppa.jsonDecode(data);
                 if(!data || !data.length) return;
             $('.option_panel').css("display", "block");
@@ -548,12 +551,16 @@
                                         echo "</div>";
             							//++ Assing default config
             								$defaultConfig = json_encode(@$default_info->{$infoColumbs[$i]}->config);
+
+                                            $config = @$default_info->{$infoColumbs[$i]}->config;
+                                            if(is_object($config)) $config = $cuppa->jsonEncode($config);
+
             								if($defaultConfig != "null"){
             									$itemName = $infoColumbs[$i]."_field";
             									$urlConfig_link = @$urlConfig[$default_info->{$infoColumbs[$i]}->type];
             										$newField = "<div style='float:left' name='".$itemName."_div"."' id='".$itemName."_div"."'>";
             										$newField .= "<input style='margin-left: 5px;' class='button_blue' type='button' value='".@$language->config_field."' onclick='stage.loadConfigAlert(\"".$itemName."\", \"".$urlConfig_link."\")' />";
-            										$newField .= "<input value='".$default_info->{$infoColumbs[$i]}->config."' class='conf_input required readonly' name='" . $itemName . "_config" . "' id='".$itemName."_config"."' />";
+            										$newField .= "<input value='".$config."' class='conf_input required readonly' name='" . $itemName . "_config" . "' id='".$itemName."_config"."' />";
             										$newField .= "</div>";
             									echo $newField;
             								}else if($value == "Text"){
@@ -561,7 +568,7 @@
             									$urlConfig_link = $urlConfig[$value];
             										$newField = "<div style='float:left' name='".$itemName."_div"."' id='".$itemName."_div"."'>";
             										$newField .= "<input style='margin-left: 5px;' class='button_blue' type='button' value='".@$language->config_field."' onclick='stage.loadConfigAlert(\"".$itemName."\", \"".$urlConfig_link."\")' />";
-            										$newField .= "<input value='".@$default_info->{$infoColumbs[$i]}->config."' class='conf_input required readonly' name='" . $itemName . "_config" . "' id='".$itemName."_config"."' />";
+            										$newField .= "<input value='".$config."' class='conf_input required readonly' name='" . $itemName . "_config" . "' id='".$itemName."_config"."' />";
             										$newField .= "</div>";
             									echo $newField;    								        								    
             								}
