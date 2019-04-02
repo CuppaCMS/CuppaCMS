@@ -17,8 +17,9 @@
         }else if(@$_POST["task"] == "delete"){
             $view = $cuppa->POST("view");
             $_POST["ids"] = $cuppa->utils->jsonDecode($_POST["ids"]);
-            $field_types = $cuppa->dataBase->getList($cuppa->configuration->table_prefix."tables", "table_name = '".$view."'");
-            $field_types = json_decode(base64_decode($field_types[0]["params"]));
+            $tableData = $cuppa->dataBase->getList($cuppa->configuration->table_prefix."tables", "table_name = '".$view."'");
+            $field_types = @json_decode(base64_decode($tableData[0]["params"]));
+            if(!@$field_types) $field_types = @json_decode($tableData[0]["params"]);
             for($i = 0; $i < count($_POST["ids"]); $i++){
               $cuppa->dataBase->delete($view, $field_types->primary_key."='".$_POST["ids"][$i]."'");
               //++ Update table log

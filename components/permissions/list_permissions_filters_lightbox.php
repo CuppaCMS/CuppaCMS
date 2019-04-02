@@ -3,7 +3,8 @@
     $cuppa = Cuppa::getInstance(); $cuppa->user->valid("admin_login");
     $language = $cuppa->language->load();
     $table = $cuppa->dataBase->getRow($cuppa->configuration->table_prefix."tables", "table_name='".$_POST["params"]["table_name"]."'", true);
-    $field_types = json_decode(base64_decode(@$table->params));
+    $field_types = @json_decode(base64_decode($table->params));
+    if(@!$field_types) $field_types = @json_decode($table->params);
 	$columns = $cuppa->dataBase->getColums($table->table_name);
 ?>
 <style>
