@@ -3,7 +3,7 @@
 		init : function(ed, url) {
 		  ed.addCommand('mceRicheditor', function() {
 				ed.windowManager.open({
-					file : url + '/richeditor.htm',
+					file : url + '/richeditor.php',
 					width : 900,
 					height : 570,
 					inline : 1

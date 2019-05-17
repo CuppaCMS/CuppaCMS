@@ -22,10 +22,26 @@
         </style>
         <div id="editor"></div>
         <script>
-            ace.require("ace/ext/language_tools");
+            langTools = ace.require("ace/ext/language_tools");
+            var cssClasses = tinyMCEPopup.editor.dom.getClasses();
+            var customCompleter = {
+                getCompletions: function(editor, session, pos, prefix, callback) {
+                    console.log("prefix", prefix, pos)
+                    for(var n = 0; n < cssClasses.length; n++){
+                        var className = cssClasses[n].class;
+                        if(className.indexOf(prefix) != -1){
+                            callback(null, [{name: className, value: className, score: 1, meta: "local"}]);
+                        }
+                    }
+                }
+            }
+            langTools.addCompleter(customCompleter);
+
             var editor = ace.edit("editor");
                 editor.setTheme("ace/theme/twilight");
                 editor.getSession().setMode("ace/mode/html");
+                //editor.completers = ["tufik", "chediak"];
+                console.log(editor.completers)
                 editor.setOptions({enableBasicAutocompletion: true, enableSnippets: true, enableLiveAutocompletion: true});
             //++ set value
                 var code = tinyMCEPopup.editor.getContent({source_view : true});
@@ -118,9 +134,6 @@
                         }
                     //--
                     //++ set code
-                        //if(html_tag == "?php") mode = "ace/mode/php";
-                        //else if(html_tag == "script") mode = "ace/mode/javascript";
-                        //else 
                         mode = "ace/mode/html";
                         editor.getSession().setMode(mode);
                     //--

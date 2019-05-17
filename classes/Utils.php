@@ -475,7 +475,7 @@
             }
         // JSON Decode
             function jsonDecode($value, $base64_decode = true){
-                if($base64_decode) $value = base64_decode($value);
+                if($base64_decode) $value = @base64_decode($value);
                 $value = json_decode($value);
                 return $value;
             }

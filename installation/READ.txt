@@ -1,13 +1,10 @@
 . Clear table_log
-. Export all database on script.sql
+. Export all database on installation/script.sql (tables / data) > 
 . Delete the rows on table INSERT INTO `cu_users`
 . Check the Configuration Script in 'installation\html\steps\installation_finished.php' with 'Configuration.php'
-. Copy 'administrator' to new folder 'administrator'
-. Remove extensions that not necessary extensions/
+. Zip 'administrator' folder to cuppa_cms.zip
 . Remove .git files
-. Clear folders inside js\filemanager\thumbs
 . Reset data base info on Configuration.php 
 	$db, 
 	$tinify_key
 . Uncoment on index.php , line 3 // Check if the directory installation exist
-. zip folder and rename zip like 'cuppa_cms'

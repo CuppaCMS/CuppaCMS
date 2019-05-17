@@ -1,0 +1,21 @@
+<template id="com.cuppa.TemplateComp" >
+    <div class="p-x-10 p-y-5">
+        Template Component
+    </div>
+</template>
+<script>
+    (function() {
+        class TemplateComp extends HTMLElement {
+            static get observedAttributes() { return ['data-index']; }
+
+            constructor() {
+                super(); cuppa.componentAdjust(this,'com.cuppa.TemplateComp');
+            }
+
+            connectedCallback(){ }
+
+            attributeChangedCallback(attr, oldVal, newVal) { }
+        }
+        customElements.define('template-comp', TemplateComp);
+    })();
+</script>

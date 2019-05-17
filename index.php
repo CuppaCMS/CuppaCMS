@@ -1,6 +1,6 @@
 <?php
 	// Check if the directory installation exist
-	   // if(is_dir('installation')) header ("Location: installation/");
+        //if(is_dir('installation')) header ("Location: installation/");
     // Import GlobalClass
         require("classes/Cuppa.php");
         $cuppa = Cuppa::getInstance();

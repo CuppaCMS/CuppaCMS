@@ -1,14 +1,12 @@
-<template id="com.cuppa.fileManager.List" >
-    <div class="p-t-40">
-        <div class="border-bottom1 flex p-x-10 p-y-10  uppercase t-12 color5 font-bold">
-            <div class="flex-grow ">Name</div>
-            <div style="width: 100px" class="d-none-s750">Size</div>
-            <div style="width: 140px" class="d-none-s750">Dimensions</div>
-            <div style="width: 120px" class="d-none-s750">Date</div>
-            <div style="width: 200px" class="t-right-s750 max-width-100-s750">Options</div>
-        </div>
-        <div id="list"></div>
+<template id="com.cuppa.fileManager.List" class="d-block p-t-40" >
+    <div class="border-bottom1 flex p-x-10 p-y-10  uppercase t-12 color5 font-bold">
+        <div class="flex-grow ">Name</div>
+        <div style="width: 100px" class="d-none-s750">Size</div>
+        <div style="width: 140px" class="d-none-s750">Dimensions</div>
+        <div style="width: 120px" class="d-none-s750">Date</div>
+        <div style="width: 200px" class="t-right-s750 max-width-100-s750">Options</div>
     </div>
+    <div id="list"></div>
 </template>
 <script>
     cuppa.requiereComponent(["components/list/ListItemFolder.html"], {plainComponent:true});

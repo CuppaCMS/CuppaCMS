@@ -20,16 +20,13 @@
                 $data["tracking_codes"] = "'".$cuppa->dataBase->escape($_POST["tracking_codes"])."'";
                 $data["default_page"] = "'".$cuppa->dataBase->escape($_POST["default_page_field"])."'";
                 $data["error_page"] = "'".$cuppa->dataBase->escape($_POST["error_page_field"])."'";
-            // Get old items info
-                $item = $cuppa->dataBase->getRow($cuppa->configuration->table_prefix."menu_items", "id = '".$cuppa->dataBase->escape($_POST["id"])."'", true);
             // validate neworder
 				$itemsGroup = $cuppa->dataBase->getList("".$cuppa->configuration->table_prefix."menu_items", "parent_id = ".$data["parent_id"], "","`order` ASC");
 				$order = $itemsGroup[count($itemsGroup)-1]["order"] + 1;
 					$newItem = true;
 					if($data["id"] != "'0'"){
-						$currentItem = $cuppa->dataBase->getRow("".$cuppa->configuration->table_prefix."menu_items", "id=".$data["id"]);
-						if($currentItem["parent_id"] == "0") $currentItem["parent_id"] = "";
-						if("'".$currentItem["parent_id"]."'" == $data["parent_id"]) $newItem = false;
+						$currentItem = $cuppa->dataBase->getRow($cuppa->configuration->table_prefix."menu_items", "id=".$data["id"]);
+						if($currentItem["parent_id"] == $data["parent_id"]) $newItem = false;
 					}
                 if($newItem) $data["order"] = "'".$order."'";
 				$result = $cuppa->dataBase->add("".$cuppa->configuration->table_prefix."menu_items", $data, true, true);

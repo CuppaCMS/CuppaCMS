@@ -554,11 +554,18 @@ try{ cuppa.script_path = document.currentScript.src.replace("cuppa.js", ""); }ca
                 return;
             };
             if(opts.plainComponent){
+                if(!cuppa.componentListContainer){
+                    cuppa.componentListContainer = document.createElement('div');
+                    cuppa.componentListContainer.id = "component_list_container";
+                    cuppa.componentListContainer.style.display = "none";
+                    cuppa.append(cuppa.componentListContainer, document.body);
+                }
+                var components = document.getElementById("component-list");
                 var div = document.createElement('div');
                     div.id = "component_"+url;
                     div.innerHTML = result;
                     div.style.display = "none";
-                cuppa.append(div, document.body);
+                cuppa.append(div, cuppa.componentListContainer);
                 if(opts.callback) opts.callback(url);
                 return;
             };
@@ -748,7 +755,7 @@ try{ cuppa.script_path = document.currentScript.src.replace("cuppa.js", ""); }ca
         };
     };
 
-/* bindable */
+/* bindAll */
     cuppa.bindAll = function(element){
         var propertyNames = Object.getOwnPropertyNames(Object.getPrototypeOf(element))
         for(var i = 0; i < propertyNames.length; i++){
@@ -1397,26 +1404,32 @@ cuppa.replace = function(string, search, replace, opts){
         return object;
     };
 /* Get UrlFriendly
-    Example: news/article-news-1
- */
-    cuppa.urlFriendly = function(str,max) {
+        Example: news/article-news-1
+    */
+    cuppa.urlFriendly = function(str, max, spaceChar) {
+        if(spaceChar == undefined) spaceChar = "-";
         if(!str) return;
         if (max === undefined) max = 500;
-            var a_chars = [];
-                a_chars.push(["a",/[áàâãªÁÀÂÃ]/g]);
-                a_chars.push(["e",/[éèêÉÈÊ]/g]);
-                a_chars.push(["i",/[íìîÍÌÎ]/g]);
-                a_chars.push(["o",/[òóôõÓÒÔÕ]/g]);
-                a_chars.push(["u",/[úùûÚÙÛ]/g]);
-                a_chars.push(["c",/[çÇ]/g]);
-                a_chars.push(["n",/[Ññ]/g]);
-                a_chars.push(["-",/[.]/g]);
-                a_chars.push(["",/['"\\()[\]/*++¿?#:;@$º&*^·’,.!¡%=+|]/g]);
+        var a_chars = [];
+        a_chars.push(["a",/[áàâãªÁÀÂÃ]/g]);
+        a_chars.push(["e",/[éèêÉÈÊ]/g]);
+        a_chars.push(["i",/[íìîÍÌÎ]/g]);
+        a_chars.push(["o",/[òóôõÓÒÔÕ]/g]);
+        a_chars.push(["u",/[úùûÚÙÛ]/g]);
+        a_chars.push(["c",/[çÇ]/g]);
+        a_chars.push(["n",/[Ññ]/g]);
+        a_chars.push(["-",/[.]/g]);
+        a_chars.push(["",/['"\\()[\]/*++¿?#:;@$º&*^·’,.!¡%=+|]/g]);
         for(var i=0; i < a_chars.length; i++){
             str = str.replace(a_chars[i][1], a_chars[i][0]);
         }
-        return str.replace(/\s+/g,'-').replace(/_+/g,'-').toLowerCase().replace(/-{2,}/g,'-').replace(/(^\s*)|(\s*$)/g, '').substr(0,max);
+        str = str.replace(/\s+/g,spaceChar).replace(/_+/g,spaceChar).toLowerCase().replace(/-{2,}/g,spaceChar).replace(/(^\s*)|(\s*$)/g, '').substr(0,max);
+        str = str.replace(/[^a-zA-Z0-9_ -]/g, "");
+        str = str.replace(/[\-]/g, spaceChar);
+        return str;
     };
+    cuppa.cleanString = function(str, max, spaces){ return cuppa.urlFriendly(str, max, spaces); };
+    cuppa.removeSpecialCharacters = function(str, max, spaces){ return cuppa.urlFriendly(str, max, spaces); };
 /* Get Path vars Vars 
     Exampe: news/article-news-1
             Return: Array('news','article-news-1')
@@ -1478,7 +1491,12 @@ cuppa.replace = function(string, search, replace, opts){
 			}
 		}
 		return string;
-	};
+    };
+/* remove html tags */
+    cuppa.removeTags = function(cleanText){
+        cleanText = cleanText.replace(/<\/?[^>]+(>|$)/g, "");
+        return cleanText;
+    };
 /* Cut text */
     cuppa.cutText = function(delimiter, text, lenght, string_to_end, delimiter_forced, remove_tags){
         if(text === undefined) text = "";
@@ -1573,7 +1591,7 @@ cuppa.replace = function(string, search, replace, opts){
     cuppa.jsonDecode = function(value, base64_decode){
         if(value === undefined || value === null) return "";
         if(base64_decode === undefined) base64_decode = true;
-        if(base64_decode) value = Base64.decode(value);
+        if(base64_decode) value = cuppa.base64Decode(value);
         try{ value = JSON.parse(value); }catch(err){}
         return value;
     };
@@ -1582,7 +1600,7 @@ cuppa.replace = function(string, search, replace, opts){
         if(value === undefined || value === null) return "";
         if(base64_encode === undefined) base64_encode = true;
         try{ value = JSON.stringify(value); }catch(err){}
-        if(base64_encode) value = Base64.encode(value);
+        if(base64_encode) value = cuppa.base64Encode(value);
         return value;
     };
 // Base64 Decode
@@ -1639,11 +1657,13 @@ cuppa.replace = function(string, search, replace, opts){
     cuppa.data = {};
     cuppa.setData = function(name, opts){
         opts = cuppa.mergeObjects([{storage:'', silence:false, data:null, "default":null}, opts]);
-        if(opts["default"]){
+        if(opts.store != undefined) opts.storage = opts.store;
+
+        if(opts["default"] !== null){
             cuppa.dataDefault[name] = opts["default"];
             opts["default"] = null;
             var current = cuppa.getData(name, opts);
-            if(!current) current = cuppa.dataDefault[name];
+            if(current == null || current == undefined) current = cuppa.dataDefault[name];
             opts.data = current;
             cuppa.setData(name, opts);
             return;
@@ -1661,6 +1681,8 @@ cuppa.replace = function(string, search, replace, opts){
 
     cuppa.getData = function(name, opts){
         opts = cuppa.mergeObjects([{storage:'', callback:null, "default":false}, opts]);
+        if(opts.store != undefined) opts.storage = opts.store;
+
         if(opts["default"]){ return cuppa.dataDefault[name]; }
 
         var data = cuppa.data[name];
@@ -1670,7 +1692,7 @@ cuppa.replace = function(string, search, replace, opts){
             data = cuppa.jsonDecode(cuppa.sessionStorage(name), false);
         }
 
-        if(data && opts.callback){
+        if(data != undefined && opts.callback){
             opts.callback(data);
         }
         if(opts.callback){
@@ -1821,7 +1843,7 @@ cuppa.replace = function(string, search, replace, opts){
     cuppa.objectToURL = function(object){
         var str = "";
         for(var key in object) {
-            if(str !== "") { str += "&"; }
+            str += "&";
             if(object[key]) str += key + "=" + (object[key]);
             else str += key;
         };
@@ -2927,11 +2949,30 @@ cuppa.imgToSVG = cuppa.img2SVG = function(elements, callback){
         }
 	};
 /* Get Cookie */
-	cuppa.getCookie = function(name) {
-		var results = document.cookie.match ( '(^|;) ?' + name + '=([^;]*)(;|$)' );
-		if ( results ) return ( unescape ( results[2] ) );
-		else return null;
-	};
+    cuppa.getCookie = function(name, documentRef) {
+        if(documentRef == undefined) documentRef = document;
+        var results = documentRef.cookie.match ( '(^|;) ?' + name + '=([^;]*)(;|$)' );
+        if ( results ) return ( unescape ( results[2] ) );
+        else return null;
+    };
+/* Get Cookie Path */
+    cuppa.getCookiePath = function(names, path, callback){
+        if(typeof names == "string") names = [names];
+        let iframe = document.createElement("iframe");
+            iframe.style.position = "fixed"; iframe.style.top = 0; iframe.style.left = 0, iframe.style.width = 0; iframe.style.height = 0, iframe.style.opacity = 0;
+            iframe.setAttribute("src", path);
+            iframe.onload = function(){
+                let documentRef = iframe.contentWindow.document;
+                let result = {};
+                for(let i = 0; i < names.length; i++){
+                    let name = names[i];
+                    result[name] = cuppa.getCookie(name, documentRef);
+                }
+                document.body.removeChild(iframe);
+                if(callback) callback(result);
+            };
+        document.body.append(iframe);
+    }
 /* Delete Cookie*/ 
 	cuppa.deleteCookie = function(name){
 		var cookie_date = new Date ( );  // current date & time
@@ -3124,7 +3165,7 @@ cuppa.imgToSVG = cuppa.img2SVG = function(elements, callback){
     cuppa.ajax = function(url, opts, callback){
         // opts
         opts = opts || { };
-        opts.method = opts.method || "POST";
+        opts.method = (opts.method) ? opts.method.toUpperCase() : "POST";
         if(opts.async == undefined) opts.async = true;
         var request = new XMLHttpRequest();
         request.open(opts.method, url, opts.async);
@@ -3842,9 +3883,9 @@ cuppa.imgToSVG = cuppa.img2SVG = function(elements, callback){
         var hours = date.getHours();
         var minutes = date.getMinutes();
         var seconds = date.getSeconds();
-        format = cuppa.replace(format,"mm", date.getMonth() + 1);
+        format = cuppa.replace(format,"mm", ("0"+(date.getMonth() + 1)).slice(-2));
         format = cuppa.replace(format,"yyyy", date.getFullYear());
-        format = cuppa.replace(format,"dd", date.getDate());
+        format = cuppa.replace(format,"dd", ("0"+date.getDate()).slice(-2));
         format = cuppa.replace(format,"H", (hours < 10) ? "0"+hours : hours);
         format = cuppa.replace(format,"I", (minutes < 10) ? "0"+minutes : minutes );
         format = cuppa.replace(format,"S", (seconds < 10) ? "0"+seconds : seconds );

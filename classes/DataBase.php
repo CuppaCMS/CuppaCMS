@@ -267,7 +267,7 @@
 			}
             public function sqlMultiQuery($sql){
                 if (mysqli_multi_query($this->con, $sql)) {
-                    do { }while (mysqli_next_result($this->con));
+                    do { }while (@mysqli_next_result($this->con));
                 }
                 return 1;
             }

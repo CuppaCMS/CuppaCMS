@@ -59,11 +59,12 @@
             $db = $cuppa->dataBase;
             $configuration = $cuppa->configuration;
             $view = $cuppa->POST("view");
-            $field_types = $db->getList($configuration->table_prefix."tables", "table_name = '".$view."'");
-			$field_types = json_decode(base64_decode($field_types[0]["params"]));
+            $tableInfo = $db->getList($configuration->table_prefix."tables", "table_name = '".$view."'");
+			$field_types = @json_decode(base64_decode($tableInfo[0]["params"]));
+			if(@!$field_types) $field_types =  @json_decode($tableInfo[0]["params"]);
 			$infoColumns = $db->getColums($view);
 			$data_to_save = array();
-            
+
             for($i = 0; $i < count($infoColumns); $i++){
                 $field_type = $field_types->{$infoColumns[$i]};
                 $configuration_params = $cuppa->utils->jsonDecode(@$field_type->config,true);

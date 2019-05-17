@@ -51,7 +51,7 @@
                 this.date.innerHTML = cuppa.dateFormat(new Date(this.data.date*1000),"yyyy-mm-dd");
                 if(this.data.type2 === "image"){
                     cuppa.css(this.image, { "background-image":`url('${this.data.url}')` });
-                    this.dimensions.innerHTML = this.data.dimensions.width+"x"+this.data.dimensions.height;
+                    if(this.data.ext != "svg") this.dimensions.innerHTML = this.data.dimensions.width+" x "+this.data.dimensions.height;
                 }else{
                     cuppa.css(this.image, { "background-image":"url(media/images/file.svg)" });
                 }
