@@ -78,7 +78,7 @@
             async copy(e){
                 e.stopPropagation();
                 let from = cuppa.getData(PATH_CU_FM).path + "/" + this.data.file;
-                let to = cuppa.getData(PATH_CU_FM).path + "/" + this.data.name+cuppa.unique("_copy_")+"."+this.data.ext;
+                let to = cuppa.getData(PATH_CU_FM).path + "/" + this.data.name+cuppa.unique("_copy_");
                 let data = {from:from, to:to};
                 await fileManager.fetch("copyFile", data);
                 fileManager.reload();

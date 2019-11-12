@@ -30,14 +30,16 @@ if($json->action == "deleteFile"){
 
 if($json->action == "rename"){
     $from = CU_FM_ROOT_FOLDER."/".$json->from;
-    $to = CU_FM_ROOT_FOLDER."/".$json->to;
+    $desc = $fileManager->getDescription($from);
+    $to = CU_FM_ROOT_FOLDER."/".$json->to.".".$desc->ext;
     $result = $fileManager->rename($from, $to);
     echo $result;
 }
 
 if($json->action == "copyFile"){
     $from = CU_FM_ROOT_FOLDER."/".$json->from;
-    $to = CU_FM_ROOT_FOLDER."/".$json->to;
+    $desc = $fileManager->getDescription($from);
+    $to = CU_FM_ROOT_FOLDER."/".$json->to.".".$desc->ext;
     $result = $fileManager->copyFile($from, $to);
     echo $result;
 }

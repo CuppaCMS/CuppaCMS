@@ -159,8 +159,8 @@
             $file = explode(".", @$file[count($file)-1]);
             $data = new stdClass();
             $data->name = @$file[0];
-            $data->ext = @$file[1];
-            $data->type = @$file[1];
+            $data->ext = @$file[count($file)-1];
+            $data->type = @$file[count($file)-1];
             return $data;
         }
         // rename

@@ -44,10 +44,8 @@
             async rename(){
                 let newFile = cuppa.trim(this.txtName.value);
                 if(!newFile) return;
-                newFile = cuppa.getData(PATH_CU_FM).path + "/" + newFile
-                if(this.data.ext) newFile += "."+this.data.ext;
+                    newFile = cuppa.getData(PATH_CU_FM).path + "/" + newFile;
                 let oldName = cuppa.getData(PATH_CU_FM).path + "/" + this.data.file;
-
                 let data = {"from":oldName,"to":newFile};
                 await fileManager.fetch("rename", data);
                 this.close();

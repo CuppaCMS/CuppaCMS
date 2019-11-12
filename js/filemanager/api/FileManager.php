@@ -3,7 +3,7 @@
         private static $instance;
         public function __construct(){ }
         public static function getInstance() {
-			if (self::$instance == NULL) { self::$instance = new FileManager(); } 
+			if (self::$instance == NULL) { self::$instance = new FileManager(); }
 			return self::$instance;
 		}
         // Generate File
@@ -45,7 +45,7 @@
                 $file_list = array();
         		for($i = 0; $i < count($files); $i++){
         			if($files[$i] != "." && $files[$i] != ".."){
-        			     if($remove_extension){ 
+        			     if($remove_extension){
         			         $files[$i] = explode(".", $files[$i]);
                              $files[$i] = $files[$i][0];
                          }
@@ -114,7 +114,7 @@
             }
         // delete File
             function deleteFile($file){
-                unlink($file); 
+                unlink($file);
             }
         // create foder
             function createFolder($name, $path, $permissions = 0755){
@@ -124,9 +124,9 @@
             function deleteFolder($folder, $keep_folder = false) {
         		$dir_handle = @opendir($folder);
         		if (!@$dir_handle){ return false; }
-        		while($file = readdir($dir_handle)) { 
+        		while($file = readdir($dir_handle)) {
         			if ($file != "." && $file != "..") {
-        				if (!is_dir($folder."/".$file)) 
+        				if (!is_dir($folder."/".$file))
         					unlink($folder."/".$file);
         				else
         					$this->deleteFolder($folder.'/'.$file);
@@ -159,8 +159,8 @@
                 $file = explode(".", @$file[count($file)-1]);
                 $data = new stdClass();
                 $data->name = @$file[0];
-                $data->ext = @$file[1];
-                $data->type = @$file[1];
+                $data->ext = @$file[count($file)-1];
+                $data->type = @$file[count($file)-1];
                 return $data;
             }
         // rename
@@ -169,20 +169,20 @@
                 return 1;
             }
         // Copy Folder
-            function copyFolder($src,$dst) { 
-                $dir = opendir($src); 
-                @mkdir($dst); 
-                while(false !== ( $file = readdir($dir)) ) { 
-                    if (( $file != '.' ) && ( $file != '..' )) { 
-                        if ( is_dir($src . '/' . $file) ) { 
+            function copyFolder($src,$dst) {
+                $dir = opendir($src);
+                @mkdir($dst);
+                while(false !== ( $file = readdir($dir)) ) {
+                    if (( $file != '.' ) && ( $file != '..' )) {
+                        if ( is_dir($src . '/' . $file) ) {
                             $this->copyFolder($src . '/' . $file,$dst . '/' . $file);
-                        } 
+                        }
                         else {
                             $this->copyFile($src . '/' . $file,$dst . '/' . $file);
-                        } 
-                    } 
+                        }
+                    }
                 }
-                closedir($dir); 
-            } 
+                closedir($dir);
+            }
     }
 ?>
