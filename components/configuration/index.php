@@ -96,7 +96,7 @@
         <div ref="code" class="tab"  ><div class="line"></div><?php echo $language->code ?></div>
     </div>
     <div class="contents">
-        <form class="form_file" autocomplete="off">
+        <form class="form_file" autocomplete="0">
             <div class="tab_content general">
                 <?php include "html/general.php"; ?>
             </div> 

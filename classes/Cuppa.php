@@ -41,7 +41,7 @@
             $this->global = new stdClass();
             $this->security = Security::getInstance();
             $this->configuration = new Configuration();
-            $this->dataBase = $this->db = DataBase::getInstance($this->configuration->db, $this->configuration->host, $this->configuration->user, $this->configuration->password);
+            $this->dataBase = $this->db = DataBase::getInstance($this->configuration->db_name, $this->configuration->db_host, $this->configuration->db_user, $this->configuration->db_password);
             $this->language = LanguageManager::getInstance();
             $this->country = CountryManager::getInstance();
             $this->utils = Utils::getInstance();
@@ -460,65 +460,73 @@
                     echo "<pre style='z-index: 9999; background: #000; color:#FFF; padding: 10px; font-size: 12px;'>"; print_r($data); echo "</pre>";
                 }
             }
+        // error
+            public function error($code, $message){
+                $error = new stdClass();
+                    $error->error = $code;
+                    $error->error_message = $message;
+                return $error;
+            }
         /* curl
-            $data_format = form                 
-            example: 
+            $data_format = form
+            example:
                 https://url.com/data \
                        -u user:pass \
                        -H header_value=value \
                        -d variable=data \
                        -d variable2=data \
+                       -X DELETE \
         */
             function curl($str, $data_format = 'form'){
                 $data = explode("\\", $str);
                 $url = trim(substr($data[0], strpos($data[0],"http"))); array_shift($data);
                 $curl = curl_init();
-                        curl_setopt($curl, CURLOPT_URL, $url);
-                        curl_setopt($curl, CURLOPT_HEADER, FALSE);
-                        curl_setopt($curl, CURLOPT_RETURNTRANSFER, TRUE);
-                        curl_setopt($curl, CURLOPT_POST, TRUE);
-                        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE); 
-                        curl_setopt($curl, CURLOPT_TIMEOUT, 10);
+                curl_setopt($curl, CURLOPT_URL, $url);
+                curl_setopt($curl, CURLOPT_HEADER, false);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+                curl_setopt($curl, CURLOPT_POST, true);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+                curl_setopt($curl, CURLOPT_TIMEOUT, 10);
                 $array_header = array();
                 $data_array = array();
                 //++ Analyze
-                    for($i = 0; $i < count($data); $i++){
-                        $row = trim($data[$i]." ");
-                        $hint = trim(strstr($row,' ', true));
-                        $row = trim(strstr($row,' ', false));
-                        if($hint == "-u"){                // user:password
-                            $row = str_replace(array("'", '"'), array("", ""), $row);
-                            curl_setopt($curl, CURLOPT_USERPWD, $row);
-                        }else if($hint == "-d"){        // post data
-                            if(strpos($row, "]=") !==  false ){
-                                $row = str_replace(array('"', "'"), array("", ""), $row);
-                                $row = explode("=", $row);
-                                $key = @$row[0]; $value = @$row[1];
+                for($i = 0; $i < count($data); $i++){
+                    $row = trim($data[$i]." ");
+                    $hint = trim(strstr($row,' ', true));
+                    $row = trim(strstr($row,' ', false));
+                    if($hint == "-u"){                // user:password
+                        $row = str_replace(array("'", '"'), array("", ""), $row);
+                        curl_setopt($curl, CURLOPT_USERPWD, $row);
+                    }else if($hint == "-d"){        // post data
+                        if(strpos($row, "]=") !==  false ){
+                            $row = str_replace(array('"', "'"), array("", ""), $row);
+                            $row = explode("=", $row);
+                            $key = @$row[0]; $value = @$row[1];
+                            $data_array[$key] = $value;
+                        }else{
+                            $row2 = explode("=", $row);
+                            if(count($row2) > 1){
+                                $key = @$row2[0]; $value = @$row2[1];
                                 $data_array[$key] = $value;
                             }else{
-                                $row2 = explode("=", $row);
-                                if(count($row2) > 1){
-                                    $key = @$row2[0]; $value = @$row2[1];
-                                    $data_array[$key] = $value;
-                                }else{
-                                    array_push($data_array, $row);
-                                }
+                                array_push($data_array, $row);
                             }
-                        }else if($hint == "-H"){
-                           array_push($array_header, $row);
-                        }else if($hint == "-X"){
-                           curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $row);
                         }
+                    }else if($hint == "-H"){
+                        array_push($array_header, $row);
+                    }else if($hint == "-X"){
+                        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, $row);
                     }
-                    // Add Header                                      
-                        curl_setopt($curl, CURLOPT_HTTPHEADER, $array_header);
-                    // Add Data
-                        if(count($data_array) <= 1) $data_array = @$data_array[0];
-                        if($data_format == "form"){
-                            curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data_array));
-                        }else{
-                            curl_setopt($curl, CURLOPT_POSTFIELDS, $data_array);
-                        }
+                }
+                // Add Header
+                curl_setopt($curl, CURLOPT_HTTPHEADER, $array_header);
+                // Add Data
+                if(count($data_array) <= 1) $data_array = @$data_array[0];
+                if($data_format == "form"){
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, http_build_query($data_array));
+                }else{
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data_array);
+                }
                 //--
                 $res = curl_exec($curl); curl_close($curl);
                 return @$res;

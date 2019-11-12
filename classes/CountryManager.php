@@ -29,7 +29,7 @@
                 else $value = @$value[0];
                 $countries = $this->getCountriesAvailable();
                 $aviable = false;
-                for($i = 0; $i < count($countries); $i++){
+                for($i = 0; $i < @count($countries); $i++){
                     if($value == $countries[$i]->code && $countries[$i]->enabled == 1){ $aviable = true; break; }
                 }
                 return $aviable;

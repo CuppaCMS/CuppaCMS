@@ -1,9 +1,9 @@
 <?php 
 	class Configuration{
-		public $host = "localhost";
-		public $db = "cuppa";
-		public $user = "root";
-		public $password = "";
+		public $db_host = "localhost";
+		public $db_name = "cuppa";
+		public $db_user = "root";
+		public $db_password = "";
 		public $administrator_template = "default";
 		public $list_limit = "25";
 		public $font_list = "Raleway";

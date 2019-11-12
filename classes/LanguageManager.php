@@ -22,7 +22,7 @@
                 if(!$path) $path =  realpath(__DIR__."/..")."/language/";
         		$files = @scandir($path);
                 $languages = array();
-        		for($i = 0; $i < count($files); $i++){
+        		for($i = 0; $i < @count($files); $i++){
         			if($files[$i] != "." && $files[$i] != ".."){
         				$temp_name_file = explode(".", $files[$i]);
         				array_push($languages, $temp_name_file[0]);

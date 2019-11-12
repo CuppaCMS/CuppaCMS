@@ -19,20 +19,11 @@
             $cuppa = Cuppa::getInstance();
             $key = @$_SERVER["HTTP_KEY"];
             // check key header value
-                if(@!$key){ 
-                    $data = new stdClass(); $data->error = "-1"; $data->error_message = "API Key required";
-                    return $data; 
-                }
+                if(@!$key){ return $cuppa->error("api_key_required",  "Header API Key required"); }
             // check api key exist
                 $api = $cuppa->db->getRow("{$cuppa->configuration->table_prefix}api_keys", "enabled = 1 AND `key` = '".$cuppa->sanitizeString($key)."'", true);
-                if(!$api){
-                    $data = new stdClass(); $data->error = "-2"; $data->error_message = "API Key not valid";
-                    return $data; 
-                }
-                if($api->ssl && !$cuppa->ssl()){
-                    $data = new stdClass(); $data->error = "-15"; $data->error_message = "All API requests must be made over SSL";
-                    return $data; 
-                }
+                if(!$api){ return $cuppa->error("invalid_api_key",  "API Key not valid"); }
+                if($api->ssl && !$cuppa->ssl()){ return $cuppa->error("ssl_request_required",  "All API requests must be made over SSL"); }
             // check limit access
                 if($api->limit_access){
                     $access = false;
@@ -49,10 +40,7 @@
                             $pos = @strpos($api->limit_access, $ip);
                             if($pos !== false) $access = true;
                         }
-                    if(!$access){
-                        $data = new stdClass(); $data->error = "-3"; $data->error_message = "This API Key is only accesible from some valid IPs or Domains";
-                        return $data;
-                    }
+                    if(!$access){ return $cuppa->error("invalid_ip",  "This API Key is only accessible from some valid IPs or Domains"); }
                 }
             return $api;
         }

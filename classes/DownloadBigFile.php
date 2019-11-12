@@ -24,8 +24,8 @@
         @fwrite($fp,"\r");
     //--
     //++ Body
-        $con = mysqli_connect($cuppa->configuration->host, $cuppa->configuration->user, $cuppa->configuration->password);
-        mysqli_select_db($con, $cuppa->configuration->db); 
+        $con = mysqli_connect($cuppa->configuration->db_host, $cuppa->configuration->db_user, $cuppa->configuration->db_password);
+        mysqli_select_db($con, $cuppa->configuration->db_name);
         mysqli_query($con, "SET NAMES 'utf8'");
         $query = mysqli_query($con, $sql);
         $i = 1;
